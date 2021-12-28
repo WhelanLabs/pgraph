@@ -1,0 +1,29 @@
+##########################################################
+# completed
+##########################################################
+
+
+##########################################################
+# WIP
+##########################################################
+
+* Have a persistant store for ArangoDB.
+
+* create a loader including edge-schema collection support.
+
+
+##########################################################
+# backlog
+##########################################################
+
+
+
+
+* write initial (static) test prediction for use in stories.
+  (~"predict AAPL stock price on 1/1/2023"?)
+
+* resolve - how best to not peek into the future?
+
+* generate persistence in docker database
+
+* support DB access via config file(s) - see ArangoDB java driver source for ideas.

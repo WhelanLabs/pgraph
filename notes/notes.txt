@@ -1,0 +1,7 @@
+
+
+
+
+
+Start ArangoDB in Docker:
+   1. D:\sandbox\2022_andrew\notes> docker run -p 8529:8529 -e ARANGO_ROOT_PASSWORD=openSesame arangodb/arangodb:3.8.2
