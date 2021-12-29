@@ -47,9 +47,9 @@ public class StockDataLoader {
    public static void main(String[] args) throws InterruptedException, ExecutionException {
       setUp();
 
-      db.createCollection("node_types");
+      createCollection("node_types");
       final ArangoCollection node_types = db.collection("node_types");
-      db.createCollection("edge_types");
+      createCollection("edge_types");
       final ArangoCollection edge_types = db.collection("edge_types");
 
       final BaseDocument v1 = new BaseDocument();
@@ -66,13 +66,13 @@ public class StockDataLoader {
       v3.addAttribute("right_type", "tickers");
       edge_types.insertDocument(v3);
 
-      db.createCollection("dates");
+      createCollection("dates");
       final ArangoCollection dates = db.collection("dates");
 
-      db.createCollection("tickers");
+      createCollection("tickers");
       final ArangoCollection tickers = db.collection("tickers");
 
-      db.createCollection("marketData", new CollectionCreateOptions().type(CollectionType.EDGES));
+      createEdgeCollection("marketData");
       final ArangoCollection marketData = db.collection("marketData");
 
       BufferedReader reader;
@@ -135,6 +135,16 @@ public class StockDataLoader {
          tearDown();
       }
 
+   }
+
+   private static void createEdgeCollection(String collectionType) {
+
+      db.createCollection(collectionType, new CollectionCreateOptions().type(CollectionType.EDGES));
+
+   }
+
+   private static void createCollection(String collectionType) {
+      db.createCollection(collectionType);
    }
 
 }
