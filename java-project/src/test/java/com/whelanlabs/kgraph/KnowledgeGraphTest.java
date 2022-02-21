@@ -1,5 +1,6 @@
 package com.whelanlabs.kgraph;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.UUID;
@@ -30,9 +31,12 @@ public class KnowledgeGraphTest {
       kGraph.createNodeCollection("dates");
       final ArangoCollection dates = kGraph.db.collection("dates");
       final BaseDocument badDate = new BaseDocument();
-      badDate.setKey(UUID.randomUUID().toString());
+      String key = UUID.randomUUID().toString();
+      badDate.setKey(key);
       kGraph.upsertNode(dates, badDate);
-      fail("Not yet implemented");
+      BaseDocument result = kGraph.getNodeByKey(key, "dates");
+      assertNotNull(result);
+      //fail("Not yet implemented");
    }
 
 }

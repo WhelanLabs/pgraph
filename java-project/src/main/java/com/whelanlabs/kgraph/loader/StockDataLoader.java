@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +24,11 @@ public class StockDataLoader {
    private static Logger logger = LogManager.getLogger(StockDataLoader.class);
 
    public static void main(String[] args) throws Exception {
-      logger.info("loader starting");
+      load();
+   }
+
+public static void load() throws Exception, InterruptedException, ExecutionException {
+	logger.info("loader starting");
       KnowledgeGraph kGraph = new KnowledgeGraph("andrew_graph_db");
 
       kGraph.createNodeCollection("node_types");
@@ -114,7 +119,6 @@ public class StockDataLoader {
          kGraph.tearDown();
          logger.info("loader complete");
       }
-
-   }
+}
 
 }
