@@ -4,4 +4,6 @@
 Current test code requires that ArangoDB is started in Docker. 
 ### steps
 1. Start Docker
-2. run: docker run -p 8529:8529 -e ARANGO_ROOT_PASSWORD=openSesame arangodb/arangodb:3.8.2
+2. run: docker run -p 8529:8529 -e ARANGO_ROOT_PASSWORD=openSesame arangodb/arangodb:latest
+<br/><del>  run: docker run -p 8529:8529 -e ARANGO_ROOT_PASSWORD=openSesame arangodb/arangodb:3.8.2 </del> 
+

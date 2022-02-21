@@ -1,4 +1,4 @@
-package com.whelanlabs.andrew3.examples;
+package com.whelanlabs.kgraph.examples;
 
 import java.util.Collections;
 import java.util.Map;

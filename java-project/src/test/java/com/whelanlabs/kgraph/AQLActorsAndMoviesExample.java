@@ -1,4 +1,4 @@
-package com.whelanlabs.andrew3;
+package com.whelanlabs.kgraph;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;

@@ -1,4 +1,4 @@
-package com.whelanlabs.andrew3;
+package com.whelanlabs.kgraph;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

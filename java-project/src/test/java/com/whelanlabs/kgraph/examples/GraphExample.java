@@ -1,4 +1,4 @@
-package com.whelanlabs.andrew3.examples;
+package com.whelanlabs.kgraph.examples;
 
 // see: https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example/graph
 
