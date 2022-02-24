@@ -61,7 +61,7 @@ public static void load() throws Exception, InterruptedException, ExecutionExcep
 
       BufferedReader reader;
       try {
-         String filename = "D:\\sandbox\\2022_andrew\\andrew\\andrew\\fetchers\\stock_data_fetcher\\data\\AA_2020-05-07.txt";
+         String filename = "../fetchers/stock_data_fetcher/data/AA_2020-05-07.txt";
 
          BaseDocument ticker = new BaseDocument();
          ticker.setKey("AA");

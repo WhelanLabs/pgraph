@@ -36,7 +36,18 @@ public class KnowledgeGraphTest {
       kGraph.upsertNode(dates, badDate);
       BaseDocument result = kGraph.getNodeByKey(key, "dates");
       assertNotNull(result);
-      //fail("Not yet implemented");
    }
 
+   @Test
+   public void upsertNode_existingNode_added() {
+      kGraph.createNodeCollection("dates");
+      final ArangoCollection dates = kGraph.db.collection("dates");
+      final BaseDocument badDate = new BaseDocument();
+      String key = UUID.randomUUID().toString();
+      badDate.setKey(key);
+      kGraph.upsertNode(dates, badDate);
+      kGraph.upsertNode(dates, badDate);
+      BaseDocument result = kGraph.getNodeByKey(key, "dates");
+      assertNotNull(result);
+   }
 }

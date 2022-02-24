@@ -55,7 +55,7 @@ public class KnowledgeGraph {
 
 	public BaseDocument upsertNode(final ArangoCollection collection, final BaseDocument element) {
 		BaseDocument result = null;
-		System.out.println("upsertNode " + element.getKey());
+		logger.debug("upsertNode " + element.getKey());
 		try {
 			if (!collection.documentExists(element.getKey())) {
 				collection.insertDocument(element);
