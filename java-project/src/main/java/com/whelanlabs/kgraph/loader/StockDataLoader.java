@@ -20,16 +20,16 @@ import com.whelanlabs.kgraph.KnowledgeGraph;
 public class StockDataLoader {
 
    private static final LocalDate epoch = LocalDate.ofEpochDay(0);
-
+   private static String default_tablespace_name = "stock_data_graph_db";
    private static Logger logger = LogManager.getLogger(StockDataLoader.class);
 
    public static void main(String[] args) throws Exception {
-      load();
+      load(default_tablespace_name);
    }
 
-public static void load() throws Exception, InterruptedException, ExecutionException {
-	logger.info("loader starting");
-      KnowledgeGraph kGraph = new KnowledgeGraph("andrew_graph_db");
+   public static void load(String tablespace_name) throws Exception, InterruptedException, ExecutionException {
+      logger.info("loader starting");
+      KnowledgeGraph kGraph = new KnowledgeGraph(tablespace_name);
 
       kGraph.createNodeCollection("node_types");
       final ArangoCollection node_types = kGraph.db.collection("node_types");
@@ -119,6 +119,6 @@ public static void load() throws Exception, InterruptedException, ExecutionExcep
          kGraph.tearDown();
          logger.info("loader complete");
       }
-}
+   }
 
 }

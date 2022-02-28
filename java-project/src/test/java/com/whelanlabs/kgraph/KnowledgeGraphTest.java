@@ -1,8 +1,5 @@
 package com.whelanlabs.kgraph;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
 import java.util.UUID;
 
 import org.junit.AfterClass;
@@ -33,9 +30,11 @@ public class KnowledgeGraphTest {
       final BaseDocument badDate = new BaseDocument();
       String key = UUID.randomUUID().toString();
       badDate.setKey(key);
+      badDate.addAttribute("foo", "bar");
       kGraph.upsertNode(dates, badDate);
       BaseDocument result = kGraph.getNodeByKey(key, "dates");
-      assertNotNull(result);
+      String attr = (String) result.getAttribute("foo");
+      assert ("bar".equals(attr));
    }
 
    @Test
@@ -46,8 +45,10 @@ public class KnowledgeGraphTest {
       String key = UUID.randomUUID().toString();
       badDate.setKey(key);
       kGraph.upsertNode(dates, badDate);
+      badDate.addAttribute("foo", "bar");
       kGraph.upsertNode(dates, badDate);
       BaseDocument result = kGraph.getNodeByKey(key, "dates");
-      assertNotNull(result);
+      String attr = (String) result.getAttribute("foo");
+      assert ("bar".equals(attr));
    }
 }
