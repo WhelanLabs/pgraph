@@ -17,6 +17,7 @@ public class KnowledgeGraphTest {
    public static void setUpBeforeClass() throws Exception {
       KnowledgeGraph.removeTablespace(tablespace_name);
       kGraph = new KnowledgeGraph(tablespace_name);
+      kGraph.flush();
    }
 
    @AfterClass
@@ -26,7 +27,7 @@ public class KnowledgeGraphTest {
    @Test
    public void upsertNode_newNode_added() {
       kGraph.createNodeCollection("dates");
-      final ArangoCollection dates = kGraph.db.collection("dates");
+      final ArangoCollection dates = kGraph._userDB.collection("dates");
       final BaseDocument badDate = new BaseDocument();
       String key = UUID.randomUUID().toString();
       badDate.setKey(key);
@@ -40,7 +41,7 @@ public class KnowledgeGraphTest {
    @Test
    public void upsertNode_existingNode_added() {
       kGraph.createNodeCollection("dates");
-      final ArangoCollection dates = kGraph.db.collection("dates");
+      final ArangoCollection dates = kGraph._userDB.collection("dates");
       final BaseDocument badDate = new BaseDocument();
       String key = UUID.randomUUID().toString();
       badDate.setKey(key);

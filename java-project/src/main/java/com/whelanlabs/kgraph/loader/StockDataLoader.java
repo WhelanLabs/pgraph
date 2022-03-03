@@ -32,9 +32,9 @@ public class StockDataLoader {
       KnowledgeGraph kGraph = new KnowledgeGraph(tablespace_name);
 
       kGraph.createNodeCollection("node_types");
-      final ArangoCollection node_types = kGraph.db.collection("node_types");
+      final ArangoCollection node_types = kGraph._userDB.collection("node_types");
       kGraph.createNodeCollection("edge_types");
-      final ArangoCollection edge_types = kGraph.db.collection("edge_types");
+      final ArangoCollection edge_types = kGraph._userDB.collection("edge_types");
 
       BaseDocument v1 = new BaseDocument();
       v1.setKey("dates");
@@ -51,13 +51,13 @@ public class StockDataLoader {
       v3 = kGraph.upsertNode(edge_types, v3);
 
       kGraph.createNodeCollection("dates");
-      final ArangoCollection dates = kGraph.db.collection("dates");
+      final ArangoCollection dates = kGraph._userDB.collection("dates");
 
       kGraph.createNodeCollection("tickers");
-      final ArangoCollection tickers = kGraph.db.collection("tickers");
+      final ArangoCollection tickers = kGraph._userDB.collection("tickers");
 
       kGraph.createEdgeCollection("marketData");
-      final ArangoCollection marketData = kGraph.db.collection("marketData");
+      final ArangoCollection marketData = kGraph._userDB.collection("marketData");
 
       BufferedReader reader;
       try {
