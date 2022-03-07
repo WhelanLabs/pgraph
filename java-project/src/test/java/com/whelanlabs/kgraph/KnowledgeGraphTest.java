@@ -15,7 +15,7 @@ public class KnowledgeGraphTest {
 
    @BeforeClass
    public static void setUpBeforeClass() throws Exception {
-      KnowledgeGraph.removeTablespace(tablespace_name);
+      // KnowledgeGraph.removeTablespace(tablespace_name);
       kGraph = new KnowledgeGraph(tablespace_name);
       kGraph.flush();
    }

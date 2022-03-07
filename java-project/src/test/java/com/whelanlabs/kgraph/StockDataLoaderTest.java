@@ -13,22 +13,22 @@ public class StockDataLoaderTest {
 
    @BeforeClass
    public static void setUpBeforeClass() throws Exception {
-      KnowledgeGraph.removeTablespace(tablespace_name);
+      // KnowledgeGraph.removeTablespace(tablespace_name);
       kGraph = new KnowledgeGraph(tablespace_name);
       kGraph.flush();
    }
 
    @AfterClass
    public static void tearDownAfterClass() throws Exception {
-	   // do nothing
+      // do nothing
    }
 
    @Test
    public void load_freshAndValid_collectionsExist() throws Exception {
-      Integer beginSize = kGraph.getCollections().size();
+      Long beginSize = kGraph.getTotalCount();
       assert (0 == beginSize) : "beginSize is " + beginSize;
       StockDataLoader.load(tablespace_name);
-      Integer endSize = kGraph.getCollections().size();
+      Long endSize = kGraph.getTotalCount();
       assert (0 < endSize);
    }
 

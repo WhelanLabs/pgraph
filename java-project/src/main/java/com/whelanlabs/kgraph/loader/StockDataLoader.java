@@ -67,7 +67,7 @@ public class StockDataLoader {
          ticker.setKey("AA");
          ticker = kGraph.upsertNode(tickers, ticker);
 
-         logger.info("reading: " + filename);
+         logger.debug("reading: " + filename);
          reader = new BufferedReader(new FileReader(filename));
          String line = reader.readLine();
          Boolean headerLine = true;
@@ -111,7 +111,7 @@ public class StockDataLoader {
 
          // FOR doc IN collection COLLECT WITH COUNT INTO length RETURN length
          CollectionPropertiesEntity count = dates.count();
-         logger.info("count: " + count.getCount());
+         logger.debug("count: " + count.getCount());
 
       } catch (IOException e) {
          e.printStackTrace();
