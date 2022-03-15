@@ -56,7 +56,7 @@ public class StockDataLoader {
       kGraph.createNodeCollection("tickers");
       final ArangoCollection tickers = kGraph._userDB.collection("tickers");
 
-      kGraph.createEdgeCollection("marketData");
+      kGraph.getEdgeCollection("marketData");
       final ArangoCollection marketData = kGraph._userDB.collection("marketData");
 
       BufferedReader reader;

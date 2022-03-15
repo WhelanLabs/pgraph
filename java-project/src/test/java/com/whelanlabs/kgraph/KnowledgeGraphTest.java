@@ -9,7 +9,6 @@ import org.junit.Test;
 import com.arangodb.ArangoCollection;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
-import com.arangodb.entity.CollectionEntity;
 
 public class KnowledgeGraphTest {
    private static KnowledgeGraph kGraph = null;
@@ -54,11 +53,11 @@ public class KnowledgeGraphTest {
       String attr = (String) result.getAttribute("foo");
       assert ("bar".equals(attr));
    }
-   
+
    @Test
    public void upsertEdge_newEdge_added() {
-      kGraph.createNodeCollection("dates");
-      final ArangoCollection dates = kGraph._userDB.collection("dates");
+      kGraph.createNodeCollection("testNodeCollection");
+      final ArangoCollection dates = kGraph._userDB.collection("testNodeCollection");
       final BaseDocument leftNode = new BaseDocument();
       final BaseDocument rightNode = new BaseDocument();
       String key1 = UUID.randomUUID().toString();
@@ -66,8 +65,8 @@ public class KnowledgeGraphTest {
       leftNode.setKey(key1);
       rightNode.setKey(key2);
       kGraph.upsertNode(dates, leftNode, rightNode);
-      
-      CollectionEntity edgeCollection = kGraph.createEdgeCollection("marketData");
+
+      ArangoCollection edgeCollection = kGraph.getEdgeCollection("testEdgeCollection");
       BaseEdgeDocument edge = new BaseEdgeDocument();
       edge.setFrom(leftNode.getId());
       edge.setTo(rightNode.getId());
@@ -75,7 +74,7 @@ public class KnowledgeGraphTest {
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       edge.setKey(edgeKey);
       edge = kGraph.upsertEdge(edgeCollection, edge);
-      
+
       BaseDocument result = kGraph.getNodeByKey(edgeKey, "testEdgeCollection");
       String attr = (String) result.getAttribute("foo");
       assert ("bar".equals(attr));
