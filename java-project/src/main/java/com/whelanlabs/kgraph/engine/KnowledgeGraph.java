@@ -130,10 +130,6 @@ public class KnowledgeGraph {
       return doc;
    }
 
-   public Collection<CollectionEntity> getCollections() {
-      return _systemDB.db(_db_name).getCollections();
-   }
-
    public void flush() throws InterruptedException, ExecutionException {
       if (_systemDB.db(_db_name).exists()) {
 
