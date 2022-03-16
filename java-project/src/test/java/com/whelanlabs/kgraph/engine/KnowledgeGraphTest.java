@@ -1,4 +1,4 @@
-package com.whelanlabs.kgraph;
+package com.whelanlabs.kgraph.engine;
 
 import java.util.UUID;
 
@@ -7,8 +7,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.arangodb.ArangoCollection;
+import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
+import com.whelanlabs.kgraph.engine.KnowledgeGraph;
 
 public class KnowledgeGraphTest {
    private static KnowledgeGraph kGraph = null;
@@ -25,23 +27,21 @@ public class KnowledgeGraphTest {
    public static void tearDownAfterClass() throws Exception {
    }
 
-   @Test
-   public void upsertNode_newNode_added() {
-      kGraph.createNodeCollection("dates");
-      final ArangoCollection dates = kGraph._userDB.collection("dates");
-      final BaseDocument badDate = new BaseDocument();
+   @Test(expected = ArangoDBException.class)
+   public void upsertNode_edgeCollection_exception() {
+      String edgeCollectionName = UUID.randomUUID().toString();
+      kGraph.getEdgeCollection(edgeCollectionName);
+      final ArangoCollection collection = kGraph._userDB.collection(edgeCollectionName);
+      final BaseDocument baseDoc = new BaseDocument();
       String key = UUID.randomUUID().toString();
-      badDate.setKey(key);
-      badDate.addAttribute("foo", "bar");
-      kGraph.upsertNode(dates, badDate);
-      BaseDocument result = kGraph.getNodeByKey(key, "dates");
-      String attr = (String) result.getAttribute("foo");
-      assert ("bar".equals(attr));
+      baseDoc.setKey(key);
+      baseDoc.addAttribute("foo", "bar");
+      kGraph.upsertNode(collection, baseDoc);
    }
 
    @Test
    public void upsertNode_existingNode_added() {
-      kGraph.createNodeCollection("dates");
+      kGraph.getNodeCollection("dates");
       final ArangoCollection dates = kGraph._userDB.collection("dates");
       final BaseDocument badDate = new BaseDocument();
       String key = UUID.randomUUID().toString();
@@ -56,7 +56,7 @@ public class KnowledgeGraphTest {
 
    @Test
    public void upsertEdge_newEdge_added() {
-      kGraph.createNodeCollection("testNodeCollection");
+      kGraph.getNodeCollection("testNodeCollection");
       final ArangoCollection dates = kGraph._userDB.collection("testNodeCollection");
       final BaseDocument leftNode = new BaseDocument();
       final BaseDocument rightNode = new BaseDocument();
@@ -82,6 +82,31 @@ public class KnowledgeGraphTest {
 
    @Test
    public void upsertEdge_existingEdge_added() {
-      assert (false);
+      kGraph.getNodeCollection("testNodeCollection");
+      final ArangoCollection dates = kGraph._userDB.collection("testNodeCollection");
+      final BaseDocument leftNode = new BaseDocument();
+      final BaseDocument rightNode = new BaseDocument();
+      String key1 = UUID.randomUUID().toString();
+      String key2 = UUID.randomUUID().toString();
+      leftNode.setKey(key1);
+      rightNode.setKey(key2);
+      kGraph.upsertNode(dates, leftNode, rightNode);
+
+      ArangoCollection edgeCollection = kGraph.getEdgeCollection("testEdgeCollection");
+      BaseEdgeDocument edge = new BaseEdgeDocument();
+      edge.setFrom(leftNode.getId());
+      edge.setTo(rightNode.getId());
+      edge.addAttribute("foo", "bar");
+      String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
+      edge.setKey(edgeKey);
+      edge = kGraph.upsertEdge(edgeCollection, edge);
+      edge.addAttribute("foo-foo", "bar-bar");
+      edge = kGraph.upsertEdge(edgeCollection, edge);
+
+      BaseDocument result = kGraph.getNodeByKey(edgeKey, "testEdgeCollection");
+      String fooAttr = (String) result.getAttribute("foo");
+      assert ("bar".equals(fooAttr)) : "foo value is " + fooAttr;
+      String fooFooAttr = (String) result.getAttribute("foo-foo");
+      assert ("bar-bar".equals(fooFooAttr)) : "foo-foo value is " + fooFooAttr;
    }
 }

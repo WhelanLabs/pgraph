@@ -1,4 +1,4 @@
-package com.whelanlabs.kgraph;
+package com.whelanlabs.kgraph.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
@@ -55,7 +54,7 @@ public class KnowledgeGraph {
    }
 
    public BaseDocument upsertNode(final ArangoCollection collection, final BaseDocument element) {
-      logger.debug("upsertNode " + element.getKey());
+      logger.trace("upsertNode " + element.getKey());
       try {
          if (!collection.documentExists(element.getKey())) {
             collection.insertDocument(element);
@@ -87,7 +86,8 @@ public class KnowledgeGraph {
             result = element;
          } else {
             logger.debug("Fetch already existing element. (key=" + element.getKey() + ")");
-            result = collection.getDocument(element.getKey(), BaseEdgeDocument.class);
+            result = collection.updateDocument(element.getKey(), element).getNew();
+            // result = collection.getDocument(element.getKey(), BaseEdgeDocument.class);
          }
       } catch (Exception e) {
          logger.error(element.toString());
@@ -111,7 +111,7 @@ public class KnowledgeGraph {
       return collection;
    }
 
-   public CollectionEntity createNodeCollection(String collectionName) {
+   public CollectionEntity getNodeCollection(String collectionName) {
       CollectionEntity result = null;
       ArangoCollection collection = _userDB.collection(collectionName);
       if (!collection.exists()) {
@@ -138,21 +138,10 @@ public class KnowledgeGraph {
       if (_systemDB.db(_db_name).exists()) {
 
          Boolean isDropped = _userDB.drop();
-         System.out.println("\nIs the database " + _db_name + " dropped : " + isDropped);
-
-         logger.info("database " + _db_name + " is dropped = " + isDropped);
+         logger.debug("Is the database " + _db_name + " dropped : " + isDropped);
+         logger.debug("database " + _db_name + " is dropped = " + isDropped);
       }
       setUp(_db_name);
-   }
-
-   public Long getCollectionSize(String type) {
-      Long count = 0l;
-      try {
-         count = _userDB.collection(type).count().getCount();
-      } catch (ArangoDBException e) {
-         // ignore
-      }
-      return count;
    }
 
    public Long getTotalCount() {

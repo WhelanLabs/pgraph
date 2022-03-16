@@ -1,13 +1,14 @@
 package com.whelanlabs.kgraph;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import com.whelanlabs.kgraph.engine.KnowledgeGraphTest;
+import com.whelanlabs.kgraph.loader.StockDataLoaderTest;
+
 @RunWith(Suite.class)
 
-@Suite.SuiteClasses({
-	KnowledgeGraphTest.class,
-	StockDataLoaderTest.class
-})
+@Suite.SuiteClasses({ KnowledgeGraphTest.class, StockDataLoaderTest.class })
 
-public class AllSuite {   
-}  
+public class AllSuite {
+}
