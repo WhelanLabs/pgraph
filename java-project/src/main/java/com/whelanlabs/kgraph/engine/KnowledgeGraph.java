@@ -21,7 +21,7 @@ import com.arangodb.model.CollectionCreateOptions;
 public class KnowledgeGraph {
 
    // private ArangoDB arangoDB;
-   public ArangoDatabase _userDB;
+   private ArangoDatabase _userDB;
    private DbName _db_name;
    private ArangoDB _systemDB = null;
 
@@ -47,7 +47,8 @@ public class KnowledgeGraph {
       return _systemDB;
    }
 
-   public void tearDown() throws InterruptedException, ExecutionException {
+   
+   public void cleanup() throws InterruptedException, ExecutionException {
       // db.drop();
       _systemDB.shutdown();
       _systemDB = null;
@@ -90,38 +91,51 @@ public class KnowledgeGraph {
             // result = collection.getDocument(element.getKey(), BaseEdgeDocument.class);
          }
       } catch (Exception e) {
-         logger.error(element.toString());
+         if(null!=element) {
+            logger.debug(element.toString());
+         }
+         else {
+            logger.error("The element is null.");
+         }
+         if(null!=collection) {
+            logger.debug(collection.toString());
+         }
+         else {
+            logger.error("The collection is null.");
+         }
          throw e;
       }
       return result;
    }
 
    public ArangoCollection getEdgeCollection(String collectionName) {
-      CollectionEntity result = null;
+      CollectionEntity collectionEntity = null;
       ArangoCollection collection = _userDB.collection(collectionName);
       if (!collection.exists()) {
-         result = _userDB.createCollection(collectionName, new CollectionCreateOptions().type(CollectionType.EDGES));
+         collectionEntity = _userDB.createCollection(collectionName, new CollectionCreateOptions().type(CollectionType.EDGES));
       } else {
-         result = collection.getInfo();
-         logger.debug("createEdgeCollection - result.getType() = " + result.getType());
-         if (!"EDGES".equals(result.getType().toString())) {
-            throw new RuntimeException("Non-DOCUMENT collection already exsists. (" + result.getType() + ")");
+         collectionEntity = collection.getInfo();
+         logger.debug("createEdgeCollection - result.getType() = " + collectionEntity.getType());
+         if (!"EDGES".equals(collectionEntity.getType().toString())) {
+            throw new RuntimeException("Non-DOCUMENT collection already exsists. (" + collectionEntity.getType() + ")");
          }
       }
-      return collection;
+      ArangoCollection result = _userDB.collection(collectionName);
+      return result;
    }
 
-   public CollectionEntity getNodeCollection(String collectionName) {
-      CollectionEntity result = null;
+   public ArangoCollection getNodeCollection(String collectionName) {
+      CollectionEntity collectionEntity = null;
       ArangoCollection collection = _userDB.collection(collectionName);
       if (!collection.exists()) {
-         result = _userDB.createCollection(collectionName);
+         collectionEntity = _userDB.createCollection(collectionName);
       } else {
-         result = collection.getInfo();
-         if (!"DOCUMENT".equals(result.getType().toString())) {
-            throw new RuntimeException("Non-DOCUMENT collection already exsists. (" + result.getType() + ")");
+         collectionEntity = collection.getInfo();
+         if (!"DOCUMENT".equals(collectionEntity.getType().toString())) {
+            throw new RuntimeException("Non-DOCUMENT collection already exsists. (" + collectionEntity.getType() + ")");
          }
       }
+      ArangoCollection result = _userDB.collection(collectionName);
       return result;
    }
 

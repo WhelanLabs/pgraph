@@ -1,4 +1,4 @@
-package com.whelanlabs.kgraph.engine.loader;
+package com.whelanlabs.kgraph.loader;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -31,10 +31,8 @@ public class StockDataLoader {
       logger.info("loader starting");
       KnowledgeGraph kGraph = new KnowledgeGraph(tablespace_name);
 
-      kGraph.getNodeCollection("node_types");
-      final ArangoCollection node_types = kGraph._userDB.collection("node_types");
-      kGraph.getNodeCollection("edge_types");
-      final ArangoCollection edge_types = kGraph._userDB.collection("edge_types");
+      final ArangoCollection node_types = kGraph.getNodeCollection("node_types");
+      final ArangoCollection edge_types = kGraph.getNodeCollection("edge_types");
 
       BaseDocument v1 = new BaseDocument();
       v1.setKey("dates");
@@ -50,14 +48,10 @@ public class StockDataLoader {
       v3.addAttribute("right_type", "tickers");
       v3 = kGraph.upsertNode(edge_types, v3);
 
-      kGraph.getNodeCollection("dates");
-      final ArangoCollection dates = kGraph._userDB.collection("dates");
-
-      kGraph.getNodeCollection("tickers");
-      final ArangoCollection tickers = kGraph._userDB.collection("tickers");
-
-      kGraph.getEdgeCollection("marketData");
-      final ArangoCollection marketData = kGraph._userDB.collection("marketData");
+      final ArangoCollection dates = kGraph.getNodeCollection("dates");
+      final ArangoCollection tickers = kGraph.getNodeCollection("tickers");
+      final ArangoCollection marketData = kGraph.getEdgeCollection("marketData");
+       
 
       BufferedReader reader;
       try {
@@ -116,7 +110,7 @@ public class StockDataLoader {
       } catch (IOException e) {
          e.printStackTrace();
       } finally {
-         kGraph.tearDown();
+         kGraph.cleanup();
          logger.info("loader complete");
       }
    }
