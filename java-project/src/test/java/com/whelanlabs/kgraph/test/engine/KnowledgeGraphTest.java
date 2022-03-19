@@ -1,5 +1,6 @@
-package com.whelanlabs.kgraph.engine;
+package com.whelanlabs.kgraph.test.engine;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.AfterClass;
@@ -11,7 +12,8 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.whelanlabs.kgraph.engine.KnowledgeGraph;
-import com.whelanlabs.kgraph.loader.StockDataLoader;
+import com.whelanlabs.kgraph.engine.QueryClause;
+import com.whelanlabs.kgraph.engine.StringQueryValue;
 
 public class KnowledgeGraphTest {
    private static KnowledgeGraph kGraph = null;
@@ -39,7 +41,7 @@ public class KnowledgeGraphTest {
       baseDoc.addAttribute("foo", "bar");
       kGraph.upsertNode(collection, baseDoc);
    }
-   
+
    @Test(expected = RuntimeException.class)
    public void getEdgeCollection_isNodeCollection_exception() {
       kGraph.getNodeCollection("node_collection");
@@ -51,7 +53,7 @@ public class KnowledgeGraphTest {
       kGraph.getEdgeCollection("edge_collection");
       kGraph.getNodeCollection("edge_collection");
    }
-   
+
    @Test
    public void upsertNode_newNode_added() {
       final ArangoCollection dates = kGraph.getNodeCollection("dates");
@@ -60,12 +62,12 @@ public class KnowledgeGraphTest {
       badDate.setKey(key);
       badDate.addAttribute("foo", "bbar");
       kGraph.upsertNode(dates, badDate);
-     
+
       BaseDocument result = kGraph.getNodeByKey(key, "dates");
       String attr = (String) result.getAttribute("foo");
       assert ("bbar".equals(attr));
    }
-   
+
    @Test
    public void upsertNode_existingNode_added() {
       final ArangoCollection dates = kGraph.getNodeCollection("dates");
@@ -108,7 +110,7 @@ public class KnowledgeGraphTest {
    @Test
    public void upsertEdge_existingEdge_added() {
       final ArangoCollection dates = kGraph.getNodeCollection("testNodeCollection");
-      
+
       final BaseDocument leftNode = new BaseDocument();
       final BaseDocument rightNode = new BaseDocument();
       String key1 = UUID.randomUUID().toString();
@@ -134,12 +136,11 @@ public class KnowledgeGraphTest {
       String fooFooAttr = (String) result.getAttribute("foo-foo");
       assert ("bar-bar".equals(fooFooAttr)) : "foo-foo value is " + fooFooAttr;
    }
-   
-   
+
    @Test(expected = NullPointerException.class)
    public void upsertEdge_collectionIsNull_exception() {
       final ArangoCollection dates = kGraph.getNodeCollection("testNodeCollection");
-      
+
       final BaseDocument leftNode = new BaseDocument();
       final BaseDocument rightNode = new BaseDocument();
       String key1 = UUID.randomUUID().toString();
@@ -157,11 +158,11 @@ public class KnowledgeGraphTest {
       edge.setKey(edgeKey);
       edge = kGraph.upsertEdge(edgeCollection, edge);
    }
-   
+
    @Test(expected = NullPointerException.class)
    public void upsertEdge_edgeIsNull_exception() {
       final ArangoCollection dates = kGraph.getNodeCollection("testNodeCollection");
-      
+
       final BaseDocument leftNode = new BaseDocument();
       final BaseDocument rightNode = new BaseDocument();
       String key1 = UUID.randomUUID().toString();
@@ -174,8 +175,7 @@ public class KnowledgeGraphTest {
       BaseEdgeDocument edge = null;
       kGraph.upsertEdge(edgeCollection, edge);
    }
-   
-   
+
    @Test
    public void load_freshAndValid_collectionsExist() throws Exception {
       Long beginSize = kGraph.getTotalCount();
@@ -188,5 +188,19 @@ public class KnowledgeGraphTest {
 
       Long endSize = kGraph.getTotalCount();
       assert (endSize == beginSize + 1) : "{beginSize, endsize} is {" + beginSize + ", " + endSize + "}";
+   }
+
+   // queryElements
+   @Test
+   public void queryElements_simpleQuery_getResult() throws Exception {
+      final ArangoCollection testCollection = kGraph.getNodeCollection("testCollection");
+      final BaseDocument testDoc = new BaseDocument();
+      String key = UUID.randomUUID().toString();
+      testDoc.setKey(key);
+      testDoc.addAttribute("foo", "bar");
+      kGraph.upsertNode(testCollection, testDoc);
+      QueryClause queryClause = new QueryClause("foo", QueryClause.Operator.EQUALS, new StringQueryValue("bar"));
+      List<BaseDocument> results = kGraph.queryElements(testCollection, queryClause);
+      assert (results.size() > 0);
    }
 }

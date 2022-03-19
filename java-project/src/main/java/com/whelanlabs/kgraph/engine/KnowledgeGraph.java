@@ -2,13 +2,18 @@ package com.whelanlabs.kgraph.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.arangodb.ArangoCollection;
+import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
@@ -47,7 +52,6 @@ public class KnowledgeGraph {
       return _systemDB;
    }
 
-   
    public void cleanup() throws InterruptedException, ExecutionException {
       // db.drop();
       _systemDB.shutdown();
@@ -91,16 +95,14 @@ public class KnowledgeGraph {
             // result = collection.getDocument(element.getKey(), BaseEdgeDocument.class);
          }
       } catch (Exception e) {
-         if(null!=element) {
+         if (null != element) {
             logger.debug(element.toString());
-         }
-         else {
+         } else {
             logger.error("The element is null.");
          }
-         if(null!=collection) {
+         if (null != collection) {
             logger.debug(collection.toString());
-         }
-         else {
+         } else {
             logger.error("The collection is null.");
          }
          throw e;
@@ -162,5 +164,38 @@ public class KnowledgeGraph {
       }
 
       return result;
+   }
+
+   public List<BaseDocument> queryElements(ArangoCollection collection, QueryClause... clauses) {
+      Map<String, Object> bindVars = new HashMap<String, Object>();
+      List<BaseDocument> results = new ArrayList<BaseDocument>();
+      try {
+         StringBuilder query = new StringBuilder("FOR t IN ");
+         query.append(collection.name());
+         query.append(" FILTER ");
+         Boolean firstCollection = true;
+         for (QueryClause clause : clauses) {
+            if (firstCollection) {
+               firstCollection = false;
+            } else {
+               query.append(" AND ");
+            }
+            query.append("t.");
+            query.append(clause.toAQL());
+            bindVars.put(clause.getName(), clause.getValue());
+         }
+         query.append(" RETURN t");
+         logger.debug("query = '" + query.toString() + "'");
+
+         // String query = "FOR t IN firstCollection FILTER t.name == @name RETURN t";
+         ArangoCursor<BaseDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars, null, BaseDocument.class);
+         cursor.forEachRemaining(aDocument -> {
+            results.add(aDocument);
+         });
+      } catch (ArangoDBException e) {
+         logger.error("Failed to execute query. " + e.getMessage());
+         throw e;
+      }
+      return results;
    }
 }

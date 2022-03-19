@@ -1,4 +1,4 @@
-package com.whelanlabs.kgraph.loader;
+package com.whelanlabs.kgraph.test.loader;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
