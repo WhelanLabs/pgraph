@@ -1,8 +1,12 @@
 package com.whelanlabs.kgraph.test.engine;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,6 +22,8 @@ import com.whelanlabs.kgraph.engine.StringQueryValue;
 public class KnowledgeGraphTest {
    private static KnowledgeGraph kGraph = null;
    private static String tablespace_name = "KnowledgeGraphTests_db";
+   
+   private static Logger logger = LogManager.getLogger(KnowledgeGraphTest.class);
 
    @BeforeClass
    public static void setUpBeforeClass() throws Exception {
@@ -199,8 +205,13 @@ public class KnowledgeGraphTest {
       testDoc.setKey(key);
       testDoc.addAttribute("foo", "bar");
       kGraph.upsertNode(testCollection, testDoc);
+      BaseDocument addedDoc = kGraph.getNodeByKey(key, testCollection.name());
+      assertNotNull(addedDoc);
+      logger.debug("addedDoc = " + addedDoc.toString() );
+      
       QueryClause queryClause = new QueryClause("foo", QueryClause.Operator.EQUALS, new StringQueryValue("bar"));
       List<BaseDocument> results = kGraph.queryElements(testCollection, queryClause);
-      assert (results.size() > 0);
+      assertNotNull(results);
+      assert (results.size() > 0) : "results.size() = " + results.size();
    }
 }

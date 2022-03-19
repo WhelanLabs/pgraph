@@ -26,5 +26,8 @@
 		<Logger name="com.whelanlabs.kgraph.engine" level="DEBUG" additivity="false">
 			<Appender-ref ref="Console" level="DEBUG" />
 		</Logger>
+		<Logger name="com.whelanlabs.kgraph.test" level="DEBUG" additivity="false">
+			<Appender-ref ref="Console" level="DEBUG" />
+		</Logger>
 	</Loggers>
 </Configuration>

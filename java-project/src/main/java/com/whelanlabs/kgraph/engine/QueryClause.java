@@ -24,17 +24,17 @@ public class QueryClause {
    private String _name;
    private Operator _op;
    private QueryValue _value;
-   private String space = " ";
+   private String atSymbol = "@";
 
    public QueryClause(String name, QueryClause.Operator op, QueryValue value) {
       _name = name;
       _op = op;
       _value = value;
-      logger.debug("new QueryClause = '" + toAQL() + "'");
+      logger.debug("new QueryClause = '" + _name + _op.toAQL() + _value + "'");
    }
 
    public String toAQL() {
-      String result = _name + space + _op.toAQL() + space + _value.toAQL();
+      String result = _name + _op.toAQL() + atSymbol + _name;
       return result;
    }
 

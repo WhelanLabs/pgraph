@@ -186,9 +186,10 @@ public class KnowledgeGraph {
          }
          query.append(" RETURN t");
          logger.debug("query = '" + query.toString() + "'");
+         logger.debug("bindVars = " + bindVars);
 
          // String query = "FOR t IN firstCollection FILTER t.name == @name RETURN t";
-         ArangoCursor<BaseDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars, null, BaseDocument.class);
+         ArangoCursor<BaseDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars, BaseDocument.class);
          cursor.forEachRemaining(aDocument -> {
             results.add(aDocument);
          });

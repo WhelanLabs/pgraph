@@ -13,4 +13,9 @@ public class StringQueryValue implements QueryValue {
    public String toAQL() {
       return quote + _value + quote;
    }
+   
+   @Override
+   public String toString() {
+      return _value.toString();
+   }
 }
