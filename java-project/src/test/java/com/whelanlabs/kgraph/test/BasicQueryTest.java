@@ -59,21 +59,21 @@ public class BasicQueryTest {
       for (int i = 0; i < 10; i++) {
          BaseDocument value = new BaseDocument();
          value.setKey(String.valueOf(i));
-         value.addAttribute("name", "Homer");
+         value.addAttribute("xname", "Homer");
          collection.insertDocument(value);
       }
       
       // Add some negative data
       BaseDocument value = new BaseDocument();
       value.setKey(String.valueOf(11));
-      value.addAttribute("xname", "Homer");
+      value.addAttribute("name", "Homer");
       collection.insertDocument(value);
 
       // Execute AQL queries - get docs
       List<BaseDocument> results = new ArrayList<BaseDocument>();
       try {
-         String query = "FOR t IN firstCollection FILTER t.name == @name RETURN t";
-         Map<String, Object> bindVars = Collections.singletonMap("name", "Homer");
+         String query = "FOR t IN firstCollection FILTER t.xname == @xname RETURN t";
+         Map<String, Object> bindVars = Collections.singletonMap("xname", "Homer");
          ArangoCursor<BaseDocument> cursor = arangoDB.db(dbName).query(query, bindVars, null, BaseDocument.class);
          cursor.forEachRemaining(aDocument -> {
             System.out.println("Key: " + aDocument.getKey());
