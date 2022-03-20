@@ -8,11 +8,6 @@ public class StringQueryValue implements QueryValue {
    public StringQueryValue(Object value) {
       _value = value;
    }
-
-   @Override
-   public String toAQL() {
-      return quote + _value + quote;
-   }
    
    @Override
    public String toString() {

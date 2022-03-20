@@ -2,6 +2,7 @@ package com.whelanlabs.kgraph.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -172,23 +173,24 @@ public class KnowledgeGraph {
       try {
          StringBuilder query = new StringBuilder("FOR t IN ");
          query.append(collection.name());
-         query.append(" FILTER ");
-         Boolean firstCollection = true;
-         for (QueryClause clause : clauses) {
-            if (firstCollection) {
-               firstCollection = false;
-            } else {
-               query.append(" AND ");
-            }
-            query.append("t.");
-            query.append(clause.toAQL());
-            bindVars.put(clause.getName(), clause.getValue());
-         }
+//         query.append(" FILTER ");
+//         Boolean firstCollection = true;
+//         for (QueryClause clause : clauses) {
+//            if (firstCollection) {
+//               firstCollection = false;
+//            } else {
+//               query.append(" AND ");
+//            }
+//            query.append("t.");
+//            query.append(clause.toAQL());
+//            bindVars.put(clause.getName(), clause.getValue());
+//         }
          query.append(" RETURN t");
          logger.debug("query = '" + query.toString() + "'");
          logger.debug("bindVars = " + bindVars);
 
-         // String query = "FOR t IN firstCollection FILTER t.name == @name RETURN t";
+         bindVars = Collections.singletonMap("name", "Homer");
+         query = new StringBuilder("FOR t IN testCollection FILTER t.xname == @name RETURN t");
          ArangoCursor<BaseDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars, BaseDocument.class);
          cursor.forEachRemaining(aDocument -> {
             results.add(aDocument);

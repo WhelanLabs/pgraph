@@ -204,6 +204,7 @@ public class KnowledgeGraphTest {
       String key = UUID.randomUUID().toString();
       testDoc.setKey(key);
       testDoc.addAttribute("foo", "bar");
+      testDoc.addAttribute("xname", "Homer");
       kGraph.upsertNode(testCollection, testDoc);
       BaseDocument addedDoc = kGraph.getNodeByKey(key, testCollection.name());
       assertNotNull(addedDoc);
