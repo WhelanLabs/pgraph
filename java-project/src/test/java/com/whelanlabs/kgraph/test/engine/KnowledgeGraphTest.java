@@ -213,6 +213,7 @@ public class KnowledgeGraphTest {
       QueryClause queryClause = new QueryClause("foo", QueryClause.Operator.EQUALS, new StringQueryValue("bar"));
       List<BaseDocument> results = kGraph.queryElements(testCollection, queryClause);
       assertNotNull(results);
+      logger.debug("results = " + results );
       assert (results.size() > 0) : "results.size() = " + results.size();
    }
 }

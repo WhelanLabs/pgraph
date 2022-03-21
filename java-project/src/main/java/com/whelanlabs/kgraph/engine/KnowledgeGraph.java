@@ -186,12 +186,13 @@ public class KnowledgeGraph {
             bindVars.put(clause.getName(), clause.getValue());
          }
          query.append(" RETURN t");
+
+         //bindVars = Collections.singletonMap("foo", "bar");
+         query = new StringBuilder("FOR t IN testCollection FILTER t.foo == @foo RETURN t");
          
          logger.debug("query = '" + query.toString() + "'");
          logger.debug("bindVars = " + bindVars);
-
-         // bindVars = Collections.singletonMap("name", "Homer");
-         // query = new StringBuilder("FOR t IN testCollection FILTER t.xname == @name RETURN t");
+         
          ArangoCursor<BaseDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars, BaseDocument.class);
          cursor.forEachRemaining(aDocument -> {
             results.add(aDocument);
