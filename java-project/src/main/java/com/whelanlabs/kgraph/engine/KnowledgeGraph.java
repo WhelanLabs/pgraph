@@ -189,11 +189,12 @@ public class KnowledgeGraph {
          }
          query.append(" RETURN t");
 
-        // query = new StringBuilder("FOR t IN testCollection FILTER t.foo == @foo RETURN t");
-         
+         // query = new StringBuilder("FOR t IN testCollection FILTER t.foo == @foo
+         // RETURN t");
+
          logger.debug("query = '" + query.toString() + "'");
          logger.debug("bindVars = " + bindVars);
-         
+
          ArangoCursor<BaseDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), BaseDocument.class);
          cursor.forEachRemaining(aDocument -> {
             results.add(aDocument);
@@ -204,4 +205,11 @@ public class KnowledgeGraph {
       }
       return results;
    }
+
+   public List<Triple> expandElements(List<BaseDocument> startingNodes, String relname, List<QueryClause> relClauses, List<QueryClause> otherSideClauses) {
+      List<Triple> results = new ArrayList<Triple>();
+      
+      return results;
+   }
+
 }

@@ -1,6 +1,7 @@
 package com.whelanlabs.kgraph.test.engine;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.UUID;
@@ -243,5 +244,13 @@ public class KnowledgeGraphTest {
       final ArangoCollection testCollection = null; //kGraph.getNodeCollection("testCollection");
       QueryClause queryClause1 = new QueryClause("foo", QueryClause.Operator.EQUALS, null);
       List<BaseDocument> results = kGraph.queryElements(testCollection, queryClause1);
+   }
+   
+   @Test
+   public void expandElements_tripleExists_getResults() throws Exception {
+      
+      
+      
+      fail("not implemented");
    }
 }
