@@ -195,9 +195,9 @@ public class KnowledgeGraphTest {
       assert (endSize == beginSize + 1) : "{beginSize, endsize} is {" + beginSize + ", " + endSize + "}";
    }
 
-   // queryElements
+
    @Test
-   public void queryElements_simpleQuery_getResult() throws Exception {
+   public void queryElements_singleClause_getResult() throws Exception {
       final ArangoCollection testCollection = kGraph.getNodeCollection("testCollection");
       final BaseDocument testDoc = new BaseDocument();
       String key = UUID.randomUUID().toString();
@@ -214,5 +214,34 @@ public class KnowledgeGraphTest {
       assertNotNull(results);
       logger.debug("results = " + results );
       assert (results.size() > 0) : "results.size() = " + results.size();
+   }
+   
+   
+   @Test
+   public void queryElements_multipleClauses_getResult() throws Exception {
+      final ArangoCollection testCollection = kGraph.getNodeCollection("testCollection");
+      final BaseDocument testDoc = new BaseDocument();
+      String key = UUID.randomUUID().toString();
+      testDoc.setKey(key);
+      testDoc.addAttribute("foo", "bar");
+      testDoc.addAttribute("foofoo", "barbar");
+      kGraph.upsertNode(testCollection, testDoc);
+      BaseDocument addedDoc = kGraph.getNodeByKey(key, testCollection.name());
+      assertNotNull(addedDoc);
+      logger.debug("addedDoc = " + addedDoc.toString() );
+      
+      QueryClause queryClause1 = new QueryClause("foo", QueryClause.Operator.EQUALS, "bar");
+      QueryClause queryClause2 = new QueryClause("foofoo", QueryClause.Operator.EQUALS, "barbar");
+      List<BaseDocument> results = kGraph.queryElements(testCollection, queryClause1, queryClause2);
+      assertNotNull(results);
+      logger.debug("results = " + results );
+      assert (results.size() > 0) : "results.size() = " + results.size();
+   }
+   
+   @Test(expected = NullPointerException.class)
+   public void queryElements_nullClauses_exception() throws Exception {
+      final ArangoCollection testCollection = null; //kGraph.getNodeCollection("testCollection");
+      QueryClause queryClause1 = new QueryClause("foo", QueryClause.Operator.EQUALS, null);
+      List<BaseDocument> results = kGraph.queryElements(testCollection, queryClause1);
    }
 }

@@ -170,7 +170,6 @@ public class KnowledgeGraph {
    }
 
    public List<BaseDocument> queryElements(ArangoCollection collection, QueryClause... clauses) {
-      //Map<String, Object> bindVars = new Hashtable<String, Object>();
       MapBuilder bindVars = new MapBuilder();
       List<BaseDocument> results = new ArrayList<BaseDocument>();
       try {
@@ -190,8 +189,7 @@ public class KnowledgeGraph {
          }
          query.append(" RETURN t");
 
-         // bindVars = Collections.singletonMap("foo", "bar");
-         query = new StringBuilder("FOR t IN testCollection FILTER t.foo == @foo RETURN t");
+        // query = new StringBuilder("FOR t IN testCollection FILTER t.foo == @foo RETURN t");
          
          logger.debug("query = '" + query.toString() + "'");
          logger.debug("bindVars = " + bindVars);
@@ -200,7 +198,7 @@ public class KnowledgeGraph {
          cursor.forEachRemaining(aDocument -> {
             results.add(aDocument);
          });
-      } catch (ArangoDBException e) {
+      } catch (Exception e) {
          logger.error("Failed to execute query. " + e.getMessage());
          throw e;
       }
