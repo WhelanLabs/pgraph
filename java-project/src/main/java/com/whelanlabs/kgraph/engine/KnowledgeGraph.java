@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -23,6 +24,7 @@ import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.CollectionCreateOptions;
+import com.arangodb.util.MapBuilder;
 
 public class KnowledgeGraph {
 
@@ -168,7 +170,8 @@ public class KnowledgeGraph {
    }
 
    public List<BaseDocument> queryElements(ArangoCollection collection, QueryClause... clauses) {
-      Map<String, Object> bindVars = new HashMap<String, Object>();
+      //Map<String, Object> bindVars = new Hashtable<String, Object>();
+      MapBuilder bindVars = new MapBuilder();
       List<BaseDocument> results = new ArrayList<BaseDocument>();
       try {
          StringBuilder query = new StringBuilder("FOR t IN ");
@@ -187,13 +190,13 @@ public class KnowledgeGraph {
          }
          query.append(" RETURN t");
 
-         //bindVars = Collections.singletonMap("foo", "bar");
+         // bindVars = Collections.singletonMap("foo", "bar");
          query = new StringBuilder("FOR t IN testCollection FILTER t.foo == @foo RETURN t");
          
          logger.debug("query = '" + query.toString() + "'");
          logger.debug("bindVars = " + bindVars);
          
-         ArangoCursor<BaseDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars, BaseDocument.class);
+         ArangoCursor<BaseDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), BaseDocument.class);
          cursor.forEachRemaining(aDocument -> {
             results.add(aDocument);
          });

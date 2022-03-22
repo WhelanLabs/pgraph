@@ -23,10 +23,10 @@ public class QueryClause {
 
    private String _name;
    private Operator _op;
-   private QueryValue _value;
+   private Object _value;
    private String atSymbol = "@";
 
-   public QueryClause(String name, QueryClause.Operator op, QueryValue value) {
+   public QueryClause(String name, QueryClause.Operator op, Object value) {
       _name = name;
       _op = op;
       _value = value;

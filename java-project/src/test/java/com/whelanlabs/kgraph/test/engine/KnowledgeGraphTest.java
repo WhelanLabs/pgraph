@@ -17,7 +17,6 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.whelanlabs.kgraph.engine.KnowledgeGraph;
 import com.whelanlabs.kgraph.engine.QueryClause;
-import com.whelanlabs.kgraph.engine.StringQueryValue;
 
 public class KnowledgeGraphTest {
    private static KnowledgeGraph kGraph = null;
@@ -210,7 +209,7 @@ public class KnowledgeGraphTest {
       assertNotNull(addedDoc);
       logger.debug("addedDoc = " + addedDoc.toString() );
       
-      QueryClause queryClause = new QueryClause("foo", QueryClause.Operator.EQUALS, new StringQueryValue("bar"));
+      QueryClause queryClause = new QueryClause("foo", QueryClause.Operator.EQUALS, "bar");
       List<BaseDocument> results = kGraph.queryElements(testCollection, queryClause);
       assertNotNull(results);
       logger.debug("results = " + results );
