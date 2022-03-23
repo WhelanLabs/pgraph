@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.logging.log4j.LogManager;
@@ -212,4 +213,11 @@ public class KnowledgeGraph {
       return results;
    }
 
+   public String generateKey() {
+      return "KEY_" + UUID.randomUUID().toString();
+   }
+   
+   public String generateName() {
+      return "NAME_" + UUID.randomUUID().toString();
+   }
 }

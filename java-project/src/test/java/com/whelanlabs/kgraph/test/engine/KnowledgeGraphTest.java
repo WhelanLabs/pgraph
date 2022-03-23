@@ -4,7 +4,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,11 +38,8 @@ public class KnowledgeGraphTest {
 
    @Test(expected = ArangoDBException.class)
    public void upsertNode_edgeCollection_exception() {
-      String edgeCollectionName = "C" + UUID.randomUUID().toString();
-      final ArangoCollection collection = kGraph.getEdgeCollection(edgeCollectionName);
-      final BaseDocument baseDoc = new BaseDocument();
-      String key = "K" + UUID.randomUUID().toString();
-      baseDoc.setKey(key);
+      final ArangoCollection collection = kGraph.getEdgeCollection(kGraph.generateName());
+      final BaseDocument baseDoc = new BaseDocument(kGraph.generateKey());
       baseDoc.addAttribute("foo", "bar");
       kGraph.upsertNode(collection, baseDoc);
    }
@@ -169,12 +165,8 @@ public class KnowledgeGraphTest {
    public void upsertEdge_edgeIsNull_exception() {
       final ArangoCollection dates = kGraph.getNodeCollection("testNodeCollection");
 
-      final BaseDocument leftNode = new BaseDocument();
-      final BaseDocument rightNode = new BaseDocument();
-      String key1 = UUID.randomUUID().toString();
-      String key2 = UUID.randomUUID().toString();
-      leftNode.setKey(key1);
-      rightNode.setKey(key2);
+      final BaseDocument leftNode = new BaseDocument(kGraph.generateKey());
+      final BaseDocument rightNode = new BaseDocument(kGraph.generateKey());
       kGraph.upsertNode(dates, leftNode, rightNode);
 
       ArangoCollection edgeCollection = kGraph.getEdgeCollection("testEdgeCollection");
