@@ -2,11 +2,7 @@ package com.whelanlabs.kgraph.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -16,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
@@ -33,6 +28,8 @@ public class KnowledgeGraph {
    private ArangoDatabase _userDB;
    private DbName _db_name;
    private ArangoDB _systemDB = null;
+   private ArangoCollection _nodeTypes;
+   private ArangoCollection _edgeTypes;
 
    private static Logger logger = LogManager.getLogger(KnowledgeGraph.class);
 
@@ -47,6 +44,13 @@ public class KnowledgeGraph {
          _systemDB.createDatabase(db_name);
       }
       _userDB = _systemDB.db(db_name);
+      
+      // create node_types collection if not exists
+      _nodeTypes = getNodeCollection("node_types");
+      
+      // create edge_types collection if not exists
+      _edgeTypes = getNodeCollection("edge_types");
+      
    }
 
    private synchronized ArangoDB setSystemDB() {
@@ -114,6 +118,18 @@ public class KnowledgeGraph {
       return result;
    }
 
+   public ArangoCollection createEdgeCollection(String collectionName, String leftCollection, String rightCollection) {
+
+      // TODO: if neither collection or registration exist, create them
+      
+      // TODO: else if collection and registration exist, verify they match (if not exception)
+      
+      // TODO: else if collection or registration exist, then create the missing
+      
+      
+      return null;
+   }
+   
    public ArangoCollection getEdgeCollection(String collectionName) {
       CollectionEntity collectionEntity = null;
       ArangoCollection collection = _userDB.collection(collectionName);
@@ -129,19 +145,31 @@ public class KnowledgeGraph {
       ArangoCollection result = _userDB.collection(collectionName);
       return result;
    }
+   
+   public ArangoCollection createNodeCollection(String collectionName) {
+      // create node collection
+      CollectionEntity result = _userDB.createCollection(collectionName);
+      
+      // TODO: register node collection
+      
+      return _userDB.collection(collectionName);
+      
+   }
 
    public ArangoCollection getNodeCollection(String collectionName) {
       CollectionEntity collectionEntity = null;
+      ArangoCollection result;
       ArangoCollection collection = _userDB.collection(collectionName);
       if (!collection.exists()) {
-         collectionEntity = _userDB.createCollection(collectionName);
+         result = createNodeCollection(collectionName);
       } else {
          collectionEntity = collection.getInfo();
          if (!"DOCUMENT".equals(collectionEntity.getType().toString())) {
             throw new RuntimeException("Non-DOCUMENT collection already exsists. (" + collectionEntity.getType() + ")");
          }
+         result = _userDB.collection(collectionName);
       }
-      ArangoCollection result = _userDB.collection(collectionName);
+      
       return result;
    }
 
