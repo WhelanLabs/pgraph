@@ -11,3 +11,6 @@ To build normally:
    
 To build licensing information:
    * mvn site
+   
+To list new versions of third-party components:
+   * mvn versions:display-dependency-updates

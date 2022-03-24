@@ -2,14 +2,15 @@
 # completed
 ##########################################################
 
+* create node and edge
+
+* query node and edge
 
 ##########################################################
 # WIP
 ##########################################################
 
-* Have a persistant store for ArangoDB.
-
-* create a loader including edge-schema collection support.
+* expand simple single level
 
 
 ##########################################################
@@ -19,11 +20,6 @@
 
 
 
-* write initial (static) test prediction for use in stories.
-  (~"predict AAPL stock price on 1/1/2023"?)
-
-* resolve - how best to not peek into the future?
-
-* generate persistence in docker database
+* create custom node and edge classes (children of ootb ones with tighter graph support)
 
 * support DB access via config file(s) - see ArangoDB java driver source for ideas.
