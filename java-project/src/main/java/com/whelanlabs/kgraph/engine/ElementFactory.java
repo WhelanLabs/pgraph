@@ -5,8 +5,8 @@ import com.arangodb.entity.BaseEdgeDocument;
 
 public class ElementFactory {
 
-   private static String leftCollectionAttrName = "left_collection";
-   private static String rightCollectionAttrName = "right_collection";
+   public static final String leftCollectionAttrName = "left_collection";
+   public static final String rightCollectionAttrName = "right_collection";
 
    public static BaseEdgeDocument createEdge(String edgeKey, BaseDocument leftNode, BaseDocument rightNode) {
       BaseEdgeDocument result = new BaseEdgeDocument(edgeKey, leftNode.getId(), rightNode.getId());

@@ -167,8 +167,8 @@ public class KnowledgeGraph {
       return doc;
    }
 
-   public BaseDocument getNodeByKey(String key, String type) {
-      BaseDocument doc = _userDB.collection(type).getDocument(key, BaseDocument.class);
+   public BaseDocument getNodeByKey(String key, String collectionName) {
+      BaseDocument doc = _userDB.collection(collectionName).getDocument(key, BaseDocument.class);
       return doc;
    }
 
@@ -192,31 +192,11 @@ public class KnowledgeGraph {
       return result;
    }
 
-   public List<BaseDocument> queryElements(ArangoCollection collection, QueryClause... clauses) {
+   public List<BaseDocument> queryNodes(ArangoCollection collection, QueryClause... clauses) {
       MapBuilder bindVars = new MapBuilder();
       List<BaseDocument> results = new ArrayList<BaseDocument>();
       try {
-         StringBuilder query = new StringBuilder("FOR t IN ");
-         query.append(collection.name());
-         query.append(" FILTER ");
-         Boolean firstCollection = true;
-         for (QueryClause clause : clauses) {
-            if (firstCollection) {
-               firstCollection = false;
-            } else {
-               query.append(" AND ");
-            }
-            query.append("t.");
-            query.append(clause.toAQL());
-            bindVars.put(clause.getName(), clause.getValue());
-         }
-         query.append(" RETURN t");
-
-         // query = new StringBuilder("FOR t IN testCollection FILTER t.foo == @foo
-         // RETURN t");
-
-         logger.debug("query = '" + query.toString() + "'");
-         logger.debug("bindVars = " + bindVars);
+         StringBuilder query = generateQuery(collection, bindVars, clauses);
 
          ArangoCursor<BaseDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), BaseDocument.class);
          cursor.forEachRemaining(aDocument -> {
@@ -229,11 +209,59 @@ public class KnowledgeGraph {
       return results;
    }
 
+   public List<BaseEdgeDocument> queryEdges(ArangoCollection collection, QueryClause... clauses) {
+      MapBuilder bindVars = new MapBuilder();
+      List<BaseEdgeDocument> results = new ArrayList<BaseEdgeDocument>();
+      try {
+         StringBuilder query = generateQuery(collection, bindVars, clauses);
+
+         ArangoCursor<BaseEdgeDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), BaseEdgeDocument.class);
+         cursor.forEachRemaining(aDocument -> {
+            results.add(aDocument);
+         });
+      } catch (Exception e) {
+         logger.error("Failed to execute query. " + e.getMessage());
+         throw e;
+      }
+      return results;
+   }
+   
+   private StringBuilder generateQuery(ArangoCollection collection, MapBuilder bindVars, QueryClause... clauses) {
+      StringBuilder query = new StringBuilder("FOR t IN ");
+      query.append(collection.name());
+      query.append(" FILTER ");
+      Boolean firstCollection = true;
+      for (QueryClause clause : clauses) {
+         if (firstCollection) {
+            firstCollection = false;
+         } else {
+            query.append(" AND ");
+         }
+         query.append("t.");
+         query.append(clause.toAQL());
+         bindVars.put(clause.getName(), clause.getValue());
+      }
+      query.append(" RETURN t");
+
+      // query = new StringBuilder("FOR t IN testCollection FILTER t.foo == @foo
+      // RETURN t");
+
+      logger.debug("query = '" + query.toString() + "'");
+      logger.debug("bindVars = " + bindVars);
+      return query;
+   }
+
    public List<Triple> expandRight(BaseDocument leftNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses) {
       List<Triple> results = new ArrayList<Triple>();
-      QueryClause queryClause = new QueryClause("foo", QueryClause.Operator.EQUALS, "bar");
-      List<BaseDocument> rels = queryElements(edgeCollection, queryClause);
+      QueryClause queryRelsClause = new QueryClause("", QueryClause.Operator.EQUALS, leftNode.getKey());
+      List<BaseEdgeDocument> rels = queryEdges(edgeCollection, queryRelsClause);
+      
+      for(BaseEdgeDocument rel : rels) {
+         BaseDocument otherSide = getNodeByKey(rel.getAttribute(ElementFactory.rightCollectionAttrName).toString(), rel.getAttribute(edgeTypesCollectionName).toString());
+         Triple triple = new Triple(leftNode, rel, otherSide);
+         results.add(triple);
+      }
 
       return results;
    }

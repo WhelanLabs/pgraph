@@ -184,7 +184,7 @@ public class KnowledgeGraphTest {
       logger.debug("addedDoc = " + addedDoc.toString());
 
       QueryClause queryClause = new QueryClause("foo", QueryClause.Operator.EQUALS, "bar");
-      List<BaseDocument> results = kGraph.queryElements(testCollection, queryClause);
+      List<BaseDocument> results = kGraph.queryNodes(testCollection, queryClause);
       assertNotNull(results);
       logger.debug("results = " + results);
       assert (results.size() > 0) : "results.size() = " + results.size();
@@ -203,7 +203,7 @@ public class KnowledgeGraphTest {
 
       QueryClause queryClause1 = new QueryClause("foo", QueryClause.Operator.EQUALS, "bar");
       QueryClause queryClause2 = new QueryClause("foofoo", QueryClause.Operator.EQUALS, "barbar");
-      List<BaseDocument> results = kGraph.queryElements(testCollection, queryClause1, queryClause2);
+      List<BaseDocument> results = kGraph.queryNodes(testCollection, queryClause1, queryClause2);
       assertNotNull(results);
       logger.debug("results = " + results);
       assert (results.size() > 0) : "results.size() = " + results.size();
@@ -213,7 +213,7 @@ public class KnowledgeGraphTest {
    public void queryElements_nullClauses_exception() throws Exception {
       final ArangoCollection testCollection = null;
       QueryClause queryClause1 = new QueryClause("foo", QueryClause.Operator.EQUALS, null);
-      List<BaseDocument> results = kGraph.queryElements(testCollection, queryClause1);
+      List<BaseDocument> results = kGraph.queryNodes(testCollection, queryClause1);
    }
 
    @Test
