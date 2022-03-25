@@ -12,9 +12,9 @@ import org.apache.logging.log4j.Logger;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
-import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionType;
@@ -28,8 +28,10 @@ public class KnowledgeGraph {
    private ArangoDatabase _userDB;
    private DbName _db_name;
    private ArangoDB _systemDB = null;
-   private ArangoCollection _nodeTypes;
-   private ArangoCollection _edgeTypes;
+   private String nodeTypesCollectionName = "node_types";
+   private String edgeTypesCollectionName = "edge_types";
+   private ArangoCollection nodeTypesCollection;
+   private ArangoCollection edgeTypesCollection;
 
    private static Logger logger = LogManager.getLogger(KnowledgeGraph.class);
 
@@ -46,10 +48,32 @@ public class KnowledgeGraph {
       _userDB = _systemDB.db(db_name);
       
       // create node_types collection if not exists
-      _nodeTypes = getNodeCollection("node_types");
+      try {
+         _userDB.createCollection(nodeTypesCollectionName);
+      }
+      catch(ArangoDBException e) {
+         if(e.getMessage().contains("duplicate name")) {
+            // do nothing - all is fine
+         }
+         else {
+            throw e;
+         }
+      }      
+      nodeTypesCollection = _userDB.collection(nodeTypesCollectionName);
       
       // create edge_types collection if not exists
-      _edgeTypes = getNodeCollection("edge_types");
+      try {
+         _userDB.createCollection(edgeTypesCollectionName);
+      }
+      catch(ArangoDBException e) {
+         if(e.getMessage().contains("duplicate name")) {
+            // do nothing - all is fine
+         }
+         else {
+            throw e;
+         }
+      }   
+      edgeTypesCollection = _userDB.collection(edgeTypesCollectionName);
       
    }
 
@@ -66,13 +90,12 @@ public class KnowledgeGraph {
       _systemDB = null;
    }
 
-   public BaseDocument upsertNode(final ArangoCollection collection, final BaseDocument element) {
+   public Node upsertNode(final ArangoCollection collection, final Node element) {
       logger.trace("upsertNode " + element.getKey());
       try {
          if (!collection.documentExists(element.getKey())) {
             collection.insertDocument(element);
          } else {
-            logger.debug("Fetch already existing element. (key=" + element.getKey() + ")");
             collection.updateDocument(element.getKey(), element);
          }
       } catch (Exception e) {
@@ -82,10 +105,10 @@ public class KnowledgeGraph {
       return element;
    }
 
-   public ArrayList<BaseDocument> upsertNode(final ArangoCollection collection, final BaseDocument... elements) {
+   public ArrayList<Node> upsertNode(final ArangoCollection collection, final Node... elements) {
       // TODO: address ACID requirements
-      ArrayList<BaseDocument> results = new ArrayList<BaseDocument>();
-      for (BaseDocument element : elements) {
+      ArrayList<Node> results = new ArrayList<Node>();
+      for (Node element : elements) {
          results.add(upsertNode(collection, element));
       }
       return results;
@@ -148,9 +171,11 @@ public class KnowledgeGraph {
    
    public ArangoCollection createNodeCollection(String collectionName) {
       // create node collection
-      CollectionEntity result = _userDB.createCollection(collectionName);
+      _userDB.createCollection(collectionName);
       
       // TODO: register node collection
+      Node nodeTypeNode = new Node(collectionName);
+      upsertNode(nodeTypesCollection, nodeTypeNode);
       
       return _userDB.collection(collectionName);
       
@@ -173,8 +198,13 @@ public class KnowledgeGraph {
       return result;
    }
 
-   public BaseDocument getNodeByKey(String key, String type) {
-      BaseDocument doc = _userDB.collection(type).getDocument(key, BaseDocument.class);
+   public BaseEdgeDocument getEdgeByKey(String key, String type) { 
+      BaseEdgeDocument doc = _userDB.collection(type).getDocument(key, BaseEdgeDocument.class);
+      return doc;
+   }
+   
+   public Node getNodeByKey(String key, String type) {
+      Node doc = _userDB.collection(type).getDocument(key, Node.class);
       return doc;
    }
 
@@ -198,9 +228,9 @@ public class KnowledgeGraph {
       return result;
    }
 
-   public List<BaseDocument> queryElements(ArangoCollection collection, QueryClause... clauses) {
+   public List<Node> queryElements(ArangoCollection collection, QueryClause... clauses) {
       MapBuilder bindVars = new MapBuilder();
-      List<BaseDocument> results = new ArrayList<BaseDocument>();
+      List<Node> results = new ArrayList<Node>();
       try {
          StringBuilder query = new StringBuilder("FOR t IN ");
          query.append(collection.name());
@@ -224,7 +254,7 @@ public class KnowledgeGraph {
          logger.debug("query = '" + query.toString() + "'");
          logger.debug("bindVars = " + bindVars);
 
-         ArangoCursor<BaseDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), BaseDocument.class);
+         ArangoCursor<Node> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), Node.class);
          cursor.forEachRemaining(aDocument -> {
             results.add(aDocument);
          });
@@ -235,7 +265,7 @@ public class KnowledgeGraph {
       return results;
    }
 
-   public List<Triple> expandElements(List<BaseDocument> startingNodes, String relname, List<QueryClause> relClauses, List<QueryClause> otherSideClauses) {
+   public List<Triple> expandElements(List<Node> startingNodes, String relname, List<QueryClause> relClauses, List<QueryClause> otherSideClauses) {
       List<Triple> results = new ArrayList<Triple>();
       
       return results;

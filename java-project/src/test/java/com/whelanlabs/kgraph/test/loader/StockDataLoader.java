@@ -12,10 +12,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.arangodb.ArangoCollection;
-import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionPropertiesEntity;
 import com.whelanlabs.kgraph.engine.KnowledgeGraph;
+import com.whelanlabs.kgraph.engine.Node;
 
 public class StockDataLoader {
 
@@ -34,16 +34,14 @@ public class StockDataLoader {
       final ArangoCollection node_types = kGraph.getNodeCollection("node_types");
       final ArangoCollection edge_types = kGraph.getNodeCollection("edge_types");
 
-      BaseDocument v1 = new BaseDocument();
+      Node v1 = new Node("dates");
       v1.setKey("dates");
       v1 = kGraph.upsertNode(node_types, v1);
 
-      BaseDocument v2 = new BaseDocument();
-      v2.setKey("tickers");
+      Node v2 = new Node("tickers");
       v2 = kGraph.upsertNode(node_types, v2);
 
-      BaseDocument v3 = new BaseDocument();
-      v3.setKey("marketData");
+      Node v3 = new Node("marketData");
       v3.addAttribute("left_type", "dates");
       v3.addAttribute("right_type", "tickers");
       v3 = kGraph.upsertNode(edge_types, v3);
@@ -57,8 +55,7 @@ public class StockDataLoader {
       try {
          String filename = "../fetchers/stock_data_fetcher/data/AA_2020-05-07.txt";
 
-         BaseDocument ticker = new BaseDocument();
-         ticker.setKey("AA");
+         Node ticker = new Node("AA");
          ticker = kGraph.upsertNode(tickers, ticker);
 
          logger.debug("reading: " + filename);
@@ -73,8 +70,7 @@ public class StockDataLoader {
                String[] tokens = line.split(",");
                LocalDate date = LocalDate.parse(tokens[0]);
 
-               BaseDocument stockDate = new BaseDocument();
-               stockDate.setKey(date.toString());
+               Node stockDate = new Node(date.toString());
                Long dayNumber = ChronoUnit.DAYS.between(epoch, date);
                // System.out.println("Days: " + dayNumber);
                stockDate.addAttribute("date", dayNumber);
@@ -99,8 +95,7 @@ public class StockDataLoader {
          }
          reader.close();
 
-         final BaseDocument badDate = new BaseDocument();
-         badDate.setKey(UUID.randomUUID().toString());
+         final Node badDate = new Node(UUID.randomUUID().toString());
          kGraph.upsertNode(dates, badDate);
 
          // FOR doc IN collection COLLECT WITH COUNT INTO length RETURN length
