@@ -225,7 +225,7 @@ public class KnowledgeGraph {
       }
       return results;
    }
-   
+
    private StringBuilder generateQuery(ArangoCollection collection, MapBuilder bindVars, QueryClause... clauses) {
       StringBuilder query = new StringBuilder("FOR t IN ");
       query.append(collection.name());
@@ -254,11 +254,14 @@ public class KnowledgeGraph {
    public List<Triple> expandRight(BaseDocument leftNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses) {
       List<Triple> results = new ArrayList<Triple>();
-      QueryClause queryRelsClause = new QueryClause("", QueryClause.Operator.EQUALS, leftNode.getKey());
+      // TODO: see line 1260+ of:
+      // https://github.com/arangodb/arangodb-java-driver/blob/4d39da8111bd36cec5207b193bbac2f11a68abfb/src/test/java/com/arangodb/ArangoDatabaseTest.java
+      QueryClause queryRelsClause = new QueryClause("from", QueryClause.Operator.EQUALS, leftNode.getKey());
       List<BaseEdgeDocument> rels = queryEdges(edgeCollection, queryRelsClause);
-      
-      for(BaseEdgeDocument rel : rels) {
-         BaseDocument otherSide = getNodeByKey(rel.getAttribute(ElementFactory.rightCollectionAttrName).toString(), rel.getAttribute(edgeTypesCollectionName).toString());
+
+      for (BaseEdgeDocument rel : rels) {
+         BaseDocument otherSide = getNodeByKey(rel.getAttribute(ElementFactory.rightCollectionAttrName).toString(),
+               rel.getAttribute(edgeTypesCollectionName).toString());
          Triple triple = new Triple(leftNode, rel, otherSide);
          results.add(triple);
       }
