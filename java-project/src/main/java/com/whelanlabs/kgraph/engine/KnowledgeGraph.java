@@ -111,18 +111,6 @@ public class KnowledgeGraph {
       return result;
    }
 
-   public ArangoCollection createEdgeCollection(String collectionName, String leftCollection, String rightCollection) {
-
-      // TODO: if neither collection or registration exist, create them
-
-      // TODO: else if collection and registration exist, verify they match (if not
-      // exception)
-
-      // TODO: else if collection or registration exist, then create the missing
-
-      return null;
-   }
-
    public ArangoCollection getEdgeCollection(String collectionName) {
       CollectionEntity collectionEntity = null;
       ArangoCollection collection = _userDB.collection(collectionName);
@@ -132,7 +120,7 @@ public class KnowledgeGraph {
          collectionEntity = collection.getInfo();
          logger.debug("createEdgeCollection - result.getType() = " + collectionEntity.getType());
          if (!"EDGES".equals(collectionEntity.getType().toString())) {
-            throw new RuntimeException("Non-DOCUMENT collection already exsists. (" + collectionEntity.getType() + ")");
+            throw new RuntimeException("Non-EDGES collection already exsists. (" + collectionEntity.getType() + ")");
          }
       }
       ArangoCollection result = _userDB.collection(collectionName);
