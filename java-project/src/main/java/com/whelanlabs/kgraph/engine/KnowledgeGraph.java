@@ -1,7 +1,9 @@
 package com.whelanlabs.kgraph.engine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -18,8 +20,12 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.PathEntity;
+import com.arangodb.entity.TraversalEntity;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.CollectionCreateOptions;
+import com.arangodb.model.TraversalOptions;
+import com.arangodb.model.TraversalOptions.Direction;
 import com.arangodb.util.MapBuilder;
 
 public class KnowledgeGraph {
@@ -239,19 +245,25 @@ public class KnowledgeGraph {
       return query;
    }
 
-   public List<Triple> expandRight(BaseDocument leftNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
-         List<QueryClause> otherSideClauses) {
-      List<Triple> results = new ArrayList<Triple>();
+   public List<PathEntity<BaseDocument, BaseEdgeDocument>> expandRight(BaseDocument leftNode, ArangoCollection edgeCollection,
+         List<QueryClause> relClauses, List<QueryClause> otherSideClauses) {
       // TODO: see line 1260+ of:
       // https://github.com/arangodb/arangodb-java-driver/blob/4d39da8111bd36cec5207b193bbac2f11a68abfb/src/test/java/com/arangodb/ArangoDatabaseTest.java
-      QueryClause queryRelsClause = new QueryClause("from", QueryClause.Operator.EQUALS, leftNode.getKey());
-      List<BaseEdgeDocument> rels = queryEdges(edgeCollection, queryRelsClause);
+      final TraversalOptions options = new TraversalOptions().edgeCollection(edgeCollection.name()).startVertex(leftNode.getId())
+            .direction(Direction.outbound);
+      final TraversalEntity<BaseDocument, BaseEdgeDocument> traversal = _userDB.executeTraversal(BaseDocument.class, BaseEdgeDocument.class, options);
+      final Collection<BaseDocument> vertices = traversal.getVertices();
 
-      for (BaseEdgeDocument rel : rels) {
-         BaseDocument otherSide = getNodeByKey(rel.getAttribute(ElementFactory.rightCollectionAttrName).toString(),
-               rel.getAttribute(edgeTypesCollectionName).toString());
-         Triple triple = new Triple(leftNode, rel, otherSide);
-         results.add(triple);
+      Collection<PathEntity<BaseDocument, BaseEdgeDocument>> paths = traversal.getPaths();
+      Iterator<PathEntity<BaseDocument, BaseEdgeDocument>> pathsItr = paths.iterator();
+      // List<PathEntity<BaseDocument, BaseEdgeDocument>> 
+      List<PathEntity<BaseDocument, BaseEdgeDocument>> results = new ArrayList<PathEntity<BaseDocument, BaseEdgeDocument>>();
+      while(pathsItr.hasNext()) {
+         PathEntity<BaseDocument, BaseEdgeDocument> currentPath = pathsItr.next();
+         if(currentPath.getEdges() != null) {
+            results.add(pathsItr.next());
+         }
+
       }
 
       return results;

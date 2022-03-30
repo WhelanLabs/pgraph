@@ -2,6 +2,7 @@ package com.whelanlabs.kgraph.test.engine;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +15,7 @@ import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
+import com.arangodb.entity.PathEntity;
 import com.whelanlabs.kgraph.engine.ElementFactory;
 import com.whelanlabs.kgraph.engine.KnowledgeGraph;
 import com.whelanlabs.kgraph.engine.QueryClause;
@@ -222,16 +224,24 @@ public class KnowledgeGraphTest {
       final BaseDocument rightNode = new BaseDocument(kGraph.generateKey());
       final ArangoCollection testCollection = kGraph.getNodeCollection("testNodeCollection");
       kGraph.upsertNode(testCollection, leftNode, rightNode);
+      logger.debug("leftNode.id: " + leftNode.getId());
+      logger.debug("rightNode.id: " + rightNode.getId());
 
       ArangoCollection edgeCollection = kGraph.getEdgeCollection("testEdgeCollection");
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       BaseEdgeDocument edge = ElementFactory.createEdge(edgeKey, leftNode, rightNode);
       edge = kGraph.upsertEdge(edgeCollection, edge);
+      logger.debug("edge.id: " + edge.getId());
 
       List<QueryClause> relClauses = null;
       List<QueryClause> otherSideClauses = null;
-      List<Triple> results = kGraph.expandRight(leftNode, edgeCollection, relClauses, otherSideClauses);
+      Collection<PathEntity<BaseDocument, BaseEdgeDocument>> results = kGraph.expandRight(leftNode, edgeCollection, relClauses, otherSideClauses);
 
       assert (1 == results.size()) : "results.size() = " + results.size();
+
+      for (PathEntity<BaseDocument, BaseEdgeDocument> result : results) {
+         logger.debug("result.vertices: " + result.getVertices());
+         logger.debug("result.edges: " + result.getEdges());
+      }
    }
 }
