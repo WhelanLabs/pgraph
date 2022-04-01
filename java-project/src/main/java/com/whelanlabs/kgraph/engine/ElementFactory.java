@@ -1,15 +1,12 @@
 package com.whelanlabs.kgraph.engine;
 
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
-
 public class ElementFactory {
 
    public static final String leftCollectionAttrName = "left_collection";
    public static final String rightCollectionAttrName = "right_collection";
 
-   public static BaseEdgeDocument createEdge(String edgeKey, BaseDocument leftNode, BaseDocument rightNode) {
-      BaseEdgeDocument result = new BaseEdgeDocument(edgeKey, leftNode.getId(), rightNode.getId());
+   public static Edge createEdge(String edgeKey, Node leftNode, Node rightNode) {
+      Edge result = new Edge(edgeKey, leftNode.getId(), rightNode.getId());
 
       String leftCollectionName = getCollectionName(leftNode);
       result.addAttribute(leftCollectionAttrName, leftCollectionName);
@@ -19,7 +16,7 @@ public class ElementFactory {
       return result;
    }
 
-   private static String getCollectionName(BaseDocument node) {
+   private static String getCollectionName(Node node) {
       String id = node.getId();
       int iend = id.indexOf("/");
       String collectionName;

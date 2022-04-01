@@ -1,7 +1,6 @@
 package com.whelanlabs.kgraph.engine;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -16,8 +15,6 @@ import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.PathEntity;
@@ -66,7 +63,7 @@ public class KnowledgeGraph {
       _systemDB = null;
    }
 
-   public BaseDocument upsertNode(final ArangoCollection collection, final BaseDocument element) {
+   public Node upsertNode(final ArangoCollection collection, final Node element) {
       logger.trace("upsertNode " + element.getKey());
       try {
          if (!collection.documentExists(element.getKey())) {
@@ -81,17 +78,17 @@ public class KnowledgeGraph {
       return element;
    }
 
-   public ArrayList<BaseDocument> upsertNode(final ArangoCollection collection, final BaseDocument... elements) {
+   public ArrayList<Node> upsertNode(final ArangoCollection collection, final Node... elements) {
       // TODO: address ACID requirements
-      ArrayList<BaseDocument> results = new ArrayList<BaseDocument>();
-      for (BaseDocument element : elements) {
+      ArrayList<Node> results = new ArrayList<Node>();
+      for (Node element : elements) {
          results.add(upsertNode(collection, element));
       }
       return results;
    }
 
-   public BaseEdgeDocument upsertEdge(final ArangoCollection collection, final BaseEdgeDocument element) {
-      BaseEdgeDocument result = null;
+   public Edge upsertEdge(final ArangoCollection collection, final Edge element) {
+      Edge result = null;
       try {
          if (!collection.documentExists(element.getKey())) {
             collection.insertDocument(element);
@@ -99,7 +96,7 @@ public class KnowledgeGraph {
          } else {
             logger.debug("Fetch already existing element. (key=" + element.getKey() + ")");
             result = collection.updateDocument(element.getKey(), element).getNew();
-            // result = collection.getDocument(element.getKey(), BaseEdgeDocument.class);
+            // result = collection.getDocument(element.getKey(), Edge.class);
          }
       } catch (Exception e) {
          if (null != element) {
@@ -156,13 +153,13 @@ public class KnowledgeGraph {
       return result;
    }
 
-   public BaseEdgeDocument getEdgeByKey(String key, String type) {
-      BaseEdgeDocument doc = _userDB.collection(type).getDocument(key, BaseEdgeDocument.class);
+   public Edge getEdgeByKey(String key, String type) {
+      Edge doc = _userDB.collection(type).getDocument(key, Edge.class);
       return doc;
    }
 
-   public BaseDocument getNodeByKey(String key, String collectionName) {
-      BaseDocument doc = _userDB.collection(collectionName).getDocument(key, BaseDocument.class);
+   public Node getNodeByKey(String key, String collectionName) {
+      Node doc = _userDB.collection(collectionName).getDocument(key, Node.class);
       return doc;
    }
 
@@ -186,13 +183,13 @@ public class KnowledgeGraph {
       return result;
    }
 
-   public List<BaseDocument> queryNodes(ArangoCollection collection, QueryClause... clauses) {
+   public List<Node> queryNodes(ArangoCollection collection, QueryClause... clauses) {
       MapBuilder bindVars = new MapBuilder();
-      List<BaseDocument> results = new ArrayList<BaseDocument>();
+      List<Node> results = new ArrayList<Node>();
       try {
          StringBuilder query = generateQuery(collection, bindVars, clauses);
 
-         ArangoCursor<BaseDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), BaseDocument.class);
+         ArangoCursor<Node> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), Node.class);
          cursor.forEachRemaining(aDocument -> {
             results.add(aDocument);
          });
@@ -203,13 +200,13 @@ public class KnowledgeGraph {
       return results;
    }
 
-   public List<BaseEdgeDocument> queryEdges(ArangoCollection collection, QueryClause... clauses) {
+   public List<Edge> queryEdges(ArangoCollection collection, QueryClause... clauses) {
       MapBuilder bindVars = new MapBuilder();
-      List<BaseEdgeDocument> results = new ArrayList<BaseEdgeDocument>();
+      List<Edge> results = new ArrayList<Edge>();
       try {
          StringBuilder query = generateQuery(collection, bindVars, clauses);
 
-         ArangoCursor<BaseEdgeDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), BaseEdgeDocument.class);
+         ArangoCursor<Edge> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), Edge.class);
          cursor.forEachRemaining(aDocument -> {
             results.add(aDocument);
          });
@@ -245,21 +242,21 @@ public class KnowledgeGraph {
       return query;
    }
 
-   public List<PathEntity<BaseDocument, BaseEdgeDocument>> expandRight(BaseDocument leftNode, ArangoCollection edgeCollection,
+   public List<PathEntity<Node, Edge>> expandRight(Node leftNode, ArangoCollection edgeCollection,
          List<QueryClause> relClauses, List<QueryClause> otherSideClauses) {
       // TODO: see line 1260+ of:
       // https://github.com/arangodb/arangodb-java-driver/blob/4d39da8111bd36cec5207b193bbac2f11a68abfb/src/test/java/com/arangodb/ArangoDatabaseTest.java
       final TraversalOptions options = new TraversalOptions().edgeCollection(edgeCollection.name()).startVertex(leftNode.getId())
             .direction(Direction.outbound);
-      final TraversalEntity<BaseDocument, BaseEdgeDocument> traversal = _userDB.executeTraversal(BaseDocument.class, BaseEdgeDocument.class, options);
-      final Collection<BaseDocument> vertices = traversal.getVertices();
+      final TraversalEntity<Node, Edge> traversal = _userDB.executeTraversal(Node.class, Edge.class, options);
+      final Collection<Node> vertices = traversal.getVertices();
 
-      Collection<PathEntity<BaseDocument, BaseEdgeDocument>> paths = traversal.getPaths();
-      Iterator<PathEntity<BaseDocument, BaseEdgeDocument>> pathsItr = paths.iterator();
-      // List<PathEntity<BaseDocument, BaseEdgeDocument>> 
-      List<PathEntity<BaseDocument, BaseEdgeDocument>> results = new ArrayList<PathEntity<BaseDocument, BaseEdgeDocument>>();
+      Collection<PathEntity<Node, Edge>> paths = traversal.getPaths();
+      Iterator<PathEntity<Node, Edge>> pathsItr = paths.iterator();
+      // List<PathEntity<Node, Edge>> 
+      List<PathEntity<Node, Edge>> results = new ArrayList<PathEntity<Node, Edge>>();
       while(pathsItr.hasNext()) {
-         PathEntity<BaseDocument, BaseEdgeDocument> currentPath = pathsItr.next();
+         PathEntity<Node, Edge> currentPath = pathsItr.next();
          if(currentPath.getEdges() != null) {
             results.add(pathsItr.next());
          }

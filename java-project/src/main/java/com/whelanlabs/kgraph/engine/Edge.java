@@ -21,13 +21,12 @@
 
 package com.whelanlabs.kgraph.engine;
 
-import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.DocumentField.Type;
 
 import java.util.Map;
 
-public class Edge extends BaseDocument {
+public class Edge extends Node {
 
     private static final long serialVersionUID = 6904923804449368783L;
 
