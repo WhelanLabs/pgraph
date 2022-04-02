@@ -15,6 +15,7 @@ import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
+import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.PathEntity;
@@ -64,6 +65,21 @@ public class KnowledgeGraph {
    }
 
    public Node upsertNode(final ArangoCollection collection, final Node element) {
+      logger.trace("upsertNode " + element.getKey());
+      try {
+         if (!collection.documentExists(element.getKey())) {
+            collection.insertDocument(element);
+         } else {
+            collection.updateDocument(element.getKey(), element);
+         }
+      } catch (Exception e) {
+         logger.error(element.toString());
+         throw e;
+      }
+      return element;
+   }
+
+   public BaseDocument upsertNode(final ArangoCollection collection, final BaseDocument element) {
       logger.trace("upsertNode " + element.getKey());
       try {
          if (!collection.documentExists(element.getKey())) {
@@ -243,8 +259,8 @@ public class KnowledgeGraph {
       return query;
    }
 
-   public List<PathEntity<Node, Edge>> expandRight(Node leftNode, ArangoCollection edgeCollection,
-         List<QueryClause> relClauses, List<QueryClause> otherSideClauses) {
+   public List<PathEntity<Node, Edge>> expandRight(Node leftNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
+         List<QueryClause> otherSideClauses) {
       // TODO: see line 1260+ of:
       // https://github.com/arangodb/arangodb-java-driver/blob/4d39da8111bd36cec5207b193bbac2f11a68abfb/src/test/java/com/arangodb/ArangoDatabaseTest.java
       final TraversalOptions options = new TraversalOptions().edgeCollection(edgeCollection.name()).startVertex(leftNode.getId())
@@ -254,11 +270,11 @@ public class KnowledgeGraph {
 
       Collection<PathEntity<Node, Edge>> paths = traversal.getPaths();
       Iterator<PathEntity<Node, Edge>> pathsItr = paths.iterator();
-      // List<PathEntity<Node, Edge>> 
+      // List<PathEntity<Node, Edge>>
       List<PathEntity<Node, Edge>> results = new ArrayList<PathEntity<Node, Edge>>();
-      while(pathsItr.hasNext()) {
+      while (pathsItr.hasNext()) {
          PathEntity<Node, Edge> currentPath = pathsItr.next();
-         if(currentPath.getEdges() != null) {
+         if (currentPath.getEdges() != null) {
             results.add(pathsItr.next());
          }
 
