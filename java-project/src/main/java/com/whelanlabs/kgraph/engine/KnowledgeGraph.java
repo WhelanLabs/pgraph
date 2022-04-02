@@ -1,6 +1,7 @@
 package com.whelanlabs.kgraph.engine;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -217,6 +218,24 @@ public class KnowledgeGraph {
       return results;
    }
 
+   public List<BaseDocument> queryBaseDocument(ArangoCollection collection, QueryClause... clauses) {
+      MapBuilder bindVars = new MapBuilder();
+      List<BaseDocument> results = new ArrayList<BaseDocument>();
+      try {
+         StringBuilder query = generateQuery(collection, bindVars, clauses);
+
+         ArangoCursor<BaseDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), BaseDocument.class);
+         cursor.forEachRemaining(aDocument -> {
+            System.out.println("cursor element!");
+            results.add(aDocument);
+         });
+      } catch (Exception e) {
+         logger.error("Failed to execute query. " + e.getMessage());
+         throw e;
+      }
+      return results;
+   }
+   
    public List<Edge> queryEdges(ArangoCollection collection, QueryClause... clauses) {
       MapBuilder bindVars = new MapBuilder();
       List<Edge> results = new ArrayList<Edge>();
@@ -284,10 +303,13 @@ public class KnowledgeGraph {
    }
 
    public String generateKey() {
-      return "KEY_" + UUID.randomUUID().toString();
+      return "KEY_" + System.currentTimeMillis(); //UUID.randomUUID().toString();
    }
 
    public String generateName() {
-      return "NAME_" + UUID.randomUUID().toString();
+      return "NAME_" + System.currentTimeMillis(); //UUID.randomUUID().toString();
+      // TODO: write defect for UUID based names used in simple tests
+      // see also: https://www.arangodb.com/docs/stable/data-modeling-naming-conventions-collection-and-view-names.html#:~:text=The%20names%20must%20only%20consist,always%20start%20with%20a%20letter.
+      
    }
 }

@@ -60,7 +60,7 @@ public class KnowledgeGraphTest {
 
    @Test
    public void upsertNode_newNode_added() {
-      String collectionName = "testNodeCollection";
+      String collectionName = kGraph.generateName();
       final ArangoCollection testNodeCollection = kGraph.getNodeCollection(collectionName);
       Node testNode = new Node(kGraph.generateKey());
       testNode.addAttribute("foo", "bbar");
