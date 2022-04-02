@@ -1,11 +1,9 @@
 package com.whelanlabs.kgraph.engine;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +14,6 @@ import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
-import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.PathEntity;
@@ -66,21 +63,6 @@ public class KnowledgeGraph {
    }
 
    public Node upsertNode(final ArangoCollection collection, final Node element) {
-      logger.trace("upsertNode " + element.getKey());
-      try {
-         if (!collection.documentExists(element.getKey())) {
-            collection.insertDocument(element);
-         } else {
-            collection.updateDocument(element.getKey(), element);
-         }
-      } catch (Exception e) {
-         logger.error(element.toString());
-         throw e;
-      }
-      return element;
-   }
-
-   public BaseDocument upsertNode(final ArangoCollection collection, final BaseDocument element) {
       logger.trace("upsertNode " + element.getKey());
       try {
          if (!collection.documentExists(element.getKey())) {
@@ -207,24 +189,6 @@ public class KnowledgeGraph {
          StringBuilder query = generateQuery(collection, bindVars, clauses);
 
          ArangoCursor<Node> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), Node.class);
-         cursor.forEachRemaining(aDocument -> {
-            System.out.println("cursor element!");
-            results.add(aDocument);
-         });
-      } catch (Exception e) {
-         logger.error("Failed to execute query. " + e.getMessage());
-         throw e;
-      }
-      return results;
-   }
-
-   public List<BaseDocument> queryBaseDocument(ArangoCollection collection, QueryClause... clauses) {
-      MapBuilder bindVars = new MapBuilder();
-      List<BaseDocument> results = new ArrayList<BaseDocument>();
-      try {
-         StringBuilder query = generateQuery(collection, bindVars, clauses);
-
-         ArangoCursor<BaseDocument> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), BaseDocument.class);
          cursor.forEachRemaining(aDocument -> {
             System.out.println("cursor element!");
             results.add(aDocument);

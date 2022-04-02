@@ -11,7 +11,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.arangodb.ArangoCollection;
-import com.arangodb.entity.BaseDocument;
 import com.whelanlabs.kgraph.engine.KnowledgeGraph;
 import com.whelanlabs.kgraph.engine.Node;
 import com.whelanlabs.kgraph.engine.QueryClause;
@@ -55,20 +54,20 @@ public class SimpleTest {
       assert (results.size() == 1) : "results.size() = " + results.size();
    }
 
-   @Test
-   public void queryBaseDocument_singleClause_getResult() throws Exception {
-      
-      String collectionName = kGraph.generateName();
-      final ArangoCollection testCollection = kGraph.getNodeCollection(collectionName);
-      final BaseDocument testDoc = new BaseDocument(kGraph.generateKey());
-      testDoc.addAttribute("foo", "bar");
-      testDoc.addAttribute("xname", "Homer");
-      kGraph.upsertNode(testCollection, testDoc);
-
-      QueryClause queryClause = new QueryClause("foo", QueryClause.Operator.EQUALS, "bar");
-      List<BaseDocument> results = kGraph.queryBaseDocument(testCollection, queryClause);
-      assertNotNull(results);
-      logger.debug("results = " + results);
-      assert (results.size() == 1) : "results.size() = " + results.size();
-   }
+//   @Test
+//   public void queryBaseDocument_singleClause_getResult() throws Exception {
+//      
+//      String collectionName = kGraph.generateName();
+//      final ArangoCollection testCollection = kGraph.getNodeCollection(collectionName);
+//      final BaseDocument testDoc = new BaseDocument(kGraph.generateKey());
+//      testDoc.addAttribute("foo", "bar");
+//      testDoc.addAttribute("xname", "Homer");
+//      kGraph.upsertNode(testCollection, testDoc);
+//
+//      QueryClause queryClause = new QueryClause("foo", QueryClause.Operator.EQUALS, "bar");
+//      List<BaseDocument> results = kGraph.queryBaseDocument(testCollection, queryClause);
+//      assertNotNull(results);
+//      logger.debug("results = " + results);
+//      assert (results.size() == 1) : "results.size() = " + results.size();
+//   }
 }
