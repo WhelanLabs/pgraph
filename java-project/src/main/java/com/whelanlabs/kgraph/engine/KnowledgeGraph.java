@@ -191,6 +191,7 @@ public class KnowledgeGraph {
 
          ArangoCursor<Node> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), Node.class);
          cursor.forEachRemaining(aDocument -> {
+            System.out.println("cursor element!");
             results.add(aDocument);
          });
       } catch (Exception e) {
