@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +14,6 @@ import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
-import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.PathEntity;
@@ -69,21 +67,6 @@ public class KnowledgeGraph {
    }
 
    public Node upsertNode(final ArangoCollection collection, final Node element) {
-      logger.trace("upsertNode " + element.getKey());
-      try {
-         if (!collection.documentExists(element.getKey())) {
-            collection.insertDocument(element);
-         } else {
-            collection.updateDocument(element.getKey(), element);
-         }
-      } catch (Exception e) {
-         logger.error(element.toString());
-         throw e;
-      }
-      return element;
-   }
-
-   public BaseDocument upsertNode(final ArangoCollection collection, final BaseDocument element) {
       logger.trace("upsertNode " + element.getKey());
       try {
          if (!collection.documentExists(element.getKey())) {
@@ -211,6 +194,7 @@ public class KnowledgeGraph {
 
          ArangoCursor<Node> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), Node.class);
          cursor.forEachRemaining(aDocument -> {
+            System.out.println("cursor element!");
             results.add(aDocument);
          });
       } catch (Exception e) {
@@ -219,7 +203,7 @@ public class KnowledgeGraph {
       }
       return results;
    }
-
+   
    public List<Edge> queryEdges(ArangoCollection collection, QueryClause... clauses) {
       MapBuilder bindVars = new MapBuilder();
       List<Edge> results = new ArrayList<Edge>();
@@ -287,11 +271,14 @@ public class KnowledgeGraph {
    }
 
    public String generateKey() {
-      return "KEY_" + UUID.randomUUID().toString();
+      return "KEY_" + System.currentTimeMillis(); //UUID.randomUUID().toString();
    }
 
    public String generateName() {
-      return "NAME_" + UUID.randomUUID().toString();
+      return "NAME_" + System.currentTimeMillis(); //UUID.randomUUID().toString();
+      // TODO: write defect for UUID based names used in simple tests
+      // see also: https://www.arangodb.com/docs/stable/data-modeling-naming-conventions-collection-and-view-names.html#:~:text=The%20names%20must%20only%20consist,always%20start%20with%20a%20letter.
+      
    }
 
 }
