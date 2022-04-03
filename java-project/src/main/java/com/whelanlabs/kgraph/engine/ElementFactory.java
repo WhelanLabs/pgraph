@@ -5,6 +5,10 @@ public class ElementFactory {
    public static final String leftCollectionAttrName = "left_collection";
    public static final String rightCollectionAttrName = "right_collection";
 
+   private ElementFactory() {
+      // do nothing!
+   }
+   
    public static Edge createEdge(String edgeKey, Node leftNode, Node rightNode) {
       Edge result = new Edge(edgeKey, leftNode.getId(), rightNode.getId());
 
@@ -16,7 +20,7 @@ public class ElementFactory {
       return result;
    }
 
-   private static String getCollectionName(Node node) {
+   protected static String getCollectionName(Node node) {
       String id = node.getId();
       int iend = id.indexOf("/");
       String collectionName;

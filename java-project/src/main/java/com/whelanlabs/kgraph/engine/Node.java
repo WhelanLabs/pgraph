@@ -9,10 +9,6 @@ public class Node extends BaseDocument {
    public Node(String generateKey) {
       super(generateKey);
    }
-
-   public Node() {
-      super();
-   }
    
    public Node(final Map<String, Object> properties) {
       super(properties);

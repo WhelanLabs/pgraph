@@ -75,10 +75,11 @@ public class StockDataLoader {
                stockDate.addAttribute("date", dayNumber);
                stockDate = kGraph.upsertNode(dates, stockDate);
 
-               Edge stockDay = new Edge();
-               stockDay.setFrom(stockDate.getId());
-               stockDay.setTo(ticker.getId());
-               stockDay.setKey(stockDate.getKey() + ":" + ticker.getKey());
+               String edgeKey = stockDate.getKey() + ":" + ticker.getKey();
+               Edge stockDay = new Edge(edgeKey, stockDate.getId(), ticker.getId());
+               // stockDay.setFrom(stockDate.getId());
+               // stockDay.setTo(ticker.getId());
+               // stockDay.setKey(stockDate.getKey() + ":" + ticker.getKey());
                stockDay.addAttribute("open", tokens[1]);
                stockDay.addAttribute("high", tokens[2]);
                stockDay.addAttribute("low", tokens[3]);

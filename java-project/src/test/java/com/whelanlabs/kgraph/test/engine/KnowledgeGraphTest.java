@@ -91,11 +91,12 @@ public class KnowledgeGraphTest {
       kGraph.upsertNode(dates, leftNode, rightNode);
 
       ArangoCollection edgeCollection = kGraph.getEdgeCollection("testEdgeCollection");
-      Edge edge = new Edge();
-      edge.setFrom(leftNode.getId());
-      edge.setTo(rightNode.getId());
-      edge.addAttribute("foo", "bar");
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
+      Edge edge = new Edge(edgeKey, leftNode.getId(), rightNode.getId());
+      //edge.setFrom(leftNode.getId());
+      //edge.setTo(rightNode.getId());
+      edge.addAttribute("foo", "bar");
+      
       edge.setKey(edgeKey);
       edge = kGraph.upsertEdge(edgeCollection, edge);
 
@@ -113,11 +114,12 @@ public class KnowledgeGraphTest {
       kGraph.upsertNode(dates, leftNode, rightNode);
 
       ArangoCollection edgeCollection = kGraph.getEdgeCollection("testEdgeCollection");
-      Edge edge = new Edge();
-      edge.setFrom(leftNode.getId());
-      edge.setTo(rightNode.getId());
-      edge.addAttribute("foo", "bar");
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
+      Edge edge = new Edge(edgeKey, leftNode.getId(), rightNode.getId());
+      //edge.setFrom(leftNode.getId());
+      //edge.setTo(rightNode.getId());
+      edge.addAttribute("foo", "bar");
+      
       edge.setKey(edgeKey);
       edge = kGraph.upsertEdge(edgeCollection, edge);
       edge.addAttribute("foo-foo", "bar-bar");
@@ -139,11 +141,12 @@ public class KnowledgeGraphTest {
       kGraph.upsertNode(dates, leftNode, rightNode);
 
       ArangoCollection edgeCollection = null;
-      Edge edge = new Edge();
-      edge.setFrom(leftNode.getId());
-      edge.setTo(rightNode.getId());
-      edge.addAttribute("foo", "bar");
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
+      Edge edge = new Edge(edgeKey, leftNode.getId(), rightNode.getId());
+      //edge.setFrom(leftNode.getId());
+      //edge.setTo(rightNode.getId());
+      edge.addAttribute("foo", "bar");
+      
       edge.setKey(edgeKey);
       edge = kGraph.upsertEdge(edgeCollection, edge);
    }

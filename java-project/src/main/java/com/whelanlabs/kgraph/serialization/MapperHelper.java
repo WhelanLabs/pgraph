@@ -29,6 +29,10 @@ import com.whelanlabs.kgraph.engine.Node;
 
 public class MapperHelper {
 
+   private MapperHelper() {
+      // do nothing!
+   }
+   
    public static VPackMapper createDefaultMapper() {
       final VPackMapper mapper = new VPackMapper();
       mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -40,8 +44,8 @@ public class MapperHelper {
       module.addSerializer(java.util.Date.class, VPackSerializers.UTIL_DATE);
       module.addSerializer(java.sql.Date.class, VPackSerializers.SQL_DATE);
       module.addSerializer(java.sql.Timestamp.class, VPackSerializers.SQL_TIMESTAMP);
-      module.addSerializer(BaseDocument.class, VPackSerializers.BASE_DOCUMENT);
-      module.addSerializer(BaseEdgeDocument.class, VPackSerializers.BASE_EDGE_DOCUMENT);
+      //module.addSerializer(BaseDocument.class, VPackSerializers.BASE_DOCUMENT);
+      //module.addSerializer(BaseEdgeDocument.class, VPackSerializers.BASE_EDGE_DOCUMENT);
 
       module.addSerializer(Node.class, NODE_SERIALIZER);
       module.addSerializer(Edge.class, EDGE_SERIALIZER);
@@ -50,8 +54,8 @@ public class MapperHelper {
       module.addDeserializer(java.util.Date.class, VPackDeserializers.UTIL_DATE);
       module.addDeserializer(java.sql.Date.class, VPackDeserializers.SQL_DATE);
       module.addDeserializer(java.sql.Timestamp.class, VPackDeserializers.SQL_TIMESTAMP);
-      module.addDeserializer(BaseDocument.class, VPackDeserializers.BASE_DOCUMENT);
-      module.addDeserializer(BaseEdgeDocument.class, VPackDeserializers.BASE_EDGE_DOCUMENT);
+      //module.addDeserializer(BaseDocument.class, VPackDeserializers.BASE_DOCUMENT);
+      //module.addDeserializer(BaseEdgeDocument.class, VPackDeserializers.BASE_EDGE_DOCUMENT);
 
       module.addDeserializer(Node.class, NODE_DESERIALIZER);
       module.addDeserializer(Edge.class, EDGE_DESERIALIZER);

@@ -33,7 +33,7 @@ public class KnowledgeGraph {
    private ArangoDB _systemDB = null;
    private String nodeTypesCollectionName = "node_types";
    private String edgeTypesCollectionName = "edge_types";
-   private Long count = 0L;
+   private static Long count = 0L;
 
    private static Logger logger = LogManager.getLogger(KnowledgeGraph.class);
 
@@ -55,8 +55,6 @@ public class KnowledgeGraph {
 
          _systemDB = new ArangoDB.Builder().user("root").password("openSesame").serializer(new ArangoJack(MapperHelper.createDefaultMapper()))
                .build();
-         /* _systemDB = new ArangoDB.Builder().user("root").password("openSesame").serializer(new ArangoJack()).serializer(arangoJackfForNode).build(); */
-         /* _systemDB = new ArangoDB.Builder().user("root").password("openSesame").serializer(arangoJackfForNode).build(); */
       }
       return _systemDB;
    }
@@ -239,9 +237,6 @@ public class KnowledgeGraph {
       }
       query.append(" RETURN t");
 
-      // query = new StringBuilder("FOR t IN testCollection FILTER t.foo == @foo
-      // RETURN t");
-
       logger.debug("query = '" + query.toString() + "'");
       logger.debug("bindVars = " + bindVars);
       return query;
@@ -249,8 +244,6 @@ public class KnowledgeGraph {
 
    public List<PathEntity<Node, Edge>> expandRight(Node leftNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses) {
-      // TODO: see line 1260+ of:
-      // https://github.com/arangodb/arangodb-java-driver/blob/4d39da8111bd36cec5207b193bbac2f11a68abfb/src/test/java/com/arangodb/ArangoDatabaseTest.java
       final TraversalOptions options = new TraversalOptions().edgeCollection(edgeCollection.name()).startVertex(leftNode.getId())
             .direction(Direction.outbound);
       final TraversalEntity<Node, Edge> traversal = _userDB.executeTraversal(Node.class, Edge.class, options);
@@ -271,11 +264,11 @@ public class KnowledgeGraph {
       return results;
    }
 
-   public String generateKey() {
+   public static String generateKey() {
       return "KEY_" + System.currentTimeMillis() + count++;
    }
 
-   public String generateName() {
+   public static String generateName() {
       return "NAME_" + System.currentTimeMillis() + count++;
    }
 

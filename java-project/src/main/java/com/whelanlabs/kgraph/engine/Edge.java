@@ -10,10 +10,6 @@ public class Edge extends BaseEdgeDocument {
       super(edgeKey, leftID, rightID);
    }
 
-   public Edge() {
-      super();
-   }
-
    public Edge(final Map<String, Object> properties) {
       super(properties);
    }
