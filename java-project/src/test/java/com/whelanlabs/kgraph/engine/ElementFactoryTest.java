@@ -1,12 +1,6 @@
 package com.whelanlabs.kgraph.engine;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
-
-import com.whelanlabs.kgraph.engine.ElementFactory;
-import com.whelanlabs.kgraph.engine.KnowledgeGraph;
-import com.whelanlabs.kgraph.engine.Node;
 
 public class ElementFactoryTest {
 

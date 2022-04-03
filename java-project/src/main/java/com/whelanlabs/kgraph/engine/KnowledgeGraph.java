@@ -27,7 +27,6 @@ import com.whelanlabs.kgraph.serialization.MapperHelper;
 
 public class KnowledgeGraph {
 
-   // private ArangoDB arangoDB;
    private ArangoDatabase _userDB;
    private DbName _db_name;
    private ArangoDB _systemDB = null;
@@ -244,23 +243,28 @@ public class KnowledgeGraph {
 
    public List<PathEntity<Node, Edge>> expandRight(Node leftNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses) {
-      final TraversalOptions options = new TraversalOptions().edgeCollection(edgeCollection.name()).startVertex(leftNode.getId())
-            .direction(Direction.outbound);
-      final TraversalEntity<Node, Edge> traversal = _userDB.executeTraversal(Node.class, Edge.class, options);
-      final Collection<Node> vertices = traversal.getVertices();
+      return expand(leftNode, edgeCollection, relClauses, otherSideClauses, Direction.outbound);
+   }
 
+   public List<PathEntity<Node, Edge>> expandLeft(Node rightNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
+         List<QueryClause> otherSideClauses) {
+      return expand(rightNode, edgeCollection, relClauses, otherSideClauses, Direction.inbound);
+   }
+
+   protected List<PathEntity<Node, Edge>> expand(Node leftNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
+         List<QueryClause> otherSideClauses, Direction direction) {
+      final TraversalOptions options = new TraversalOptions().edgeCollection(edgeCollection.name()).startVertex(leftNode.getId())
+            .direction(direction);
+      final TraversalEntity<Node, Edge> traversal = _userDB.executeTraversal(Node.class, Edge.class, options);
       Collection<PathEntity<Node, Edge>> paths = traversal.getPaths();
       Iterator<PathEntity<Node, Edge>> pathsItr = paths.iterator();
-      // List<PathEntity<Node, Edge>>
       List<PathEntity<Node, Edge>> results = new ArrayList<PathEntity<Node, Edge>>();
       while (pathsItr.hasNext()) {
          PathEntity<Node, Edge> currentPath = pathsItr.next();
          if (currentPath.getEdges() != null) {
             results.add(pathsItr.next());
          }
-
       }
-
       return results;
    }
 

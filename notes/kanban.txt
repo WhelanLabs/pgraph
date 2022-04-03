@@ -10,11 +10,13 @@
 
 * create custom node and edge classes (children of ootb ones with tighter graph support)
 
+* expandLeft simple single level
+
 ##########################################################
 # WIP
 ##########################################################
 
-* expandLeft simple single level
+* expandRight complex (one relClause) single level
 
 
 
@@ -22,9 +24,11 @@
 # backlog
 ##########################################################
 
-* expandRight complex single level
+* expandRight complex (one relClause) single level
 
-* expandLeft complex single level
+* expandLeft complex (one otherSideClause) single level
+
+* expandRight complex (multiple relClause, multiple otherSideClause) single level
 
 * switch node contructor to specify collection
 
@@ -37,12 +41,6 @@
 * list node collections for given edge collection
 
 * list edge collections for given node collection
-
-
-
-
-
-
 
 
 * support DB access via config file(s) - see ArangoDB java driver source for ideas.
