@@ -28,7 +28,6 @@ public class KnowledgeGraphTest {
 
    @BeforeClass
    public static void setUpBeforeClass() throws Exception {
-      // KnowledgeGraph.removeTablespace(tablespace_name);
       kGraph = new KnowledgeGraph(tablespace_name);
       kGraph.flush();
    }
@@ -93,8 +92,6 @@ public class KnowledgeGraphTest {
       ArangoCollection edgeCollection = kGraph.getEdgeCollection("testEdgeCollection");
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       Edge edge = new Edge(edgeKey, leftNode.getId(), rightNode.getId());
-      //edge.setFrom(leftNode.getId());
-      //edge.setTo(rightNode.getId());
       edge.addAttribute("foo", "bar");
       
       edge.setKey(edgeKey);
@@ -116,8 +113,6 @@ public class KnowledgeGraphTest {
       ArangoCollection edgeCollection = kGraph.getEdgeCollection("testEdgeCollection");
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       Edge edge = new Edge(edgeKey, leftNode.getId(), rightNode.getId());
-      //edge.setFrom(leftNode.getId());
-      //edge.setTo(rightNode.getId());
       edge.addAttribute("foo", "bar");
       
       edge.setKey(edgeKey);
@@ -143,8 +138,6 @@ public class KnowledgeGraphTest {
       ArangoCollection edgeCollection = null;
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       Edge edge = new Edge(edgeKey, leftNode.getId(), rightNode.getId());
-      //edge.setFrom(leftNode.getId());
-      //edge.setTo(rightNode.getId());
       edge.addAttribute("foo", "bar");
       
       edge.setKey(edgeKey);
