@@ -27,6 +27,7 @@ public class SimpleTest {
       // KnowledgeGraph.removeTablespace(tablespace_name);
       kGraph = new KnowledgeGraph(tablespace_name);
       kGraph.flush();
+
    }
 
    @AfterClass

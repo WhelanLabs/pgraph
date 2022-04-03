@@ -25,6 +25,7 @@ import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Direction;
 import com.arangodb.util.MapBuilder;
+import com.whelanlabs.kgraph.serialization.MapperHelper;
 
 public class KnowledgeGraph {
 
@@ -48,12 +49,15 @@ public class KnowledgeGraph {
          _systemDB.createDatabase(db_name);
       }
       _userDB = _systemDB.db(db_name);
-
    }
 
    private synchronized ArangoDB setSystemDB() {
       if (null == _systemDB) {
-         _systemDB = new ArangoDB.Builder().user("root").password("openSesame").serializer(new ArangoJack()).build();
+
+         _systemDB = new ArangoDB.Builder().user("root").password("openSesame").serializer(new ArangoJack(MapperHelper.createDefaultMapper()))
+               .build();
+         /* _systemDB = new ArangoDB.Builder().user("root").password("openSesame").serializer(new ArangoJack()).serializer(arangoJackfForNode).build(); */
+         /* _systemDB = new ArangoDB.Builder().user("root").password("openSesame").serializer(arangoJackfForNode).build(); */
       }
       return _systemDB;
    }
@@ -289,4 +293,5 @@ public class KnowledgeGraph {
    public String generateName() {
       return "NAME_" + UUID.randomUUID().toString();
    }
+
 }
