@@ -33,6 +33,7 @@ public class KnowledgeGraph {
    private ArangoDB _systemDB = null;
    private String nodeTypesCollectionName = "node_types";
    private String edgeTypesCollectionName = "edge_types";
+   private Long count = 0L;
 
    private static Logger logger = LogManager.getLogger(KnowledgeGraph.class);
 
@@ -203,7 +204,7 @@ public class KnowledgeGraph {
       }
       return results;
    }
-   
+
    public List<Edge> queryEdges(ArangoCollection collection, QueryClause... clauses) {
       MapBuilder bindVars = new MapBuilder();
       List<Edge> results = new ArrayList<Edge>();
@@ -271,14 +272,11 @@ public class KnowledgeGraph {
    }
 
    public String generateKey() {
-      return "KEY_" + System.currentTimeMillis(); //UUID.randomUUID().toString();
+      return "KEY_" + System.currentTimeMillis() + count++;
    }
 
    public String generateName() {
-      return "NAME_" + System.currentTimeMillis(); //UUID.randomUUID().toString();
-      // TODO: write defect for UUID based names used in simple tests
-      // see also: https://www.arangodb.com/docs/stable/data-modeling-naming-conventions-collection-and-view-names.html#:~:text=The%20names%20must%20only%20consist,always%20start%20with%20a%20letter.
-      
+      return "NAME_" + System.currentTimeMillis() + count++;
    }
 
 }

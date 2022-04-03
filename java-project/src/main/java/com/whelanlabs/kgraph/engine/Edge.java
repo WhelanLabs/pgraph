@@ -1,7 +1,8 @@
 package com.whelanlabs.kgraph.engine;
 
-import com.arangodb.entity.BaseEdgeDocument;
+import java.util.Map;
 
+import com.arangodb.entity.BaseEdgeDocument;
 
 public class Edge extends BaseEdgeDocument {
 
@@ -11,6 +12,10 @@ public class Edge extends BaseEdgeDocument {
 
    public Edge() {
       super();
+   }
+
+   public Edge(final Map<String, Object> properties) {
+      super(properties);
    }
 
    private static final long serialVersionUID = -4801740400388403434L;
