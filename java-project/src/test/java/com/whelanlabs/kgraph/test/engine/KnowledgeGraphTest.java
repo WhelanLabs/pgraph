@@ -2,9 +2,10 @@ package com.whelanlabs.kgraph.test.engine;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
@@ -13,12 +14,12 @@ import org.junit.Test;
 
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDBException;
-import com.arangodb.entity.PathEntity;
 import com.whelanlabs.kgraph.engine.Edge;
 import com.whelanlabs.kgraph.engine.ElementFactory;
 import com.whelanlabs.kgraph.engine.KnowledgeGraph;
 import com.whelanlabs.kgraph.engine.Node;
 import com.whelanlabs.kgraph.engine.QueryClause;
+import com.whelanlabs.kgraph.engine.QueryClause.Operator;
 
 public class KnowledgeGraphTest {
    private static KnowledgeGraph kGraph = null;
@@ -214,7 +215,7 @@ public class KnowledgeGraphTest {
    }
 
    @Test
-   public void expandRight_tripleExists_getResults() {
+   public void expandRight_noFilters_getResults() {
       final Node leftNode = new Node(KnowledgeGraph.generateKey());
       final Node rightNode = new Node(KnowledgeGraph.generateKey());
       final ArangoCollection testCollection = kGraph.getNodeCollection("testNodeCollection");
@@ -230,13 +231,14 @@ public class KnowledgeGraphTest {
 
       List<QueryClause> relClauses = null;
       List<QueryClause> otherSideClauses = null;
-      Collection<PathEntity<Node, Edge>> results = kGraph.expandRight(leftNode, edgeCollection, relClauses, otherSideClauses);
+      List<Triple<Node, Edge, Node>> results = kGraph.expandRight(leftNode, edgeCollection, relClauses, otherSideClauses);
 
       assert (1 == results.size()) : "results.size() = " + results.size();
 
-      for (PathEntity<Node, Edge> result : results) {
-         logger.debug("result.vertices: " + result.getVertices());
-         logger.debug("result.edges: " + result.getEdges());
+      for (Triple<Node, Edge, Node> result : results) {
+         logger.debug("result.getLeft(): " + result.getLeft());
+         logger.debug("result.getMiddle(): " + result.getMiddle());
+         logger.debug("result.getRight(): " + result.getRight());
       }
    }
 
@@ -283,7 +285,7 @@ public class KnowledgeGraphTest {
    }
 
    @Test
-   public void expandLeft_tripleExists_getResults() {
+   public void expandLeft_noFilters_getResults() {
       final Node leftNode = new Node(KnowledgeGraph.generateKey());
       final Node rightNode = new Node(KnowledgeGraph.generateKey());
       final ArangoCollection testCollection = kGraph.getNodeCollection("testNodeCollection");
@@ -299,13 +301,60 @@ public class KnowledgeGraphTest {
 
       List<QueryClause> relClauses = null;
       List<QueryClause> otherSideClauses = null;
-      Collection<PathEntity<Node, Edge>> results = kGraph.expandLeft(rightNode, edgeCollection, relClauses, otherSideClauses);
+      List<Triple<Node, Edge, Node>> results = kGraph.expandLeft(rightNode, edgeCollection, relClauses, otherSideClauses);
 
       assert (1 == results.size()) : "results.size() = " + results.size();
 
-      for (PathEntity<Node, Edge> result : results) {
-         logger.debug("result.vertices: " + result.getVertices());
-         logger.debug("result.edges: " + result.getEdges());
+      for (Triple<Node, Edge, Node> result : results) {
+         logger.debug("result.getLeft(): " + result.getLeft());
+         logger.debug("result.getMiddle(): " + result.getMiddle());
+         logger.debug("result.getRight(): " + result.getRight());
       }
+   }
+
+   @Test
+   public void expandRight_oneRelClause_getResults() {
+      final Node leftNode = new Node(KnowledgeGraph.generateKey());
+      final Node rightNode1 = new Node(KnowledgeGraph.generateKey());
+      final Node rightNode2 = new Node(KnowledgeGraph.generateKey());
+      final Node rightNode3 = new Node(KnowledgeGraph.generateKey());
+
+      final ArangoCollection testCollection = kGraph.getNodeCollection(KnowledgeGraph.generateName());
+      kGraph.upsertNode(testCollection, leftNode, rightNode1, rightNode2, rightNode3);
+      logger.debug("leftNode.id: " + leftNode.getId());
+      logger.debug("rightNode1.id: " + rightNode1.getId());
+      logger.debug("rightNode2.id: " + rightNode2.getId());
+      logger.debug("rightNode3.id: " + rightNode3.getId());
+
+      ArangoCollection edgeCollection = kGraph.getEdgeCollection(KnowledgeGraph.generateName());
+      String edgeKey1 = leftNode.getKey() + ":" + rightNode1.getKey();
+      String edgeKey2 = leftNode.getKey() + ":" + rightNode2.getKey();
+      String edgeKey3 = leftNode.getKey() + ":" + rightNode3.getKey();
+
+      Edge edge1 = ElementFactory.createEdge(edgeKey1, leftNode, rightNode1);
+      Edge edge2 = ElementFactory.createEdge(edgeKey2, leftNode, rightNode2);
+      Edge edge3 = ElementFactory.createEdge(edgeKey3, leftNode, rightNode3);
+      edge1.addAttribute("edgeVal", "good");
+      edge3.addAttribute("edgeVal", "good");
+
+      ArrayList<Edge> edges = kGraph.upsertEdge(edgeCollection, edge1, edge2, edge3);
+      assert (3 == edges.size()) : "edges.size() = " + edges.size();
+      logger.debug("edge1: " + edge1.toString());
+      logger.debug("edge2: " + edge2.toString());
+      logger.debug("edge3: " + edge3.toString());
+
+      List<QueryClause> relClauses = new ArrayList<>();
+      relClauses.add(new QueryClause("edgeVal", Operator.EQUALS, "good"));
+      List<QueryClause> otherSideClauses = null;
+      List<Triple<Node, Edge, Node>> results = kGraph.expandRight(leftNode, edgeCollection, relClauses, otherSideClauses);
+
+      for (Triple<Node, Edge, Node> result : results) {
+         logger.debug("result.getLeft(): " + result.getLeft());
+         logger.debug("result.getMiddle(): " + result.getMiddle());
+         logger.debug("result.getRight(): " + result.getRight());
+      }
+
+      assert (2 == results.size()) : "results.size() = " + results.size();
+
    }
 }

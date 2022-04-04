@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.arangodb.entity.BaseEdgeDocument;
 
-public class Edge extends BaseEdgeDocument {
+public class Edge extends BaseEdgeDocument implements Element {
 
    public Edge(String edgeKey, String leftID, String rightID) {
       super(edgeKey, leftID, rightID);

@@ -2,10 +2,10 @@ package com.whelanlabs.kgraph.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,13 +16,11 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.PathEntity;
-import com.arangodb.entity.TraversalEntity;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.CollectionCreateOptions;
-import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Direction;
 import com.arangodb.util.MapBuilder;
+import com.whelanlabs.kgraph.engine.QueryClause.Operator;
 import com.whelanlabs.kgraph.serialization.MapperHelper;
 
 public class KnowledgeGraph {
@@ -80,10 +78,17 @@ public class KnowledgeGraph {
    }
 
    public ArrayList<Node> upsertNode(final ArangoCollection collection, final Node... elements) {
-      // TODO: address ACID requirements
       ArrayList<Node> results = new ArrayList<Node>();
       for (Node element : elements) {
          results.add(upsertNode(collection, element));
+      }
+      return results;
+   }
+
+   public ArrayList<Edge> upsertEdge(final ArangoCollection collection, final Edge... elements) {
+      ArrayList<Edge> results = new ArrayList<Edge>();
+      for (Edge element : elements) {
+         results.add(upsertEdge(collection, element));
       }
       return results;
    }
@@ -241,32 +246,62 @@ public class KnowledgeGraph {
       return query;
    }
 
-   public List<PathEntity<Node, Edge>> expandRight(Node leftNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
+   public List<Triple<Node, Edge, Node>> expandRight(Node leftNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses) {
       return expand(leftNode, edgeCollection, relClauses, otherSideClauses, Direction.outbound);
    }
 
-   public List<PathEntity<Node, Edge>> expandLeft(Node rightNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
+   public List<Triple<Node, Edge, Node>> expandLeft(Node rightNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses) {
       return expand(rightNode, edgeCollection, relClauses, otherSideClauses, Direction.inbound);
    }
 
-   protected List<PathEntity<Node, Edge>> expand(Node leftNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
+   protected List<Triple<Node, Edge, Node>> expand(Node startingNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses, Direction direction) {
-      final TraversalOptions options = new TraversalOptions().edgeCollection(edgeCollection.name()).startVertex(leftNode.getId())
-            .direction(direction);
-      final TraversalEntity<Node, Edge> traversal = _userDB.executeTraversal(Node.class, Edge.class, options);
-      Collection<PathEntity<Node, Edge>> paths = traversal.getPaths();
-      Iterator<PathEntity<Node, Edge>> pathsItr = paths.iterator();
-      List<PathEntity<Node, Edge>> results = new ArrayList<PathEntity<Node, Edge>>();
-      while (pathsItr.hasNext()) {
-         PathEntity<Node, Edge> currentPath = pathsItr.next();
-         if (currentPath.getEdges() != null) {
-            results.add(pathsItr.next());
-         }
+      List<Triple<Node, Edge, Node>> results = new ArrayList<>();
+      // QueryClause edgeIDQueryClause = new QueryClause("_from", Operator.EQUALS,
+      // startingNode.getId());
+      QueryClause edgeIDQueryClause = new QueryClause(ElementFactory.getLeftAttrString(direction), Operator.EQUALS, startingNode.getId());
+      List<QueryClause> augmentedRelClauses = new ArrayList<>();
+      if (null != relClauses) {
+         augmentedRelClauses.addAll(relClauses);
       }
+      augmentedRelClauses.add(edgeIDQueryClause);
+      List<Edge> edges = queryEdges(edgeCollection, augmentedRelClauses.toArray(new QueryClause[0]));
+
+      for (Edge edge : edges) { // edge.getTo()
+         QueryClause otherSideIDQueryClause = new QueryClause("_id", Operator.EQUALS, ElementFactory.getRightIdString(direction, edge));
+         List<QueryClause> augmentedOtherSideClauses = new ArrayList<>();
+         if (null != otherSideClauses) {
+            augmentedOtherSideClauses.addAll(otherSideClauses);
+         }
+         augmentedOtherSideClauses.add(otherSideIDQueryClause);
+         String collectionName = ElementFactory.getCollectionName(edge.getTo());
+         ArangoCollection otherSideCollection = _userDB.collection(collectionName);
+         ;
+         List<Node> otherSides = queryNodes(otherSideCollection, augmentedOtherSideClauses.toArray(new QueryClause[0]));
+         results.add(Triple.of(startingNode, edge, otherSides.get(0)));
+      }
+
       return results;
    }
+
+//   protected List<PathEntity<Node, Edge>> expand_old(Node startingNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
+//         List<QueryClause> otherSideClauses, Direction direction) {
+//      final TraversalOptions options = new TraversalOptions().edgeCollection(edgeCollection.name()).startVertex(startingNode.getId())
+//            .direction(direction);
+//      final TraversalEntity<Node, Edge> traversal = _userDB.executeTraversal(Node.class, Edge.class, options);
+//      Collection<PathEntity<Node, Edge>> paths = traversal.getPaths();
+//      Iterator<PathEntity<Node, Edge>> pathsItr = paths.iterator();
+//      List<PathEntity<Node, Edge>> results = new ArrayList<PathEntity<Node, Edge>>();
+//      while (pathsItr.hasNext()) {
+//         PathEntity<Node, Edge> currentPath = pathsItr.next();
+//         if (currentPath.getEdges() != null && currentPath.getEdges().size() > 0) {
+//            results.add(currentPath);
+//         }
+//      }
+//      return results;
+//   }
 
    public static String generateKey() {
       return "KEY_" + System.currentTimeMillis() + count++;

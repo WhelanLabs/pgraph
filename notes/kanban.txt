@@ -18,17 +18,15 @@
 
 * expandRight complex (one relClause) single level
 
-
-
 ##########################################################
 # backlog
 ##########################################################
 
-* expandRight complex (one relClause) single level
-
 * expandLeft complex (one otherSideClause) single level
 
 * expandRight complex (multiple relClause, multiple otherSideClause) single level
+
+* expandRight simple single level with otherSide objects in different collections
 
 * switch node contructor to specify collection
 
