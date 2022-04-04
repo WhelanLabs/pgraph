@@ -12,17 +12,20 @@
 
 * expandLeft simple single level
 
+* expandRight complex (one relClause) single level
+
+* expandLeft complex (one otherSideClause) single level
+
 ##########################################################
 # WIP
 ##########################################################
 
-* expandRight complex (one relClause) single level
+
 
 ##########################################################
 # backlog
 ##########################################################
 
-* expandLeft complex (one otherSideClause) single level
 
 * expandRight complex (multiple relClause, multiple otherSideClause) single level
 

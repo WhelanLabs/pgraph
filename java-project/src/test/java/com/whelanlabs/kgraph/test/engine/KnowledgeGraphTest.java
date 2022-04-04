@@ -348,13 +348,57 @@ public class KnowledgeGraphTest {
       List<QueryClause> otherSideClauses = null;
       List<Triple<Node, Edge, Node>> results = kGraph.expandRight(leftNode, edgeCollection, relClauses, otherSideClauses);
 
+      assert (2 == results.size()) : "results.size() = " + results.size();
+
       for (Triple<Node, Edge, Node> result : results) {
          logger.debug("result.getLeft(): " + result.getLeft());
          logger.debug("result.getMiddle(): " + result.getMiddle());
          logger.debug("result.getRight(): " + result.getRight());
       }
+   }
+
+   @Test
+   public void expandLeft_oneOtherSideClause_getResults() {
+      final Node rightNode = new Node(KnowledgeGraph.generateKey());
+      final Node leftNode1 = new Node(KnowledgeGraph.generateKey());
+      final Node leftNode2 = new Node(KnowledgeGraph.generateKey());
+      final Node leftNode3 = new Node(KnowledgeGraph.generateKey());
+      leftNode1.addAttribute("nodeVal", "good");
+      leftNode3.addAttribute("nodeVal", "good");
+
+      final ArangoCollection testCollection = kGraph.getNodeCollection(KnowledgeGraph.generateName());
+      kGraph.upsertNode(testCollection, rightNode, leftNode1, leftNode2, leftNode3);
+      logger.debug("rightNode.id: " + rightNode.getId());
+      logger.debug("leftNode1.id: " + leftNode1.getId());
+      logger.debug("leftNode2.id: " + leftNode2.getId());
+      logger.debug("leftNode3.id: " + leftNode3.getId());
+
+      ArangoCollection edgeCollection = kGraph.getEdgeCollection(KnowledgeGraph.generateName());
+      String edgeKey1 = leftNode1.getKey() + ":" + rightNode.getKey();
+      String edgeKey2 = leftNode2.getKey() + ":" + rightNode.getKey();
+      String edgeKey3 = leftNode3.getKey() + ":" + rightNode.getKey();
+
+      Edge edge1 = ElementFactory.createEdge(edgeKey1, leftNode1, rightNode);
+      Edge edge2 = ElementFactory.createEdge(edgeKey2, leftNode2, rightNode);
+      Edge edge3 = ElementFactory.createEdge(edgeKey3, leftNode3, rightNode);
+
+      ArrayList<Edge> edges = kGraph.upsertEdge(edgeCollection, edge1, edge2, edge3);
+      assert (3 == edges.size()) : "edges.size() = " + edges.size();
+      logger.debug("edge1: " + edge1.toString());
+      logger.debug("edge2: " + edge2.toString());
+      logger.debug("edge3: " + edge3.toString());
+
+      List<QueryClause> otherSideClauses = new ArrayList<>();
+      otherSideClauses.add(new QueryClause("nodeVal", Operator.EQUALS, "good"));
+      List<QueryClause> relClauses = null;
+      List<Triple<Node, Edge, Node>> results = kGraph.expandLeft(rightNode, edgeCollection, relClauses, otherSideClauses);
 
       assert (2 == results.size()) : "results.size() = " + results.size();
 
+      for (Triple<Node, Edge, Node> result : results) {
+         logger.debug("result.getLeft(): " + result.getLeft());
+         logger.debug("result.getMiddle(): " + result.getMiddle());
+         logger.debug("result.getRight(): " + result.getRight());
+      }
    }
 }

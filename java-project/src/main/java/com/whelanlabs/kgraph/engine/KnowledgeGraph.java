@@ -280,7 +280,9 @@ public class KnowledgeGraph {
          ArangoCollection otherSideCollection = _userDB.collection(collectionName);
          ;
          List<Node> otherSides = queryNodes(otherSideCollection, augmentedOtherSideClauses.toArray(new QueryClause[0]));
-         results.add(Triple.of(startingNode, edge, otherSides.get(0)));
+         if (1 == otherSides.size()) {
+            results.add(Triple.of(startingNode, edge, otherSides.get(0)));
+         }
       }
 
       return results;
