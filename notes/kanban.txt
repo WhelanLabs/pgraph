@@ -18,12 +18,13 @@
 
 * expandRight complex (multiple relClause, multiple otherSideClause) single level
 
+* Switch edge constructor to be object based (not string based)
+
 ##########################################################
 # WIP
 ##########################################################
 
-* Switch edge constructor to be object based (not string based)
-  This still needs 100% code coverage.
+
 
 ##########################################################
 # backlog
