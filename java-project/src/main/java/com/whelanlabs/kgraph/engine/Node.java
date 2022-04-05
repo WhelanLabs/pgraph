@@ -15,11 +15,4 @@ public class Node extends BaseDocument implements Element {
    }
 
    private static final long serialVersionUID = -1109802074556650431L;
-
-   @Override
-   public String getType() {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
 }

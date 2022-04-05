@@ -94,9 +94,10 @@ public class KnowledgeGraph {
    }
 
    public Edge upsertEdge(final Edge edge) {
-      ArangoCollection collection = getEdgeCollection(edge.getType());
+      ArangoCollection collection = null;
       Edge result = null;
       try {
+         collection = getEdgeCollection(edge.getType());
          if (!collection.documentExists(edge.getKey())) {
             collection.insertDocument(edge);
             result = edge;
@@ -112,7 +113,7 @@ public class KnowledgeGraph {
             logger.error("The element is null.");
          }
          if (null != collection) {
-            logger.debug(collection.toString());
+            logger.debug("collection = '" + collection.toString() + "'");
          } else {
             logger.error("The collection is null.");
          }
@@ -209,10 +210,10 @@ public class KnowledgeGraph {
    }
 
    public List<Edge> queryEdges(String collectionName, QueryClause... clauses) {
-      ArangoCollection collection = getEdgeCollection(collectionName);
       MapBuilder bindVars = new MapBuilder();
       List<Edge> results = new ArrayList<Edge>();
       try {
+         ArangoCollection collection = getEdgeCollection(collectionName);
          StringBuilder query = generateQuery(collection, bindVars, clauses);
 
          ArangoCursor<Edge> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), Edge.class);

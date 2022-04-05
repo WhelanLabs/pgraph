@@ -13,9 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.arangodb.ArangoCollection;
-import com.arangodb.ArangoDBException;
 import com.whelanlabs.kgraph.engine.Edge;
-import com.whelanlabs.kgraph.engine.ElementFactory;
 import com.whelanlabs.kgraph.engine.KnowledgeGraph;
 import com.whelanlabs.kgraph.engine.Node;
 import com.whelanlabs.kgraph.engine.QueryClause;
@@ -132,6 +130,22 @@ public class KnowledgeGraphTest {
 
       Edge edge = null;
       kGraph.upsertEdge(edge);
+   }
+
+   @Test(expected = NullPointerException.class)
+   public void upsertEdge_keyIsNull_exception() {
+      final ArangoCollection dates = kGraph.getNodeCollection("testNodeCollection");
+
+      final Node leftNode = new Node(KnowledgeGraph.generateKey());
+      final Node rightNode = new Node(KnowledgeGraph.generateKey());
+      kGraph.upsertNode(dates, leftNode, rightNode);
+
+      String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
+      Edge edge = new Edge(edgeKey, leftNode, rightNode, "someEdgeCollection");
+      edge.addAttribute("foo", "bar");
+
+      edge.setKey(null);
+      edge = kGraph.upsertEdge(edge);
    }
 
    @Test
@@ -327,7 +341,7 @@ public class KnowledgeGraphTest {
 
       assert (2 == results.size()) : "results.size() = " + results.size();
    }
-   
+
    @Test
    public void expandRight_multiRelMultiOtherClauses_getResults() {
       final Node leftNode = new Node(KnowledgeGraph.generateKey());
@@ -370,8 +384,8 @@ public class KnowledgeGraphTest {
       List<Triple<Node, Edge, Node>> results = kGraph.expandRight(leftNode, edgeCollectionName, relClauses, otherSideClauses);
 
       assert (1 == results.size()) : "results.size() = " + results.size();
-      
+
       String resultID = results.get(0).getRight().getId();
-      assert ( rn1id.equals(resultID)) : "rn1id = " + rn1id + ", resultID = " + resultID;
+      assert (rn1id.equals(resultID)) : "rn1id = " + rn1id + ", resultID = " + resultID;
    }
 }

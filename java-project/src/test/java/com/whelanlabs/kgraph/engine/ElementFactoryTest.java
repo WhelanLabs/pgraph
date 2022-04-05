@@ -1,10 +1,31 @@
 package com.whelanlabs.kgraph.engine;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.arangodb.ArangoCollection;
 import com.arangodb.model.TraversalOptions.Direction;
 
 public class ElementFactoryTest {
+
+   private static KnowledgeGraph kGraph = null;
+   private static String tablespace_name = "ElementFactoryTest_db";
+
+   private static Logger logger = LogManager.getLogger(ElementFactoryTest.class);
+
+   @BeforeClass
+   public static void setUpBeforeClass() throws Exception {
+      kGraph = new KnowledgeGraph(tablespace_name);
+      kGraph.flush();
+   }
+
+   @AfterClass
+   public static void tearDownAfterClass() throws Exception {
+      kGraph.cleanup();
+   }
 
    @Test(expected = RuntimeException.class)
    public void getCollectionName_Element_idIsNull_exception() {
@@ -25,7 +46,13 @@ public class ElementFactoryTest {
 
    @Test(expected = RuntimeException.class)
    public void getRightIdString_badDirection_exception() {
-      Edge edge = new Edge(KnowledgeGraph.generateKey(), null, null, "someCollection");
+      final Node leftNode = new Node(KnowledgeGraph.generateKey());
+      final Node rightNode = new Node(KnowledgeGraph.generateKey());
+      final ArangoCollection testCollection = kGraph.getNodeCollection("someCollection");
+      kGraph.upsertNode(testCollection, leftNode, rightNode);
+
+      String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
+      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection");
       ElementFactory.getRightIdString(Direction.any, edge);
    }
 
