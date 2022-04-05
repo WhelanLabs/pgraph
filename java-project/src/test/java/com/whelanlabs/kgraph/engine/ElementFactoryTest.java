@@ -25,7 +25,7 @@ public class ElementFactoryTest {
 
    @Test(expected = RuntimeException.class)
    public void getRightIdString_badDirection_exception() {
-      Edge edge = new Edge(KnowledgeGraph.generateKey(), null, null);
+      Edge edge = new Edge(KnowledgeGraph.generateKey(), null, null, "someCollection");
       ElementFactory.getRightIdString(Direction.any, edge);
    }
 

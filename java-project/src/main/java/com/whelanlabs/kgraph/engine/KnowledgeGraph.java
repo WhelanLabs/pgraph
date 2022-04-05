@@ -85,28 +85,29 @@ public class KnowledgeGraph {
       return results;
    }
 
-   public ArrayList<Edge> upsertEdge(final ArangoCollection collection, final Edge... elements) {
+   public ArrayList<Edge> upsertEdge(final Edge... elements) {
       ArrayList<Edge> results = new ArrayList<Edge>();
       for (Edge element : elements) {
-         results.add(upsertEdge(collection, element));
+         results.add(upsertEdge(element));
       }
       return results;
    }
 
-   public Edge upsertEdge(final ArangoCollection collection, final Edge element) {
+   public Edge upsertEdge(final Edge edge) {
+      ArangoCollection collection = getEdgeCollection(edge.getType());
       Edge result = null;
       try {
-         if (!collection.documentExists(element.getKey())) {
-            collection.insertDocument(element);
-            result = element;
+         if (!collection.documentExists(edge.getKey())) {
+            collection.insertDocument(edge);
+            result = edge;
          } else {
-            logger.debug("Fetch already existing element. (key=" + element.getKey() + ")");
-            result = collection.updateDocument(element.getKey(), element).getNew();
+            logger.debug("Fetch already existing element. (key=" + edge.getKey() + ")");
+            result = collection.updateDocument(edge.getKey(), edge).getNew();
             // result = collection.getDocument(element.getKey(), Edge.class);
          }
       } catch (Exception e) {
-         if (null != element) {
-            logger.debug(element.toString());
+         if (null != edge) {
+            logger.debug(edge.toString());
          } else {
             logger.error("The element is null.");
          }
@@ -120,7 +121,7 @@ public class KnowledgeGraph {
       return result;
    }
 
-   public ArangoCollection getEdgeCollection(String collectionName) {
+   protected ArangoCollection getEdgeCollection(String collectionName) {
       CollectionEntity collectionEntity = null;
       ArangoCollection collection = _userDB.collection(collectionName);
       if (!collection.exists()) {
@@ -207,7 +208,8 @@ public class KnowledgeGraph {
       return results;
    }
 
-   public List<Edge> queryEdges(ArangoCollection collection, QueryClause... clauses) {
+   public List<Edge> queryEdges(String collectionName, QueryClause... clauses) {
+      ArangoCollection collection = getEdgeCollection(collectionName);
       MapBuilder bindVars = new MapBuilder();
       List<Edge> results = new ArrayList<Edge>();
       try {
@@ -246,17 +248,17 @@ public class KnowledgeGraph {
       return query;
    }
 
-   public List<Triple<Node, Edge, Node>> expandRight(Node leftNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
+   public List<Triple<Node, Edge, Node>> expandRight(Node leftNode, String edgeCollectionName, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses) {
-      return expand(leftNode, edgeCollection, relClauses, otherSideClauses, Direction.outbound);
+      return expand(leftNode, edgeCollectionName, relClauses, otherSideClauses, Direction.outbound);
    }
 
-   public List<Triple<Node, Edge, Node>> expandLeft(Node rightNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
+   public List<Triple<Node, Edge, Node>> expandLeft(Node rightNode, String edgeCollectionName, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses) {
-      return expand(rightNode, edgeCollection, relClauses, otherSideClauses, Direction.inbound);
+      return expand(rightNode, edgeCollectionName, relClauses, otherSideClauses, Direction.inbound);
    }
 
-   protected List<Triple<Node, Edge, Node>> expand(Node startingNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
+   protected List<Triple<Node, Edge, Node>> expand(Node startingNode, String edgeCollectionName, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses, Direction direction) {
       List<Triple<Node, Edge, Node>> results = new ArrayList<>();
       // QueryClause edgeIDQueryClause = new QueryClause("_from", Operator.EQUALS,
@@ -267,7 +269,7 @@ public class KnowledgeGraph {
          augmentedRelClauses.addAll(relClauses);
       }
       augmentedRelClauses.add(edgeIDQueryClause);
-      List<Edge> edges = queryEdges(edgeCollection, augmentedRelClauses.toArray(new QueryClause[0]));
+      List<Edge> edges = queryEdges(edgeCollectionName, augmentedRelClauses.toArray(new QueryClause[0]));
 
       for (Edge edge : edges) { // edge.getTo()
          QueryClause otherSideIDQueryClause = new QueryClause("_id", Operator.EQUALS, ElementFactory.getRightIdString(direction, edge));

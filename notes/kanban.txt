@@ -16,24 +16,27 @@
 
 * expandLeft complex (one otherSideClause) single level
 
+* expandRight complex (multiple relClause, multiple otherSideClause) single level
+
 ##########################################################
 # WIP
 ##########################################################
 
-
+* Switch edge constructor to be object based (not string based)
+  This still needs 100% code coverage.
 
 ##########################################################
 # backlog
 ##########################################################
 
 
-* expandRight complex (multiple relClause, multiple otherSideClause) single level
+* combine KnowledgeGraph.upsert[...]() to KnowledgeGraph.upsert()
 
 * expandRight simple single level with otherSide objects in different collections
 
-* switch node contructor to specify collection
+* switch node constructor to specify collection
 
-* Switch edge contructor to be object based (not string based)
+
 
 * list node collections
 

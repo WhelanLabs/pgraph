@@ -48,7 +48,7 @@ public class StockDataLoader {
 
       final ArangoCollection dates = kGraph.getNodeCollection("dates");
       final ArangoCollection tickers = kGraph.getNodeCollection("tickers");
-      final ArangoCollection marketData = kGraph.getEdgeCollection("marketData");
+      String MarketDataEdgeCollectionName = "marketData";
 
       BufferedReader reader;
       try {
@@ -76,7 +76,7 @@ public class StockDataLoader {
                stockDate = kGraph.upsertNode(dates, stockDate);
 
                String edgeKey = stockDate.getKey() + ":" + ticker.getKey();
-               Edge stockDay = new Edge(edgeKey, stockDate.getId(), ticker.getId());
+               Edge stockDay = new Edge(edgeKey, stockDate, ticker, MarketDataEdgeCollectionName);
                // stockDay.setFrom(stockDate.getId());
                // stockDay.setTo(ticker.getId());
                // stockDay.setKey(stockDate.getKey() + ":" + ticker.getKey());
@@ -86,7 +86,7 @@ public class StockDataLoader {
                stockDay.addAttribute("close", tokens[4]);
                stockDay.addAttribute("adjClose", tokens[5]);
                stockDay.addAttribute("volume", tokens[6]);
-               stockDay = kGraph.upsertEdge(marketData, stockDay);
+               stockDay = kGraph.upsertEdge(stockDay);
 
             }
 
