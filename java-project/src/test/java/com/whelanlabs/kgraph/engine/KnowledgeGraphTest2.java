@@ -40,22 +40,22 @@ public class KnowledgeGraphTest2 {
 
    @Test(expected = ArangoDBException.class)
    public void upsertNode_edgeCollection_exception() {
-      final ArangoCollection collection = kGraph.getEdgeCollection(KnowledgeGraph.generateName());
-      final Node baseDoc = new Node(KnowledgeGraph.generateKey());
+      String collectionName = KnowledgeGraph.generateName();
+      final Node baseDoc = new Node(KnowledgeGraph.generateKey(), collectionName);
       baseDoc.addAttribute("foo", "bar");
-      kGraph.upsertNode(collection, baseDoc);
+      kGraph.upsert(baseDoc);
    }
 
-   @Test(expected = RuntimeException.class)
-   public void getEdgeCollection_isNodeCollection_exception() {
-      kGraph.getNodeCollection("node_collection");
-      kGraph.getEdgeCollection("node_collection");
-   }
-
-   @Test(expected = RuntimeException.class)
-   public void getNodeCollection_isEdgeCollection_exception() {
-      kGraph.getEdgeCollection("edge_collection");
-      kGraph.getNodeCollection("edge_collection");
-   }
+//   @Test(expected = RuntimeException.class)
+//   public void getEdgeCollection_isNodeCollection_exception() {
+//      kGraph.getNodeCollection("node_collection");
+//      kGraph.getEdgeCollection("node_collection");
+//   }
+//
+//   @Test(expected = RuntimeException.class)
+//   public void getNodeCollection_isEdgeCollection_exception() {
+//      kGraph.getEdgeCollection("edge_collection");
+//      kGraph.getNodeCollection("edge_collection");
+//   }
 
 }

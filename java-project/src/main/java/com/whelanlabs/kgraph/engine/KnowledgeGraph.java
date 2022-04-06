@@ -15,6 +15,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
 import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.CollectionCreateOptions;
@@ -61,39 +62,57 @@ public class KnowledgeGraph {
       _systemDB.shutdown();
       _systemDB = null;
    }
-
-   public Node upsertNode(final ArangoCollection collection, final Node element) {
-      logger.trace("upsertNode " + element.getKey());
+   
+   public List<Element> upsert(Element... elements) {
+      ArrayList<Element> results = new ArrayList<>();
+      for (Element element : elements) {
+         if(element instanceof  Node) {
+            results.add((Element)_upsert((Node)element));
+         }
+         else if (element instanceof  Edge) {
+            results.add((Element)_upsert((Edge)element));
+         }
+         else {
+            throw new RuntimeException("Unsupported type for insert");
+         }
+      }
+      return results;
+   }
+   
+   
+   private Node _upsert(final Node node) {
+      ArangoCollection collection = getNodeCollection(node.getType());
+      logger.trace("upsertNode " + node.getKey());
       try {
-         if (!collection.documentExists(element.getKey())) {
-            collection.insertDocument(element);
+         if (!collection.documentExists(node.getKey())) {
+            collection.insertDocument(node);
          } else {
-            collection.updateDocument(element.getKey(), element);
+            collection.updateDocument(node.getKey(), node);
          }
       } catch (Exception e) {
-         logger.error(element.toString());
+         logger.error(node.toString());
          throw e;
       }
-      return element;
+      return node;
    }
 
-   public ArrayList<Node> upsertNode(final ArangoCollection collection, final Node... elements) {
-      ArrayList<Node> results = new ArrayList<Node>();
-      for (Node element : elements) {
-         results.add(upsertNode(collection, element));
-      }
-      return results;
-   }
+//   public ArrayList<Node> upsertNode(final Node... nodes) {
+//      ArrayList<Node> results = new ArrayList<Node>();
+//      for (Node node : nodes) {
+//         results.add(upsert(node));
+//      }
+//      return results;
+//   }
+//
+//   public ArrayList<Edge> upsertEdge(final Edge... elements) {
+//      ArrayList<Edge> results = new ArrayList<Edge>();
+//      for (Edge element : elements) {
+//         results.add(upsert(element));
+//      }
+//      return results;
+//   }
 
-   public ArrayList<Edge> upsertEdge(final Edge... elements) {
-      ArrayList<Edge> results = new ArrayList<Edge>();
-      for (Edge element : elements) {
-         results.add(upsertEdge(element));
-      }
-      return results;
-   }
-
-   public Edge upsertEdge(final Edge edge) {
+   private Edge _upsert(final Edge edge) {
       ArangoCollection collection = null;
       Edge result = null;
       try {
@@ -144,7 +163,7 @@ public class KnowledgeGraph {
 
    }
 
-   public ArangoCollection getNodeCollection(String collectionName) {
+   private ArangoCollection getNodeCollection(String collectionName) {
       CollectionEntity collectionEntity = null;
       ArangoCollection result;
       ArangoCollection collection = _userDB.collection(collectionName);
@@ -191,7 +210,8 @@ public class KnowledgeGraph {
       return result;
    }
 
-   public List<Node> queryNodes(ArangoCollection collection, QueryClause... clauses) {
+   public List<Node> queryNodes(String collectionName, QueryClause... clauses) {
+      ArangoCollection collection = _userDB.collection(collectionName);
       MapBuilder bindVars = new MapBuilder();
       List<Node> results = new ArrayList<Node>();
       try {
@@ -280,9 +300,8 @@ public class KnowledgeGraph {
          }
          augmentedOtherSideClauses.add(otherSideIDQueryClause);
          String collectionName = ElementFactory.getCollectionName(edge.getTo());
-         ArangoCollection otherSideCollection = _userDB.collection(collectionName);
-         ;
-         List<Node> otherSides = queryNodes(otherSideCollection, augmentedOtherSideClauses.toArray(new QueryClause[0]));
+
+         List<Node> otherSides = queryNodes(collectionName, augmentedOtherSideClauses.toArray(new QueryClause[0]));
          if (1 == otherSides.size()) {
             results.add(Triple.of(startingNode, edge, otherSides.get(0)));
          }
@@ -314,6 +333,12 @@ public class KnowledgeGraph {
 
    public static String generateName() {
       return "NAME_" + System.currentTimeMillis() + count++;
+   }
+
+   public Long getCount(String typeName) {
+      ArangoCollection collection = _userDB.collection(typeName);
+      Long result = collection.count().getCount();
+      return result;
    }
 
 }

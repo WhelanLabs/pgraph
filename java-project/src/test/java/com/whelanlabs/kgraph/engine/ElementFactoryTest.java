@@ -29,7 +29,7 @@ public class ElementFactoryTest {
 
    @Test(expected = RuntimeException.class)
    public void getCollectionName_Element_idIsNull_exception() {
-      Node node = new Node(KnowledgeGraph.generateKey());
+      Node node = new Node(KnowledgeGraph.generateKey(), "someCollection");
       node.setId("something_without_a_slash");
       ElementFactory.getCollectionName(node);
    }
@@ -46,10 +46,11 @@ public class ElementFactoryTest {
 
    @Test(expected = RuntimeException.class)
    public void getRightIdString_badDirection_exception() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey());
-      final Node rightNode = new Node(KnowledgeGraph.generateKey());
-      final ArangoCollection testCollection = kGraph.getNodeCollection("someCollection");
-      kGraph.upsertNode(testCollection, leftNode, rightNode);
+      String testCollectionName = "someCollection";
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), testCollectionName);
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), testCollectionName);
+      
+      kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection");

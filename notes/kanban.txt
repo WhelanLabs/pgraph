@@ -24,14 +24,12 @@
 # WIP
 ##########################################################
 
-
+* combine KnowledgeGraph.upsert[...]() to KnowledgeGraph.upsert()
 
 ##########################################################
 # backlog
 ##########################################################
 
-
-* combine KnowledgeGraph.upsert[...]() to KnowledgeGraph.upsert()
 
 * expandRight simple single level with otherSide objects in different collections
 

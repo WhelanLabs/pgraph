@@ -31,31 +31,29 @@ public class StockDataLoader {
       logger.info("loader starting");
       KnowledgeGraph kGraph = new KnowledgeGraph(tablespace_name);
 
-      final ArangoCollection node_types = kGraph.getNodeCollection("node_types");
-      final ArangoCollection edge_types = kGraph.getNodeCollection("edge_types");
+      String node_types_name = "node_types";
+      String edge_types_name = "edge_types";
 
-      Node v1 = new Node("dates");
+      Node v1 = new Node("dates", edge_types_name);
       v1.setKey("dates");
-      v1 = kGraph.upsertNode(node_types, v1);
+      v1 = kGraph.upsert(v1);
 
-      Node v2 = new Node("tickers");
-      v2 = kGraph.upsertNode(node_types, v2);
+      Node v2 = new Node("tickers", edge_types_name);
+      v2 = kGraph.upsert(v2);
 
-      Node v3 = new Node("marketData");
+      Node v3 = new Node("marketData", node_types_name);
       v3.addAttribute("left_type", "dates");
       v3.addAttribute("right_type", "tickers");
-      v3 = kGraph.upsertNode(edge_types, v3);
+      v3 = kGraph.upsert(v3);
 
-      final ArangoCollection dates = kGraph.getNodeCollection("dates");
-      final ArangoCollection tickers = kGraph.getNodeCollection("tickers");
       String MarketDataEdgeCollectionName = "marketData";
 
       BufferedReader reader;
       try {
          String filename = "../fetchers/stock_data_fetcher/data/AA_2020-05-07.txt";
 
-         Node ticker = new Node("AA");
-         ticker = kGraph.upsertNode(tickers, ticker);
+         Node ticker = new Node("AA", "tickers");
+         ticker = kGraph.upsert(ticker);
 
          logger.debug("reading: " + filename);
          reader = new BufferedReader(new FileReader(filename));
@@ -69,11 +67,11 @@ public class StockDataLoader {
                String[] tokens = line.split(",");
                LocalDate date = LocalDate.parse(tokens[0]);
 
-               Node stockDate = new Node(date.toString());
+               Node stockDate = new Node(date.toString(), "dates");
                Long dayNumber = ChronoUnit.DAYS.between(epoch, date);
                // System.out.println("Days: " + dayNumber);
                stockDate.addAttribute("date", dayNumber);
-               stockDate = kGraph.upsertNode(dates, stockDate);
+               stockDate = kGraph.upsert(stockDate);
 
                String edgeKey = stockDate.getKey() + ":" + ticker.getKey();
                Edge stockDay = new Edge(edgeKey, stockDate, ticker, MarketDataEdgeCollectionName);
@@ -86,7 +84,7 @@ public class StockDataLoader {
                stockDay.addAttribute("close", tokens[4]);
                stockDay.addAttribute("adjClose", tokens[5]);
                stockDay.addAttribute("volume", tokens[6]);
-               stockDay = kGraph.upsertEdge(stockDay);
+               stockDay = kGraph.upsert(stockDay);
 
             }
 
@@ -95,12 +93,10 @@ public class StockDataLoader {
          }
          reader.close();
 
-         final Node badDate = new Node(UUID.randomUUID().toString());
-         kGraph.upsertNode(dates, badDate);
+         final Node badDate = new Node(UUID.randomUUID().toString(), "dates");
+         kGraph.upsert(badDate);
 
-         // FOR doc IN collection COLLECT WITH COUNT INTO length RETURN length
-         CollectionPropertiesEntity count = dates.count();
-         logger.debug("count: " + count.getCount());
+         logger.debug("count: " + kGraph.getCount("dates"));
 
       } catch (IOException e) {
          e.printStackTrace();

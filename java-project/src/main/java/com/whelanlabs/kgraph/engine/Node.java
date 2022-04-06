@@ -6,8 +6,9 @@ import com.arangodb.entity.BaseDocument;
 
 public class Node extends BaseDocument implements Element {
 
-   public Node(String generateKey) {
-      super(generateKey);
+   public Node(String key, String type) {
+      super(key);
+      this.addAttribute(typeAttrName, type);
    }
 
    public Node(final Map<String, Object> properties) {
