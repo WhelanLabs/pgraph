@@ -22,6 +22,8 @@
 
 * combine KnowledgeGraph.upsert[...]() to KnowledgeGraph.upsert()
 
+* switch node constructor to specify collection
+
 ##########################################################
 # WIP
 ##########################################################
@@ -35,7 +37,7 @@
 
 * expandRight simple single level with otherSide objects in different collections
 
-* switch node constructor to specify collection
+
 
 
 
