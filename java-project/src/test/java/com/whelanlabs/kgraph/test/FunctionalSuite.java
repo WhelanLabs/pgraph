@@ -9,7 +9,7 @@ import com.whelanlabs.kgraph.test.engine.KnowledgeGraphTest;
 
 @RunWith(Suite.class)
 
-@Suite.SuiteClasses({ KnowledgeGraphTest.class, KnowledgeGraphTest2.class, ElementFactoryTest.class})
+@Suite.SuiteClasses({ KnowledgeGraphTest.class, KnowledgeGraphTest2.class, ElementFactoryTest.class })
 
 public class FunctionalSuite {
 }

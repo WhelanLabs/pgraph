@@ -12,7 +12,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.arangodb.ArangoCollection;
+import com.arangodb.ArangoDBException;
 import com.whelanlabs.kgraph.engine.Edge;
 import com.whelanlabs.kgraph.engine.Element;
 import com.whelanlabs.kgraph.engine.KnowledgeGraph;
@@ -42,7 +42,7 @@ public class KnowledgeGraphTest {
       String collectionName = KnowledgeGraph.generateName();
       Node testNode = new Node(KnowledgeGraph.generateKey(), collectionName);
       testNode.addAttribute("foo", "bbar");
-      testNode = kGraph.upsert(testNode);
+      testNode = kGraph.upsert(testNode).getNodes().get(0);
 
       Node result = kGraph.getNodeByKey(testNode.getKey(), collectionName);
       String attr = (String) result.getAttribute("foo");
@@ -71,7 +71,7 @@ public class KnowledgeGraphTest {
       edge.addAttribute("foo", "bar");
 
       edge.setKey(edgeKey);
-      edge = kGraph.upsert(edge);
+      edge = kGraph.upsert(edge).getEdges().get(0);
 
       Edge result = kGraph.getEdgeByKey(edgeKey, "testEdgeCollection");
       String attr = (String) result.getAttribute("foo");
@@ -88,10 +88,9 @@ public class KnowledgeGraphTest {
       Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection");
       edge.addAttribute("foo", "bar");
 
-      edge.setKey(edgeKey);
-      edge = kGraph.upsert(edge);
+      edge = kGraph.upsert(edge).getEdges().get(0);
       edge.addAttribute("foo-foo", "bar-bar");
-      edge = kGraph.upsert(edge);
+      edge = kGraph.upsert(edge).getEdges().get(0);
 
       Edge result = kGraph.getEdgeByKey(edgeKey, "testEdgeCollection");
       String fooAttr = (String) result.getAttribute("foo");
@@ -111,10 +110,10 @@ public class KnowledgeGraphTest {
       edge.addAttribute("foo", "bar");
 
       edge.setKey(edgeKey);
-      edge = kGraph.upsert(edge);
+      edge = kGraph.upsert(edge).getEdges().get(0);
    }
 
-   @Test(expected = NullPointerException.class)
+   @Test(expected = RuntimeException.class)
    public void upsertEdge_edgeIsNull_exception() {
       final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
       final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
@@ -135,7 +134,7 @@ public class KnowledgeGraphTest {
       edge.addAttribute("foo", "bar");
 
       edge.setKey(null);
-      edge = kGraph.upsert(edge);
+      edge = kGraph.upsert(edge).getEdges().get(0);
    }
 
    @Test
@@ -184,7 +183,7 @@ public class KnowledgeGraphTest {
       assert (results.size() > 0) : "results.size() = " + results.size();
    }
 
-   @Test(expected = NullPointerException.class)
+   @Test(expected = ArangoDBException.class)
    public void queryNodes_nullCollection_exception() throws Exception {
       QueryClause queryClause1 = new QueryClause("foo", QueryClause.Operator.EQUALS, null);
       kGraph.queryNodes(null, queryClause1);
@@ -198,7 +197,7 @@ public class KnowledgeGraphTest {
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection");
-      edge = kGraph.upsert(edge);
+      edge = kGraph.upsert(edge).getEdges().get(0);
       logger.debug("edge.id: " + edge.getId());
 
       List<QueryClause> relClauses = null;
@@ -217,7 +216,7 @@ public class KnowledgeGraphTest {
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection2");
       edge.addAttribute("foo", "bar");
-      edge = kGraph.upsert(edge);
+      edge = kGraph.upsert(edge).getEdges().get(0);
       logger.debug("edge.id: " + edge.getId());
 
       QueryClause queryClause = new QueryClause("foo", QueryClause.Operator.EQUALS, "bar");
@@ -235,7 +234,7 @@ public class KnowledgeGraphTest {
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection2");
       edge.addAttribute("foo", "bar");
-      edge = kGraph.upsert(edge);
+      edge = kGraph.upsert(edge).getEdges().get(0);
       logger.debug("edge.id: " + edge.getId());
 
       QueryClause queryClause = new QueryClause("foo", QueryClause.Operator.EQUALS, "bar");
@@ -250,7 +249,7 @@ public class KnowledgeGraphTest {
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection");
-      edge = kGraph.upsert(edge);
+      edge = kGraph.upsert(edge).getEdges().get(0);
       logger.debug("edge.id: " + edge.getId());
 
       List<QueryClause> relClauses = null;
@@ -298,7 +297,7 @@ public class KnowledgeGraphTest {
       final Node rightNode = new Node(KnowledgeGraph.generateKey(), testCollectionName);
       final Node leftNode1 = new Node(KnowledgeGraph.generateKey(), testCollectionName);
       final Node leftNode2 = new Node(KnowledgeGraph.generateKey(), testCollectionName);
-      final Node leftNode3 = new Node(KnowledgeGraph.generateKey(), testCollectionName); 
+      final Node leftNode3 = new Node(KnowledgeGraph.generateKey(), testCollectionName);
       leftNode1.addAttribute("nodeVal", "good");
       leftNode3.addAttribute("nodeVal", "good");
 
@@ -369,5 +368,16 @@ public class KnowledgeGraphTest {
 
       String resultID = results.get(0).getRight().getId();
       assert (rn1id.equals(resultID)) : "rn1id = " + rn1id + ", resultID = " + resultID;
+   }
+
+   @Test
+   public void getCount_countIsOne_getAnswer() {
+      String collectionName = KnowledgeGraph.generateName();
+      Node testNode = new Node(KnowledgeGraph.generateKey(), collectionName);
+      testNode.addAttribute("foo", "bbar");
+      testNode = kGraph.upsert(testNode).getNodes().get(0);
+
+      Long count = kGraph.getCount(collectionName);
+      assert (1 == count);
    }
 }

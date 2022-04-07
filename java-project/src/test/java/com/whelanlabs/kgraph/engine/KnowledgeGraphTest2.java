@@ -1,25 +1,10 @@
 package com.whelanlabs.kgraph.engine;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.arangodb.ArangoCollection;
-import com.arangodb.ArangoDBException;
-import com.whelanlabs.kgraph.engine.Edge;
-import com.whelanlabs.kgraph.engine.ElementFactory;
-import com.whelanlabs.kgraph.engine.KnowledgeGraph;
-import com.whelanlabs.kgraph.engine.Node;
-import com.whelanlabs.kgraph.engine.QueryClause;
-import com.whelanlabs.kgraph.engine.QueryClause.Operator;
 
 public class KnowledgeGraphTest2 {
    private static KnowledgeGraph kGraph = null;
@@ -38,24 +23,50 @@ public class KnowledgeGraphTest2 {
       kGraph.cleanup();
    }
 
-   @Test(expected = ArangoDBException.class)
-   public void upsertNode_edgeCollection_exception() {
+   @Test(expected = RuntimeException.class)
+   public void getEdgeCollection_isNodeCollection_getException() {
       String collectionName = KnowledgeGraph.generateName();
-      final Node baseDoc = new Node(KnowledgeGraph.generateKey(), collectionName);
-      baseDoc.addAttribute("foo", "bar");
-      kGraph.upsert(baseDoc);
+      Node testNode = new Node(KnowledgeGraph.generateKey(), collectionName);
+      testNode.addAttribute("foo", "bbar");
+      testNode = kGraph.upsert(testNode).getNodes().get(0);
+      kGraph.getEdgeCollection(collectionName);
    }
 
-//   @Test(expected = RuntimeException.class)
-//   public void getEdgeCollection_isNodeCollection_exception() {
-//      kGraph.getNodeCollection("node_collection");
-//      kGraph.getEdgeCollection("node_collection");
-//   }
-//
-//   @Test(expected = RuntimeException.class)
-//   public void getNodeCollection_isEdgeCollection_exception() {
-//      kGraph.getEdgeCollection("edge_collection");
-//      kGraph.getNodeCollection("edge_collection");
-//   }
+   @Test(expected = RuntimeException.class)
+   public void getNodeCollection_isEdgeCollection_getException() {
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      kGraph.upsert(leftNode, rightNode);
 
+      String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
+      String testEdgeCollection = KnowledgeGraph.generateName();
+      Edge edge = new Edge(edgeKey, leftNode, rightNode, testEdgeCollection);
+      kGraph.upsert(edge);
+
+      kGraph.getNodeCollection(testEdgeCollection);
+   }
+
+   @Test(expected = RuntimeException.class)
+   public void upsert_nodeKeyIsNull_exception() {
+      final Node node = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      node.setKey(null);
+      kGraph._upsert(node);
+   }
+
+   @Test(expected = RuntimeException.class)
+   public void upsert_edgeKeyIsNull_exception() {
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      kGraph.upsert(leftNode, rightNode);
+
+      String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
+      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection");
+      edge.setKey(null);
+      kGraph._upsert(edge);
+   }
+
+   @Test(expected = RuntimeException.class)
+   public void upsert_edgeIsNull_exception() {
+      kGraph._upsert((Edge) null);
+   }
 }

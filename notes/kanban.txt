@@ -20,11 +20,13 @@
 
 * Switch edge constructor to be object based (not string based)
 
+* combine KnowledgeGraph.upsert[...]() to KnowledgeGraph.upsert()
+
 ##########################################################
 # WIP
 ##########################################################
 
-* combine KnowledgeGraph.upsert[...]() to KnowledgeGraph.upsert()
+
 
 ##########################################################
 # backlog

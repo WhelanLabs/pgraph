@@ -15,7 +15,6 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
 import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.CollectionCreateOptions;
@@ -62,28 +61,26 @@ public class KnowledgeGraph {
       _systemDB.shutdown();
       _systemDB = null;
    }
-   
-   public List<Element> upsert(Element... elements) {
-      ArrayList<Element> results = new ArrayList<>();
+
+   public ElementList<Element> upsert(Element... elements) {
+      ElementList<Element> results = new ElementList<>();
       for (Element element : elements) {
-         if(element instanceof  Node) {
-            results.add((Element)_upsert((Node)element));
-         }
-         else if (element instanceof  Edge) {
-            results.add((Element)_upsert((Edge)element));
-         }
-         else {
+         if (element instanceof Node) {
+            results.add(_upsert((Node) element));
+         } else if (element instanceof Edge) {
+            results.add(_upsert((Edge) element));
+         } else {
             throw new RuntimeException("Unsupported type for insert");
          }
       }
       return results;
    }
-   
-   
-   private Node _upsert(final Node node) {
-      ArangoCollection collection = getNodeCollection(node.getType());
-      logger.trace("upsertNode " + node.getKey());
+
+   protected Node _upsert(final Node node) {
+      ArangoCollection collection = null;
       try {
+         collection = getNodeCollection(node.getType());
+         logger.trace("upsertNode " + node.getKey());
          if (!collection.documentExists(node.getKey())) {
             collection.insertDocument(node);
          } else {
@@ -112,7 +109,7 @@ public class KnowledgeGraph {
 //      return results;
 //   }
 
-   private Edge _upsert(final Edge edge) {
+   protected Edge _upsert(final Edge edge) {
       ArangoCollection collection = null;
       Edge result = null;
       try {
@@ -123,13 +120,13 @@ public class KnowledgeGraph {
          } else {
             logger.debug("Fetch already existing element. (key=" + edge.getKey() + ")");
             result = collection.updateDocument(edge.getKey(), edge).getNew();
-            // result = collection.getDocument(element.getKey(), Edge.class);
+            result = collection.getDocument(edge.getKey(), Edge.class);
          }
       } catch (Exception e) {
          if (null != edge) {
             logger.debug(edge.toString());
          } else {
-            logger.error("The element is null.");
+            logger.error("The edge is null.");
          }
          if (null != collection) {
             logger.debug("collection = '" + collection.toString() + "'");
@@ -163,7 +160,7 @@ public class KnowledgeGraph {
 
    }
 
-   private ArangoCollection getNodeCollection(String collectionName) {
+   protected ArangoCollection getNodeCollection(String collectionName) {
       CollectionEntity collectionEntity = null;
       ArangoCollection result;
       ArangoCollection collection = _userDB.collection(collectionName);
