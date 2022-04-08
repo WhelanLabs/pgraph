@@ -29,6 +29,7 @@ public class ElementFactoryTest {
 
    @Test(expected = RuntimeException.class)
    public void getCollectionName_Element_idIsNull_exception() {
+      logger.debug("getCollectionName_Element_idIsNull_exception");
       Node node = new Node(KnowledgeGraph.generateKey(), "someCollection");
       node.setId("something_without_a_slash");
       ElementFactory.getCollectionName(node);

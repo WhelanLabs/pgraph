@@ -380,4 +380,24 @@ public class KnowledgeGraphTest {
       Long count = kGraph.getCount(collectionName);
       assert (1 == count);
    }
+   
+   @Test
+   public void expandRight_mixedOthersideTypes_getResults() {
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      final Node rightNode1 = new Node(KnowledgeGraph.generateKey(), KnowledgeGraph.generateName());
+      final Node rightNode2 = new Node(KnowledgeGraph.generateKey(), KnowledgeGraph.generateName());
+      kGraph.upsert(leftNode, rightNode1, rightNode2);
+
+      String edgeKey1 = leftNode.getKey() + ":" + rightNode1.getKey();
+      String edgeKey2 = leftNode.getKey() + ":" + rightNode2.getKey();
+      Edge edge1 = new Edge(edgeKey1, leftNode, rightNode1, "testEdgeCollection");
+      Edge edge2 = new Edge(edgeKey2, leftNode, rightNode2, "testEdgeCollection");
+      kGraph.upsert(edge1, edge2);
+
+      List<QueryClause> relClauses = null;
+      List<QueryClause> otherSideClauses = null;
+      List<Triple<Node, Edge, Node>> results = kGraph.expandRight(leftNode, "testEdgeCollection", relClauses, otherSideClauses);
+
+      assert (2 == results.size()) : "results.size() = " + results.size();
+   }
 }

@@ -93,22 +93,6 @@ public class KnowledgeGraph {
       return node;
    }
 
-//   public ArrayList<Node> upsertNode(final Node... nodes) {
-//      ArrayList<Node> results = new ArrayList<Node>();
-//      for (Node node : nodes) {
-//         results.add(upsert(node));
-//      }
-//      return results;
-//   }
-//
-//   public ArrayList<Edge> upsertEdge(final Edge... elements) {
-//      ArrayList<Edge> results = new ArrayList<Edge>();
-//      for (Edge element : elements) {
-//         results.add(upsert(element));
-//      }
-//      return results;
-//   }
-
    protected Edge _upsert(final Edge edge) {
       ArangoCollection collection = null;
       Edge result = null;
@@ -145,7 +129,6 @@ public class KnowledgeGraph {
          collectionEntity = _userDB.createCollection(collectionName, new CollectionCreateOptions().type(CollectionType.EDGES));
       } else {
          collectionEntity = collection.getInfo();
-         logger.debug("createEdgeCollection - result.getType() = " + collectionEntity.getType());
          if (!"EDGES".equals(collectionEntity.getType().toString())) {
             throw new RuntimeException("Non-EDGES collection already exsists. (" + collectionEntity.getType() + ")");
          }
@@ -306,23 +289,6 @@ public class KnowledgeGraph {
 
       return results;
    }
-
-//   protected List<PathEntity<Node, Edge>> expand_old(Node startingNode, ArangoCollection edgeCollection, List<QueryClause> relClauses,
-//         List<QueryClause> otherSideClauses, Direction direction) {
-//      final TraversalOptions options = new TraversalOptions().edgeCollection(edgeCollection.name()).startVertex(startingNode.getId())
-//            .direction(direction);
-//      final TraversalEntity<Node, Edge> traversal = _userDB.executeTraversal(Node.class, Edge.class, options);
-//      Collection<PathEntity<Node, Edge>> paths = traversal.getPaths();
-//      Iterator<PathEntity<Node, Edge>> pathsItr = paths.iterator();
-//      List<PathEntity<Node, Edge>> results = new ArrayList<PathEntity<Node, Edge>>();
-//      while (pathsItr.hasNext()) {
-//         PathEntity<Node, Edge> currentPath = pathsItr.next();
-//         if (currentPath.getEdges() != null && currentPath.getEdges().size() > 0) {
-//            results.add(currentPath);
-//         }
-//      }
-//      return results;
-//   }
 
    public static String generateKey() {
       return "KEY_" + System.currentTimeMillis() + count++;

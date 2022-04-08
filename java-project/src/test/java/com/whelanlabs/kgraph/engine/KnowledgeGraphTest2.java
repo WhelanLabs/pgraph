@@ -25,6 +25,7 @@ public class KnowledgeGraphTest2 {
 
    @Test(expected = RuntimeException.class)
    public void getEdgeCollection_isNodeCollection_getException() {
+      logger.debug("getEdgeCollection_isNodeCollection_getException");
       String collectionName = KnowledgeGraph.generateName();
       Node testNode = new Node(KnowledgeGraph.generateKey(), collectionName);
       testNode.addAttribute("foo", "bbar");

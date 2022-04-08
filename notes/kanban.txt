@@ -24,6 +24,8 @@
 
 * switch node constructor to specify collection
 
+* expandRight simple single level with otherSide objects in different collections
+
 ##########################################################
 # WIP
 ##########################################################
@@ -33,12 +35,6 @@
 ##########################################################
 # backlog
 ##########################################################
-
-
-* expandRight simple single level with otherSide objects in different collections
-
-
-
 
 
 * list node collections
