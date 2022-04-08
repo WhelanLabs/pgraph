@@ -334,4 +334,11 @@ public class KnowledgeGraph {
       return results;
    }
 
+   public List<String> getEdgeTypes() {
+      List<Edge> edges = queryEdges(edgeTypesCollectionName);
+      List<String> results = edges.stream()
+            .map(object -> object.getKey())
+            .collect(Collectors.toList());
+      return results;
+   }
 }

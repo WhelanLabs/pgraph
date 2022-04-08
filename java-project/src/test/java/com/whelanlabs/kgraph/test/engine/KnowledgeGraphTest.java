@@ -417,4 +417,25 @@ public class KnowledgeGraphTest {
       assert (nodeTypes.contains(nodeType2)) : "nodeTypes = " + nodeTypes;
       assert (nodeTypes.contains(nodeType3)) : "nodeTypes = " + nodeTypes;
    }
+   
+   @Test
+   public void getEdgeTypes_typesExist_getResults() {
+      Node node1 = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      Node node2 = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      Node node3 = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      kGraph.upsert(node1, node2, node3);
+      
+      String edgeType1 = KnowledgeGraph.generateName();
+      String edgeType2 = KnowledgeGraph.generateName();
+      String edgeType3 = KnowledgeGraph.generateName();
+      Edge edge1 = new Edge(KnowledgeGraph.generateKey(), node1, node2, edgeType1);
+      Edge edge2 = new Edge(KnowledgeGraph.generateKey(), node1, node3, edgeType2);
+      Edge edge3 = new Edge(KnowledgeGraph.generateKey(), node2, node3, edgeType3);
+      
+      List<String> edgeTypes = kGraph.getEdgeTypes();
+      assert (edgeTypes.size() >= 3) : "edgeTypes = " + edgeTypes;
+      assert (edgeTypes.contains(edgeType1)) : "edgeTypes = " + edgeTypes;
+      assert (edgeTypes.contains(edgeType2)) : "edgeTypes = " + edgeTypes;
+      assert (edgeTypes.contains(edgeType3)) : "edgeTypes = " + edgeTypes;
+   }
 }

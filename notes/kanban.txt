@@ -38,7 +38,6 @@
 # backlog
 ##########################################################
 
-* list edge collections
 
 * list node collections for given edge collection
 
