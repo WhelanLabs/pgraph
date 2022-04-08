@@ -2,8 +2,13 @@ package com.whelanlabs.kgraph.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +35,7 @@ public class KnowledgeGraph {
    private ArangoDB _systemDB = null;
    private String nodeTypesCollectionName = "node_types";
    private String edgeTypesCollectionName = "edge_types";
+   private Set<String> nodeTypesCache = new HashSet<>();
    private static Long count = 0L;
 
    private static Logger logger = LogManager.getLogger(KnowledgeGraph.class);
@@ -79,6 +85,7 @@ public class KnowledgeGraph {
    protected Node _upsert(final Node node) {
       ArangoCollection collection = null;
       try {
+         addNodeType(node.getType());
          collection = getNodeCollection(node.getType());
          logger.trace("upsertNode " + node.getKey());
          if (!collection.documentExists(node.getKey())) {
@@ -91,6 +98,20 @@ public class KnowledgeGraph {
          throw e;
       }
       return node;
+   }
+
+   private void addNodeType(String type) {
+      ArangoCollection nodeTypesCollection = getNodeCollection(nodeTypesCollectionName);
+      if(!nodeTypesCache.contains(type)) {
+         if (!nodeTypesCollection.documentExists(type)) {
+            Map<String, Object> props = new HashMap<>();
+            // props.put(typeAttrName, nodeTypesCollection)
+            Node node = new Node(props);
+            node.setKey(type);
+            nodeTypesCollection.insertDocument(node);
+            nodeTypesCache.add(type);
+         }
+      }
    }
 
    protected Edge _upsert(final Edge edge) {
@@ -199,7 +220,6 @@ public class KnowledgeGraph {
 
          ArangoCursor<Node> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), Node.class);
          cursor.forEachRemaining(aDocument -> {
-            System.out.println("cursor element!");
             results.add(aDocument);
          });
       } catch (Exception e) {
@@ -230,17 +250,19 @@ public class KnowledgeGraph {
    private StringBuilder generateQuery(ArangoCollection collection, MapBuilder bindVars, QueryClause... clauses) {
       StringBuilder query = new StringBuilder("FOR t IN ");
       query.append(collection.name());
-      query.append(" FILTER ");
-      Boolean firstCollection = true;
-      for (QueryClause clause : clauses) {
-         if (firstCollection) {
-            firstCollection = false;
-         } else {
-            query.append(" AND ");
+      if(clauses.length > 0) {
+         query.append(" FILTER ");
+         Boolean firstCollection = true;
+         for (QueryClause clause : clauses) {
+            if (firstCollection) {
+               firstCollection = false;
+            } else {
+               query.append(" AND ");
+            }
+            query.append("t.");
+            query.append(clause.toAQL());
+            bindVars.put(clause.getName(), clause.getValue());
          }
-         query.append("t.");
-         query.append(clause.toAQL());
-         bindVars.put(clause.getName(), clause.getValue());
       }
       query.append(" RETURN t");
 
@@ -302,6 +324,14 @@ public class KnowledgeGraph {
       ArangoCollection collection = _userDB.collection(typeName);
       Long result = collection.count().getCount();
       return result;
+   }
+
+   public List<String> getNodeTypes() {
+      List<Node> nodes = queryNodes(nodeTypesCollectionName);
+      List<String> results = nodes.stream()
+            .map(object -> object.getKey())
+            .collect(Collectors.toList());
+      return results;
    }
 
 }

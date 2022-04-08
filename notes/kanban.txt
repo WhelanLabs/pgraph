@@ -26,18 +26,17 @@
 
 * expandRight simple single level with otherSide objects in different collections
 
+* list node collections
+
 ##########################################################
 # WIP
 ##########################################################
 
-
+* list edge collections
 
 ##########################################################
 # backlog
 ##########################################################
-
-
-* list node collections
 
 * list edge collections
 
@@ -45,5 +44,10 @@
 
 * list edge collections for given node collection
 
+* list node collections for edge left
+
+* list node collections for edge left
 
 * support DB access via config file(s) - see ArangoDB java driver source for ideas.
+
+* Big load test
