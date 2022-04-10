@@ -36,6 +36,7 @@ public class KnowledgeGraph {
    private String nodeTypesCollectionName = "node_types";
    private String edgeTypesCollectionName = "edge_types";
    private Set<String> nodeTypesCache = new HashSet<>();
+   private Set<Triple<String, String, String>> edgeTypesCache = new HashSet<>();
    private static Long count = 0L;
 
    private static Logger logger = LogManager.getLogger(KnowledgeGraph.class);
@@ -101,8 +102,8 @@ public class KnowledgeGraph {
    }
 
    private void addNodeType(String type) {
-      ArangoCollection nodeTypesCollection = getNodeCollection(nodeTypesCollectionName);
       if(!nodeTypesCache.contains(type)) {
+         ArangoCollection nodeTypesCollection = getNodeCollection(nodeTypesCollectionName);
          if (!nodeTypesCollection.documentExists(type)) {
             Map<String, Object> props = new HashMap<>();
             // props.put(typeAttrName, nodeTypesCollection)
@@ -114,10 +115,33 @@ public class KnowledgeGraph {
       }
    }
 
+   private void addEdgeType(Edge edge) {
+      String edgeType = edge.getType();
+      String leftType = edge.getAttribute(Edge.leftTypeAttrName).toString();
+      String rightType = edge.getAttribute(Edge.rightTypeAttrName).toString();
+      
+      Triple<String, String, String> thisEdgeType = Triple.of(leftType, edgeType, rightType);
+      
+      if(!edgeTypesCache.contains(thisEdgeType)) {
+         ArangoCollection edgeTypesCollection = getNodeCollection(edgeTypesCollectionName);
+
+         if (!edgeTypesCollection.documentExists(type)) {
+            Map<String, Object> props = new HashMap<>();
+            props.put(Edge.leftTypeAttrName, leftType);
+            props.put(Edge.rightTypeAttrName, rightType);
+            Node node = new Node(props);
+            node.setKey(type);
+            edgeTypesCollection.insertDocument(node);
+            nodeTypesCache.add(type);
+         }
+      }
+   }
+   
    protected Edge _upsert(final Edge edge) {
       ArangoCollection collection = null;
       Edge result = null;
       try {
+         addEdgeType(edge);
          collection = getEdgeCollection(edge.getType());
          if (!collection.documentExists(edge.getKey())) {
             collection.insertDocument(edge);
@@ -334,11 +358,12 @@ public class KnowledgeGraph {
       return results;
    }
 
-   public List<String> getEdgeTypes() {
+   public List<Triple<String, String, String>> getEdgeTypes() {
       List<Edge> edges = queryEdges(edgeTypesCollectionName);
-      List<String> results = edges.stream()
-            .map(object -> object.getKey())
-            .collect(Collectors.toList());
+      List<Triple<String, String, String>> results = new ArrayList<>();
+      for(Edge edge : edges) {
+         results.add(Triple.of(edge.getAttribute(Edge.leftTypeAttrName).toString(), edge.getId(), edge.getAttribute(Edge.rightTypeAttrName).toString()));
+      }
       return results;
    }
 }

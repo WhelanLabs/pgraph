@@ -431,8 +431,9 @@ public class KnowledgeGraphTest {
       Edge edge1 = new Edge(KnowledgeGraph.generateKey(), node1, node2, edgeType1);
       Edge edge2 = new Edge(KnowledgeGraph.generateKey(), node1, node3, edgeType2);
       Edge edge3 = new Edge(KnowledgeGraph.generateKey(), node2, node3, edgeType3);
+      kGraph.upsert(edge1, edge2, edge3);
       
-      List<String> edgeTypes = kGraph.getEdgeTypes();
+      List<Triple<String, String, String>> edgeTypes = kGraph.getEdgeTypes();
       assert (edgeTypes.size() >= 3) : "edgeTypes = " + edgeTypes;
       assert (edgeTypes.contains(edgeType1)) : "edgeTypes = " + edgeTypes;
       assert (edgeTypes.contains(edgeType2)) : "edgeTypes = " + edgeTypes;
