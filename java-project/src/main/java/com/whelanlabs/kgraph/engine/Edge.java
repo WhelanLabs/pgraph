@@ -8,6 +8,7 @@ public class Edge extends BaseEdgeDocument implements Element {
 
    public static final String leftTypeAttrName = "__left_collection";
    public static final String rightTypeAttrName = "__right_collection";
+   public static final String edgeTypeAttrName = "__edge_collection";
 
    public Edge(String edgeKey, Node left, Node right, String type) {
       super(edgeKey, left.getId(), right.getId());

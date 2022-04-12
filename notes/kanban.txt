@@ -28,11 +28,13 @@
 
 * list node collections
 
+* list edge collections
+
 ##########################################################
 # WIP
 ##########################################################
 
-* list edge collections
+* list node collections for given edge collection
 
 ##########################################################
 # backlog

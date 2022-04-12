@@ -1,9 +1,11 @@
 package com.whelanlabs.kgraph.test.engine;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
@@ -433,10 +435,26 @@ public class KnowledgeGraphTest {
       Edge edge3 = new Edge(KnowledgeGraph.generateKey(), node2, node3, edgeType3);
       kGraph.upsert(edge1, edge2, edge3);
       
-      List<Triple<String, String, String>> edgeTypes = kGraph.getEdgeTypes();
+      List<Node> edgeTypes = kGraph.getEdgeTypes();
       assert (edgeTypes.size() >= 3) : "edgeTypes = " + edgeTypes;
-      assert (edgeTypes.contains(edgeType1)) : "edgeTypes = " + edgeTypes;
-      assert (edgeTypes.contains(edgeType2)) : "edgeTypes = " + edgeTypes;
-      assert (edgeTypes.contains(edgeType3)) : "edgeTypes = " + edgeTypes;
+      String edge1Str = node1.getType() + ":" + edge1.getType() + ":" + node2.getType();
+      logger.debug("edge1Str = " + edge1Str);
+      String edge2Str = node1.getType() + ":" + edge2.getType() + ":" + node3.getType();
+      logger.debug("edge2Str = " + edge2Str);
+      String edge3Str = node2.getType() + ":" + edge3.getType() + ":" + node3.getType();
+      logger.debug("edge1Str = " + edge3Str);
+      
+      List<String> edgeTypesIDs = edgeTypes.stream()
+            .map(object -> object.getKey())
+            .collect(Collectors.toList());
+      
+      assert (edgeTypesIDs.contains(edge1Str)) : "edgeTypes = " + edgeTypes;
+      assert (edgeTypesIDs.contains(edge2Str)) : "edgeTypes = " + edgeTypes;
+      assert (edgeTypesIDs.contains(edge3Str)) : "edgeTypes = " + edgeTypes;
+   }
+   
+   @Test
+   public void getEdgeTypes_givenEdgeCollectionType_getResults() {
+      fail("not implemented");
    }
 }
