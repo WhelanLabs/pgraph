@@ -28,26 +28,29 @@
 
 * list node collections
 
-* list edge collections
+* getEdgeTypesForLeftType
+
+
 
 ##########################################################
 # WIP
 ##########################################################
 
-* list node collections for given edge collection
+
 
 ##########################################################
 # backlog
 ##########################################################
 
 
-* list node collections for given edge collection
+* getEdgeTypesForRightType
 
-* list edge collections for given node collection
+* getLeftTypesForEdgeType
 
-* list node collections for edge left
+* getRightTypesforEdgeType
 
-* list node collections for edge left
+* replace "Collection" with "Type" in kgraph language.
+
 
 * support DB access via config file(s) - see ArangoDB java driver source for ideas.
 

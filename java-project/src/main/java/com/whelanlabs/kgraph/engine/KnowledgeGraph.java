@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -363,5 +364,15 @@ public class KnowledgeGraph {
          results.add(edgeType);
       }
       return results;
+   }
+
+   public List<String> getEdgeTypesForLeftType(String nodeType1) {
+      QueryClause queryClause = new QueryClause(Edge.leftTypeAttrName, QueryClause.Operator.EQUALS, nodeType1);
+      List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
+      List<String> edgeTypesIDs = edgeTypeNodes.stream()
+            .map(object -> object.getAttribute(Edge.edgeTypeAttrName).toString())
+            .collect(Collectors.toList());
+      List<String> edgeTypesIDsNoDups = new ArrayList<String>(new LinkedHashSet<>(edgeTypesIDs));
+      return edgeTypesIDsNoDups;
    }
 }
