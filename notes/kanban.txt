@@ -34,7 +34,7 @@
 
 * getLeftTypesForEdgeType
 
-
+* getRightTypesforEdgeType
 
 ##########################################################
 # WIP
@@ -46,7 +46,7 @@
 # backlog
 ##########################################################
 
-* getRightTypesforEdgeType
+
 
 * replace "Collection" with "Type" in kgraph language.
 

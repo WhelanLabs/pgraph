@@ -395,4 +395,14 @@ public class KnowledgeGraph {
       List<String> leftTypesNoDups = new ArrayList<String>(new LinkedHashSet<>(leftTypes));
       return leftTypesNoDups;
    }
+
+   public List<String> getRightTypesforEdgeType(String edgeType) {
+      QueryClause queryClause = new QueryClause(Edge.edgeTypeAttrName, QueryClause.Operator.EQUALS, edgeType);
+      List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
+      List<String> leftTypes = edgeTypeNodes.stream()
+            .map(object -> object.getAttribute(Edge.rightTypeAttrName).toString())
+            .collect(Collectors.toList());
+      List<String> leftTypesNoDups = new ArrayList<String>(new LinkedHashSet<>(leftTypes));
+      return leftTypesNoDups;
+   }
 }
