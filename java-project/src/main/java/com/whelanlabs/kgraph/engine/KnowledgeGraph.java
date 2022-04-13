@@ -369,20 +369,30 @@ public class KnowledgeGraph {
    public List<String> getEdgeTypesForLeftType(String leftType) {
       QueryClause queryClause = new QueryClause(Edge.leftTypeAttrName, QueryClause.Operator.EQUALS, leftType);
       List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
-      List<String> edgeTypesIDs = edgeTypeNodes.stream()
+      List<String> edgeTypes = edgeTypeNodes.stream()
             .map(object -> object.getAttribute(Edge.edgeTypeAttrName).toString())
             .collect(Collectors.toList());
-      List<String> edgeTypesIDsNoDups = new ArrayList<String>(new LinkedHashSet<>(edgeTypesIDs));
-      return edgeTypesIDsNoDups;
+      List<String> edgeTypesNoDups = new ArrayList<String>(new LinkedHashSet<>(edgeTypes));
+      return edgeTypesNoDups;
    }
 
    public List<String> getEdgeTypesForRightType(String rightType) {
       QueryClause queryClause = new QueryClause(Edge.rightTypeAttrName, QueryClause.Operator.EQUALS, rightType);
       List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
-      List<String> edgeTypesIDs = edgeTypeNodes.stream()
+      List<String> edgeTypes = edgeTypeNodes.stream()
             .map(object -> object.getAttribute(Edge.edgeTypeAttrName).toString())
             .collect(Collectors.toList());
-      List<String> edgeTypesIDsNoDups = new ArrayList<String>(new LinkedHashSet<>(edgeTypesIDs));
-      return edgeTypesIDsNoDups;
+      List<String> edgeTypesNoDups = new ArrayList<String>(new LinkedHashSet<>(edgeTypes));
+      return edgeTypesNoDups;
+   }
+
+   public List<String> getLeftTypesForEdgeType(String edgeType) {
+      QueryClause queryClause = new QueryClause(Edge.edgeTypeAttrName, QueryClause.Operator.EQUALS, edgeType);
+      List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
+      List<String> leftTypes = edgeTypeNodes.stream()
+            .map(object -> object.getAttribute(Edge.leftTypeAttrName).toString())
+            .collect(Collectors.toList());
+      List<String> leftTypesNoDups = new ArrayList<String>(new LinkedHashSet<>(leftTypes));
+      return leftTypesNoDups;
    }
 }

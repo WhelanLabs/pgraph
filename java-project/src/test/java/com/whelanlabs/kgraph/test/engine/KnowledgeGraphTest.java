@@ -382,7 +382,7 @@ public class KnowledgeGraphTest {
       Long count = kGraph.getCount(collectionName);
       assert (1 == count);
    }
-   
+
    @Test
    public void expandRight_mixedOthersideTypes_getResults() {
       final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
@@ -402,7 +402,7 @@ public class KnowledgeGraphTest {
 
       assert (2 == results.size()) : "results.size() = " + results.size();
    }
-   
+
    @Test
    public void getNodeTypes_typesExist_getResults() {
       String nodeType1 = KnowledgeGraph.generateName();
@@ -412,21 +412,21 @@ public class KnowledgeGraphTest {
       Node node2 = new Node(KnowledgeGraph.generateKey(), nodeType2);
       Node node3 = new Node(KnowledgeGraph.generateKey(), nodeType3);
       kGraph.upsert(node1, node2, node3);
-      
+
       List<String> nodeTypes = kGraph.getNodeTypes();
       assert (nodeTypes.size() >= 3) : "nodeTypes = " + nodeTypes;
       assert (nodeTypes.contains(nodeType1)) : "nodeTypes = " + nodeTypes;
       assert (nodeTypes.contains(nodeType2)) : "nodeTypes = " + nodeTypes;
       assert (nodeTypes.contains(nodeType3)) : "nodeTypes = " + nodeTypes;
    }
-   
+
    @Test
    public void getEdgeTypes_typesExist_getResults() {
       Node node1 = new Node(KnowledgeGraph.generateKey(), "testNodeType");
       Node node2 = new Node(KnowledgeGraph.generateKey(), "testNodeType");
       Node node3 = new Node(KnowledgeGraph.generateKey(), "testNodeType");
       kGraph.upsert(node1, node2, node3);
-      
+
       String edgeType1 = KnowledgeGraph.generateName();
       String edgeType2 = KnowledgeGraph.generateName();
       String edgeType3 = KnowledgeGraph.generateName();
@@ -434,7 +434,7 @@ public class KnowledgeGraphTest {
       Edge edge2 = new Edge(KnowledgeGraph.generateKey(), node1, node3, edgeType2);
       Edge edge3 = new Edge(KnowledgeGraph.generateKey(), node2, node3, edgeType3);
       kGraph.upsert(edge1, edge2, edge3);
-      
+
       List<Node> edgeTypes = kGraph.getEdgeTypes();
       assert (edgeTypes.size() >= 3) : "edgeTypes = " + edgeTypes;
       String edge1Str = node1.getType() + ":" + edge1.getType() + ":" + node2.getType();
@@ -443,16 +443,14 @@ public class KnowledgeGraphTest {
       logger.debug("edge2Str = " + edge2Str);
       String edge3Str = node2.getType() + ":" + edge3.getType() + ":" + node3.getType();
       logger.debug("edge1Str = " + edge3Str);
-      
-      List<String> edgeTypesIDs = edgeTypes.stream()
-            .map(object -> object.getKey())
-            .collect(Collectors.toList());
+
+      List<String> edgeTypesIDs = edgeTypes.stream().map(object -> object.getKey()).collect(Collectors.toList());
       assert (edgeTypesIDs.contains(edge1Str)) : "edgeTypes = " + edgeTypes;
       assert (edgeTypesIDs.contains(edge1Str)) : "edgeTypes = " + edgeTypes;
       assert (edgeTypesIDs.contains(edge2Str)) : "edgeTypes = " + edgeTypes;
       assert (edgeTypesIDs.contains(edge3Str)) : "edgeTypes = " + edgeTypes;
    }
-   
+
    @Test
    public void getEdgeTypesForLeftType_givenEdgeTypes_getResults() {
       String nodeType1 = KnowledgeGraph.generateName();
@@ -462,22 +460,21 @@ public class KnowledgeGraphTest {
       Node node2 = new Node(KnowledgeGraph.generateKey(), nodeType2);
       Node node3 = new Node(KnowledgeGraph.generateKey(), nodeType3);
       kGraph.upsert(node1, node2, node3);
-      
+
       String edgeType1 = KnowledgeGraph.generateName();
       String edgeType2 = KnowledgeGraph.generateName();
       Edge edge1 = new Edge(KnowledgeGraph.generateKey(), node1, node2, edgeType1);
       Edge edge2 = new Edge(KnowledgeGraph.generateKey(), node1, node3, edgeType1);
       Edge edge3 = new Edge(KnowledgeGraph.generateKey(), node1, node3, edgeType2);
       kGraph.upsert(edge1, edge2, edge3);
-      
+
       List<String> results = kGraph.getEdgeTypesForLeftType(nodeType1);
-      
+
       assert (results.size() == 2) : "results = " + results;
       assert (results.contains(edgeType1)) : "results = " + results;
       assert (results.contains(edgeType2)) : "results = " + results;
    }
-   
-   //getEdgeTypesForRightType
+
    @Test
    public void getEdgeTypesForRightType_givenEdgeTypes_getResults() {
       String nodeType1 = KnowledgeGraph.generateName();
@@ -487,18 +484,42 @@ public class KnowledgeGraphTest {
       Node node2 = new Node(KnowledgeGraph.generateKey(), nodeType2);
       Node node3 = new Node(KnowledgeGraph.generateKey(), nodeType3);
       kGraph.upsert(node1, node2, node3);
-      
+
       String edgeType1 = KnowledgeGraph.generateName();
       String edgeType2 = KnowledgeGraph.generateName();
       Edge edge1 = new Edge(KnowledgeGraph.generateKey(), node1, node3, edgeType1);
       Edge edge2 = new Edge(KnowledgeGraph.generateKey(), node2, node3, edgeType1);
       Edge edge3 = new Edge(KnowledgeGraph.generateKey(), node3, node3, edgeType2);
       kGraph.upsert(edge1, edge2, edge3);
-      
+
       List<String> results = kGraph.getEdgeTypesForRightType(nodeType3);
-      
+
       assert (results.size() == 2) : "results = " + results;
       assert (results.contains(edgeType1)) : "results = " + results;
       assert (results.contains(edgeType2)) : "results = " + results;
    }
+
+   @Test
+   public void getLeftTypesForEdgeType_givenEdgeTypes_getResults() {
+      String nodeType1 = KnowledgeGraph.generateName();
+      String nodeType2 = KnowledgeGraph.generateName();
+      String nodeType3 = KnowledgeGraph.generateName();
+      Node node1 = new Node(KnowledgeGraph.generateKey(), nodeType1);
+      Node node2 = new Node(KnowledgeGraph.generateKey(), nodeType2);
+      Node node3 = new Node(KnowledgeGraph.generateKey(), nodeType3);
+      kGraph.upsert(node1, node2, node3);
+
+      String edgeType1 = KnowledgeGraph.generateName();
+      Edge edge1 = new Edge(KnowledgeGraph.generateKey(), node1, node3, edgeType1);
+      Edge edge2 = new Edge(KnowledgeGraph.generateKey(), node1, node2, edgeType1);
+      Edge edge3 = new Edge(KnowledgeGraph.generateKey(), node2, node3, edgeType1);
+      kGraph.upsert(edge1, edge2, edge3);
+
+      List<String> results = kGraph.getLeftTypesForEdgeType(edgeType1);
+
+      assert (results.size() == 2) : "results = " + results;
+      assert (results.contains(nodeType1)) : "results = " + results;
+      assert (results.contains(nodeType2)) : "results = " + results;
+   }
+
 }

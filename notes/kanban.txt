@@ -32,6 +32,10 @@
 
 * getEdgeTypesForRightType
 
+* getLeftTypesForEdgeType
+
+
+
 ##########################################################
 # WIP
 ##########################################################
@@ -42,15 +46,11 @@
 # backlog
 ##########################################################
 
-
-
-
-* getLeftTypesForEdgeType
-
 * getRightTypesforEdgeType
 
 * replace "Collection" with "Type" in kgraph language.
 
+* JavaDoc the code
 
 * support DB access via config file(s) - see ArangoDB java driver source for ideas.
 
