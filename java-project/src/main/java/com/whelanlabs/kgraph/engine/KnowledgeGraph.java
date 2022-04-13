@@ -168,39 +168,39 @@ public class KnowledgeGraph {
       return result;
    }
 
-   protected ArangoCollection getEdgeCollection(String collectionName) {
+   protected ArangoCollection getEdgeCollection(String typeName) {
       CollectionEntity collectionEntity = null;
-      ArangoCollection collection = _userDB.collection(collectionName);
+      ArangoCollection collection = _userDB.collection(typeName);
       if (!collection.exists()) {
-         collectionEntity = _userDB.createCollection(collectionName, new CollectionCreateOptions().type(CollectionType.EDGES));
+         collectionEntity = _userDB.createCollection(typeName, new CollectionCreateOptions().type(CollectionType.EDGES));
       } else {
          collectionEntity = collection.getInfo();
          if (!"EDGES".equals(collectionEntity.getType().toString())) {
             throw new RuntimeException("Non-EDGES collection already exsists. (" + collectionEntity.getType() + ")");
          }
       }
-      ArangoCollection result = _userDB.collection(collectionName);
+      ArangoCollection result = _userDB.collection(typeName);
       return result;
    }
 
-   public ArangoCollection createNodeCollection(String collectionName) {
-      _userDB.createCollection(collectionName);
-      return _userDB.collection(collectionName);
+   public ArangoCollection createNodeType(String typeName) {
+      _userDB.createCollection(typeName);
+      return _userDB.collection(typeName);
 
    }
 
-   protected ArangoCollection getNodeCollection(String collectionName) {
+   protected ArangoCollection getNodeCollection(String typeName) {
       CollectionEntity collectionEntity = null;
       ArangoCollection result;
-      ArangoCollection collection = _userDB.collection(collectionName);
+      ArangoCollection collection = _userDB.collection(typeName);
       if (!collection.exists()) {
-         result = createNodeCollection(collectionName);
+         result = createNodeType(typeName);
       } else {
          collectionEntity = collection.getInfo();
          if (!"DOCUMENT".equals(collectionEntity.getType().toString())) {
             throw new RuntimeException("Non-DOCUMENT collection already exsists. (" + collectionEntity.getType() + ")");
          }
-         result = _userDB.collection(collectionName);
+         result = _userDB.collection(typeName);
       }
 
       return result;
@@ -211,8 +211,8 @@ public class KnowledgeGraph {
       return doc;
    }
 
-   public Node getNodeByKey(String key, String collectionName) {
-      Node doc = _userDB.collection(collectionName).getDocument(key, Node.class);
+   public Node getNodeByKey(String key, String typeName) {
+      Node doc = _userDB.collection(typeName).getDocument(key, Node.class);
       return doc;
    }
 
@@ -236,8 +236,8 @@ public class KnowledgeGraph {
       return result;
    }
 
-   public List<Node> queryNodes(String collectionName, QueryClause... clauses) {
-      ArangoCollection collection = _userDB.collection(collectionName);
+   public List<Node> queryNodes(String typeName, QueryClause... clauses) {
+      ArangoCollection collection = _userDB.collection(typeName);
       MapBuilder bindVars = new MapBuilder();
       List<Node> results = new ArrayList<Node>();
       try {
@@ -254,11 +254,11 @@ public class KnowledgeGraph {
       return results;
    }
 
-   public List<Edge> queryEdges(String collectionName, QueryClause... clauses) {
+   public List<Edge> queryEdges(String typeName, QueryClause... clauses) {
       MapBuilder bindVars = new MapBuilder();
       List<Edge> results = new ArrayList<Edge>();
       try {
-         ArangoCollection collection = getEdgeCollection(collectionName);
+         ArangoCollection collection = getEdgeCollection(typeName);
          StringBuilder query = generateQuery(collection, bindVars, clauses);
 
          ArangoCursor<Edge> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), Edge.class);
@@ -326,9 +326,9 @@ public class KnowledgeGraph {
             augmentedOtherSideClauses.addAll(otherSideClauses);
          }
          augmentedOtherSideClauses.add(otherSideIDQueryClause);
-         String collectionName = ElementFactory.getCollectionName(edge.getTo());
+         String typeName = ElementFactory.getTypeName(edge.getTo());
 
-         List<Node> otherSides = queryNodes(collectionName, augmentedOtherSideClauses.toArray(new QueryClause[0]));
+         List<Node> otherSides = queryNodes(typeName, augmentedOtherSideClauses.toArray(new QueryClause[0]));
          if (1 == otherSides.size()) {
             results.add(Triple.of(startingNode, edge, otherSides.get(0)));
          }

@@ -41,12 +41,12 @@ public class KnowledgeGraphTest {
 
    @Test
    public void upsertNode_newNode_added() {
-      String collectionName = KnowledgeGraph.generateName();
-      Node testNode = new Node(KnowledgeGraph.generateKey(), collectionName);
+      String typeName = KnowledgeGraph.generateName();
+      Node testNode = new Node(KnowledgeGraph.generateKey(), typeName);
       testNode.addAttribute("foo", "bbar");
       testNode = kGraph.upsert(testNode).getNodes().get(0);
 
-      Node result = kGraph.getNodeByKey(testNode.getKey(), collectionName);
+      Node result = kGraph.getNodeByKey(testNode.getKey(), typeName);
       String attr = (String) result.getAttribute("foo");
       assert ("bbar".equals(attr));
    }
@@ -64,37 +64,37 @@ public class KnowledgeGraphTest {
 
    @Test
    public void upsertEdge_newEdge_added() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
-      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection");
+      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeType");
       edge.addAttribute("foo", "bar");
 
       edge.setKey(edgeKey);
       edge = kGraph.upsert(edge).getEdges().get(0);
 
-      Edge result = kGraph.getEdgeByKey(edgeKey, "testEdgeCollection");
+      Edge result = kGraph.getEdgeByKey(edgeKey, "testEdgeType");
       String attr = (String) result.getAttribute("foo");
       assert ("bar".equals(attr));
    }
 
    @Test
    public void upsertEdge_existingEdge_added() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
-      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection");
+      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeType");
       edge.addAttribute("foo", "bar");
 
       edge = kGraph.upsert(edge).getEdges().get(0);
       edge.addAttribute("foo-foo", "bar-bar");
       edge = kGraph.upsert(edge).getEdges().get(0);
 
-      Edge result = kGraph.getEdgeByKey(edgeKey, "testEdgeCollection");
+      Edge result = kGraph.getEdgeByKey(edgeKey, "testEdgeType");
       String fooAttr = (String) result.getAttribute("foo");
       assert ("bar".equals(fooAttr)) : "foo value is " + fooAttr;
       String fooFooAttr = (String) result.getAttribute("foo-foo");
@@ -102,9 +102,9 @@ public class KnowledgeGraphTest {
    }
 
    @Test(expected = NullPointerException.class)
-   public void upsertEdge_collectionIsNull_exception() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+   public void upsertEdge_typeIsNull_exception() {
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
@@ -117,8 +117,8 @@ public class KnowledgeGraphTest {
 
    @Test(expected = RuntimeException.class)
    public void upsertEdge_edgeIsNull_exception() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       Edge edge = null;
@@ -127,12 +127,12 @@ public class KnowledgeGraphTest {
 
    @Test(expected = NullPointerException.class)
    public void upsertEdge_keyIsNull_exception() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
-      Edge edge = new Edge(edgeKey, leftNode, rightNode, "someEdgeCollection");
+      Edge edge = new Edge(edgeKey, leftNode, rightNode, "someEdgeType");
       edge.addAttribute("foo", "bar");
 
       edge.setKey(null);
@@ -140,7 +140,7 @@ public class KnowledgeGraphTest {
    }
 
    @Test
-   public void upsertNode_freshAndValid_collectionsExist() throws Exception {
+   public void upsertNode_freshAndValid_typesExist() throws Exception {
       Long beginSize = kGraph.getTotalCount();
       final Node badDate = new Node(KnowledgeGraph.generateKey(), "dates");
       badDate.addAttribute("foo", "bbar");
@@ -152,16 +152,16 @@ public class KnowledgeGraphTest {
 
    @Test
    public void queryNodes_singleClause_getResult() throws Exception {
-      final Node testDoc = new Node(KnowledgeGraph.generateKey(), "testCollection");
+      final Node testDoc = new Node(KnowledgeGraph.generateKey(), "testType");
       testDoc.addAttribute("foo", "bar");
       testDoc.addAttribute("xname", "Homer");
       kGraph.upsert(testDoc);
-      Node addedDoc = kGraph.getNodeByKey(testDoc.getKey(), "testCollection");
+      Node addedDoc = kGraph.getNodeByKey(testDoc.getKey(), "testType");
       assertNotNull(addedDoc);
       logger.debug("addedDoc = " + addedDoc.toString());
 
       QueryClause queryClause = new QueryClause("foo", QueryClause.Operator.EQUALS, "bar");
-      List<Node> results = kGraph.queryNodes("testCollection", queryClause);
+      List<Node> results = kGraph.queryNodes("testType", queryClause);
       assertNotNull(results);
       logger.debug("results = " + results);
       assert (results.size() > 0) : "results.size() = " + results.size();
@@ -169,72 +169,72 @@ public class KnowledgeGraphTest {
 
    @Test
    public void queryNodes_multipleClauses_getResult() throws Exception {
-      final Node testDoc = new Node(KnowledgeGraph.generateKey(), "testCollection");
+      final Node testDoc = new Node(KnowledgeGraph.generateKey(), "testType");
       testDoc.addAttribute("foo", "bar");
       testDoc.addAttribute("foofoo", "barbar");
       kGraph.upsert(testDoc);
-      Node addedDoc = kGraph.getNodeByKey(testDoc.getKey(), "testCollection");
+      Node addedDoc = kGraph.getNodeByKey(testDoc.getKey(), "testType");
       assertNotNull(addedDoc);
       logger.debug("addedDoc = " + addedDoc.toString());
 
       QueryClause queryClause1 = new QueryClause("foo", QueryClause.Operator.EQUALS, "bar");
       QueryClause queryClause2 = new QueryClause("foofoo", QueryClause.Operator.EQUALS, "barbar");
-      List<Node> results = kGraph.queryNodes("testCollection", queryClause1, queryClause2);
+      List<Node> results = kGraph.queryNodes("testType", queryClause1, queryClause2);
       assertNotNull(results);
       logger.debug("results = " + results);
       assert (results.size() > 0) : "results.size() = " + results.size();
    }
 
    @Test(expected = ArangoDBException.class)
-   public void queryNodes_nullCollection_exception() throws Exception {
+   public void queryNodes_nullType_exception() throws Exception {
       QueryClause queryClause1 = new QueryClause("foo", QueryClause.Operator.EQUALS, null);
       kGraph.queryNodes(null, queryClause1);
    }
 
    @Test
    public void expandRight_noFilters_getResults() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
-      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection");
+      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeType");
       edge = kGraph.upsert(edge).getEdges().get(0);
       logger.debug("edge.id: " + edge.getId());
 
       List<QueryClause> relClauses = null;
       List<QueryClause> otherSideClauses = null;
-      List<Triple<Node, Edge, Node>> results = kGraph.expandRight(leftNode, "testEdgeCollection", relClauses, otherSideClauses);
+      List<Triple<Node, Edge, Node>> results = kGraph.expandRight(leftNode, "testEdgeType", relClauses, otherSideClauses);
 
       assert (1 == results.size()) : "results.size() = " + results.size();
    }
 
    @Test
    public void queryEdge_edgeExists_getResults() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
-      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection2");
+      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeType2");
       edge.addAttribute("foo", "bar");
       edge = kGraph.upsert(edge).getEdges().get(0);
       logger.debug("edge.id: " + edge.getId());
 
       QueryClause queryClause = new QueryClause("foo", QueryClause.Operator.EQUALS, "bar");
-      List<Edge> results = kGraph.queryEdges("testEdgeCollection2", queryClause);
+      List<Edge> results = kGraph.queryEdges("testEdgeType2", queryClause);
 
       assert (1 == results.size()) : "results.size() = " + results.size();
    }
 
    @Test(expected = NullPointerException.class)
-   public void queryEdge_nullCollection_exception() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+   public void queryEdge_nullType_exception() {
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
-      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection2");
+      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeType2");
       edge.addAttribute("foo", "bar");
       edge = kGraph.upsert(edge).getEdges().get(0);
       logger.debug("edge.id: " + edge.getId());
@@ -245,40 +245,40 @@ public class KnowledgeGraphTest {
 
    @Test
    public void expandLeft_noFilters_getResults() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
-      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection");
+      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeType");
       edge = kGraph.upsert(edge).getEdges().get(0);
       logger.debug("edge.id: " + edge.getId());
 
       List<QueryClause> relClauses = null;
       List<QueryClause> otherSideClauses = null;
-      List<Triple<Node, Edge, Node>> results = kGraph.expandLeft(rightNode, "testEdgeCollection", relClauses, otherSideClauses);
+      List<Triple<Node, Edge, Node>> results = kGraph.expandLeft(rightNode, "testEdgeType", relClauses, otherSideClauses);
 
       assert (1 == results.size()) : "results.size() = " + results.size();
    }
 
    @Test
    public void expandRight_oneRelClause_getResults() {
-      String testCollectionName = KnowledgeGraph.generateName();
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), testCollectionName);
-      final Node rightNode1 = new Node(KnowledgeGraph.generateKey(), testCollectionName);
-      final Node rightNode2 = new Node(KnowledgeGraph.generateKey(), testCollectionName);
-      final Node rightNode3 = new Node(KnowledgeGraph.generateKey(), testCollectionName);
+      String testTypeName = KnowledgeGraph.generateName();
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), testTypeName);
+      final Node rightNode1 = new Node(KnowledgeGraph.generateKey(), testTypeName);
+      final Node rightNode2 = new Node(KnowledgeGraph.generateKey(), testTypeName);
+      final Node rightNode3 = new Node(KnowledgeGraph.generateKey(), testTypeName);
 
       kGraph.upsert(leftNode, rightNode1, rightNode2, rightNode3);
 
-      String edgeCollectionName = KnowledgeGraph.generateName();
+      String edgeTypeName = KnowledgeGraph.generateName();
       String edgeKey1 = leftNode.getKey() + ":" + rightNode1.getKey();
       String edgeKey2 = leftNode.getKey() + ":" + rightNode2.getKey();
       String edgeKey3 = leftNode.getKey() + ":" + rightNode3.getKey();
 
-      Edge edge1 = new Edge(edgeKey1, leftNode, rightNode1, edgeCollectionName);
-      Edge edge2 = new Edge(edgeKey2, leftNode, rightNode2, edgeCollectionName);
-      Edge edge3 = new Edge(edgeKey3, leftNode, rightNode3, edgeCollectionName);
+      Edge edge1 = new Edge(edgeKey1, leftNode, rightNode1, edgeTypeName);
+      Edge edge2 = new Edge(edgeKey2, leftNode, rightNode2, edgeTypeName);
+      Edge edge3 = new Edge(edgeKey3, leftNode, rightNode3, edgeTypeName);
       edge1.addAttribute("edgeVal", "good");
       edge3.addAttribute("edgeVal", "good");
 
@@ -288,18 +288,18 @@ public class KnowledgeGraphTest {
       List<QueryClause> relClauses = new ArrayList<>();
       relClauses.add(new QueryClause("edgeVal", Operator.EQUALS, "good"));
       List<QueryClause> otherSideClauses = null;
-      List<Triple<Node, Edge, Node>> results = kGraph.expandRight(leftNode, edgeCollectionName, relClauses, otherSideClauses);
+      List<Triple<Node, Edge, Node>> results = kGraph.expandRight(leftNode, edgeTypeName, relClauses, otherSideClauses);
 
       assert (2 == results.size()) : "results.size() = " + results.size();
    }
 
    @Test
    public void expandLeft_oneOtherSideClause_getResults() {
-      String testCollectionName = KnowledgeGraph.generateName();
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), testCollectionName);
-      final Node leftNode1 = new Node(KnowledgeGraph.generateKey(), testCollectionName);
-      final Node leftNode2 = new Node(KnowledgeGraph.generateKey(), testCollectionName);
-      final Node leftNode3 = new Node(KnowledgeGraph.generateKey(), testCollectionName);
+      String testTypeName = KnowledgeGraph.generateName();
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), testTypeName);
+      final Node leftNode1 = new Node(KnowledgeGraph.generateKey(), testTypeName);
+      final Node leftNode2 = new Node(KnowledgeGraph.generateKey(), testTypeName);
+      final Node leftNode3 = new Node(KnowledgeGraph.generateKey(), testTypeName);
       leftNode1.addAttribute("nodeVal", "good");
       leftNode3.addAttribute("nodeVal", "good");
 
@@ -327,11 +327,11 @@ public class KnowledgeGraphTest {
 
    @Test
    public void expandRight_multiRelMultiOtherClauses_getResults() {
-      String testCollectionName = KnowledgeGraph.generateName();
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), testCollectionName);
-      final Node rightNode1 = new Node(KnowledgeGraph.generateKey(), testCollectionName);
-      final Node rightNode2 = new Node(KnowledgeGraph.generateKey(), testCollectionName);
-      final Node rightNode3 = new Node(KnowledgeGraph.generateKey(), testCollectionName);
+      String testTypeName = KnowledgeGraph.generateName();
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), testTypeName);
+      final Node rightNode1 = new Node(KnowledgeGraph.generateKey(), testTypeName);
+      final Node rightNode2 = new Node(KnowledgeGraph.generateKey(), testTypeName);
+      final Node rightNode3 = new Node(KnowledgeGraph.generateKey(), testTypeName);
       rightNode1.addAttribute("nodeVal1", "good");
       rightNode2.addAttribute("nodeVal1", "good");
       rightNode1.addAttribute("nodeVal2", "better");
@@ -374,31 +374,31 @@ public class KnowledgeGraphTest {
 
    @Test
    public void getCount_countIsOne_getAnswer() {
-      String collectionName = KnowledgeGraph.generateName();
-      Node testNode = new Node(KnowledgeGraph.generateKey(), collectionName);
+      String typeName = KnowledgeGraph.generateName();
+      Node testNode = new Node(KnowledgeGraph.generateKey(), typeName);
       testNode.addAttribute("foo", "bbar");
       testNode = kGraph.upsert(testNode).getNodes().get(0);
 
-      Long count = kGraph.getCount(collectionName);
+      Long count = kGraph.getCount(typeName);
       assert (1 == count);
    }
 
    @Test
    public void expandRight_mixedOthersideTypes_getResults() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeCollection");
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
       final Node rightNode1 = new Node(KnowledgeGraph.generateKey(), KnowledgeGraph.generateName());
       final Node rightNode2 = new Node(KnowledgeGraph.generateKey(), KnowledgeGraph.generateName());
       kGraph.upsert(leftNode, rightNode1, rightNode2);
 
       String edgeKey1 = leftNode.getKey() + ":" + rightNode1.getKey();
       String edgeKey2 = leftNode.getKey() + ":" + rightNode2.getKey();
-      Edge edge1 = new Edge(edgeKey1, leftNode, rightNode1, "testEdgeCollection");
-      Edge edge2 = new Edge(edgeKey2, leftNode, rightNode2, "testEdgeCollection");
+      Edge edge1 = new Edge(edgeKey1, leftNode, rightNode1, "testEdgeType");
+      Edge edge2 = new Edge(edgeKey2, leftNode, rightNode2, "testEdgeType");
       kGraph.upsert(edge1, edge2);
 
       List<QueryClause> relClauses = null;
       List<QueryClause> otherSideClauses = null;
-      List<Triple<Node, Edge, Node>> results = kGraph.expandRight(leftNode, "testEdgeCollection", relClauses, otherSideClauses);
+      List<Triple<Node, Edge, Node>> results = kGraph.expandRight(leftNode, "testEdgeType", relClauses, otherSideClauses);
 
       assert (2 == results.size()) : "results.size() = " + results.size();
    }

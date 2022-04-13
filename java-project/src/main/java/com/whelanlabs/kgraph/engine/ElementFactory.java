@@ -10,7 +10,7 @@ public class ElementFactory {
       // do nothing!
    }
 
-   public static String getCollectionName(Element element) {
+   public static String getTypeName(Element element) {
       String id = element.getId();
       int iend = id.indexOf("/");
       String collectionName;
@@ -22,7 +22,7 @@ public class ElementFactory {
       return collectionName;
    }
 
-   public static String getCollectionName(String id) {
+   public static String getTypeName(String id) {
       int iend = id.indexOf("/");
       String collectionName;
       if (iend != -1) {

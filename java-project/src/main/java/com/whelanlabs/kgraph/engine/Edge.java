@@ -13,8 +13,8 @@ public class Edge extends BaseEdgeDocument implements Element {
    public Edge(String edgeKey, Node left, Node right, String type) {
       super(edgeKey, left.getId(), right.getId());
       this.addAttribute(typeAttrName, type);
-      String leftCollectionName = ElementFactory.getCollectionName(left);
-      String rightCollectionName = ElementFactory.getCollectionName(right);
+      String leftCollectionName = ElementFactory.getTypeName(left);
+      String rightCollectionName = ElementFactory.getTypeName(right);
       this.addAttribute(leftTypeAttrName, leftCollectionName);
       this.addAttribute(rightTypeAttrName, rightCollectionName);
    }
