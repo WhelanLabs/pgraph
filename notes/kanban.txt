@@ -30,7 +30,7 @@
 
 * getEdgeTypesForLeftType
 
-
+* getEdgeTypesForRightType
 
 ##########################################################
 # WIP
@@ -43,7 +43,7 @@
 ##########################################################
 
 
-* getEdgeTypesForRightType
+
 
 * getLeftTypesForEdgeType
 

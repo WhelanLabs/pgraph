@@ -366,8 +366,18 @@ public class KnowledgeGraph {
       return results;
    }
 
-   public List<String> getEdgeTypesForLeftType(String nodeType1) {
-      QueryClause queryClause = new QueryClause(Edge.leftTypeAttrName, QueryClause.Operator.EQUALS, nodeType1);
+   public List<String> getEdgeTypesForLeftType(String leftType) {
+      QueryClause queryClause = new QueryClause(Edge.leftTypeAttrName, QueryClause.Operator.EQUALS, leftType);
+      List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
+      List<String> edgeTypesIDs = edgeTypeNodes.stream()
+            .map(object -> object.getAttribute(Edge.edgeTypeAttrName).toString())
+            .collect(Collectors.toList());
+      List<String> edgeTypesIDsNoDups = new ArrayList<String>(new LinkedHashSet<>(edgeTypesIDs));
+      return edgeTypesIDsNoDups;
+   }
+
+   public List<String> getEdgeTypesForRightType(String rightType) {
+      QueryClause queryClause = new QueryClause(Edge.rightTypeAttrName, QueryClause.Operator.EQUALS, rightType);
       List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
       List<String> edgeTypesIDs = edgeTypeNodes.stream()
             .map(object -> object.getAttribute(Edge.edgeTypeAttrName).toString())
