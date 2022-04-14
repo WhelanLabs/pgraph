@@ -48,10 +48,6 @@
 # backlog
 ##########################################################
 
-
-
-
-
 * JavaDoc the code
 
 * support DB access via config file(s) - see ArangoDB java driver source for ideas.
