@@ -58,7 +58,7 @@ public class KnowledgeGraph {
    private synchronized ArangoDB setSystemDB() {
       if (null == _systemDB) {
 
-         _systemDB = new ArangoDB.Builder().user("root").password("openSesame").serializer(new ArangoJack(MapperHelper.createDefaultMapper()))
+         _systemDB = new ArangoDB.Builder().user("root").password("openSesame").serializer(new ArangoJack(MapperHelper.createKGraphMapper()))
                .build();
       }
       return _systemDB;
@@ -116,6 +116,11 @@ public class KnowledgeGraph {
       }
    }
 
+   /**
+    * Adds the edge type.
+    *
+    * @param edge the edge
+    */
    private void addEdgeType(Edge edge) {
       String edgeType = edge.getType();
       String leftType = edge.getAttribute(Edge.leftTypeAttrName).toString();
@@ -360,7 +365,7 @@ public class KnowledgeGraph {
    public List<Node> getEdgeTypes() {
       List<Node> edgeTypes = queryNodes(edgeTypesCollectionName);
       List<Node> results = new ArrayList<>();
-      for(Node edgeType : edgeTypes) {
+      for (Node edgeType : edgeTypes) {
          results.add(edgeType);
       }
       return results;
@@ -369,8 +374,7 @@ public class KnowledgeGraph {
    public List<String> getEdgeTypesForLeftType(String leftType) {
       QueryClause queryClause = new QueryClause(Edge.leftTypeAttrName, QueryClause.Operator.EQUALS, leftType);
       List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
-      List<String> edgeTypes = edgeTypeNodes.stream()
-            .map(object -> object.getAttribute(Edge.edgeTypeAttrName).toString())
+      List<String> edgeTypes = edgeTypeNodes.stream().map(object -> object.getAttribute(Edge.edgeTypeAttrName).toString())
             .collect(Collectors.toList());
       List<String> edgeTypesNoDups = new ArrayList<String>(new LinkedHashSet<>(edgeTypes));
       return edgeTypesNoDups;
@@ -379,8 +383,7 @@ public class KnowledgeGraph {
    public List<String> getEdgeTypesForRightType(String rightType) {
       QueryClause queryClause = new QueryClause(Edge.rightTypeAttrName, QueryClause.Operator.EQUALS, rightType);
       List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
-      List<String> edgeTypes = edgeTypeNodes.stream()
-            .map(object -> object.getAttribute(Edge.edgeTypeAttrName).toString())
+      List<String> edgeTypes = edgeTypeNodes.stream().map(object -> object.getAttribute(Edge.edgeTypeAttrName).toString())
             .collect(Collectors.toList());
       List<String> edgeTypesNoDups = new ArrayList<String>(new LinkedHashSet<>(edgeTypes));
       return edgeTypesNoDups;
@@ -389,8 +392,7 @@ public class KnowledgeGraph {
    public List<String> getLeftTypesForEdgeType(String edgeType) {
       QueryClause queryClause = new QueryClause(Edge.edgeTypeAttrName, QueryClause.Operator.EQUALS, edgeType);
       List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
-      List<String> leftTypes = edgeTypeNodes.stream()
-            .map(object -> object.getAttribute(Edge.leftTypeAttrName).toString())
+      List<String> leftTypes = edgeTypeNodes.stream().map(object -> object.getAttribute(Edge.leftTypeAttrName).toString())
             .collect(Collectors.toList());
       List<String> leftTypesNoDups = new ArrayList<String>(new LinkedHashSet<>(leftTypes));
       return leftTypesNoDups;
@@ -399,8 +401,7 @@ public class KnowledgeGraph {
    public List<String> getRightTypesforEdgeType(String edgeType) {
       QueryClause queryClause = new QueryClause(Edge.edgeTypeAttrName, QueryClause.Operator.EQUALS, edgeType);
       List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
-      List<String> leftTypes = edgeTypeNodes.stream()
-            .map(object -> object.getAttribute(Edge.rightTypeAttrName).toString())
+      List<String> leftTypes = edgeTypeNodes.stream().map(object -> object.getAttribute(Edge.rightTypeAttrName).toString())
             .collect(Collectors.toList());
       List<String> leftTypesNoDups = new ArrayList<String>(new LinkedHashSet<>(leftTypes));
       return leftTypesNoDups;

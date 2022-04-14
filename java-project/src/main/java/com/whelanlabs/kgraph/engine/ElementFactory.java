@@ -4,12 +4,16 @@ import com.arangodb.model.TraversalOptions.Direction;
 
 public class ElementFactory {
 
-
-
    private ElementFactory() {
       // do nothing!
    }
 
+   /**
+    * Gets the type name.
+    *
+    * @param element the element
+    * @return the type name
+    */
    public static String getTypeName(Element element) {
       String id = element.getId();
       int iend = id.indexOf("/");

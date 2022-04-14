@@ -25,13 +25,25 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.whelanlabs.kgraph.engine.Edge;
 import com.whelanlabs.kgraph.engine.Node;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MapperHelper.
+ */
 public class MapperHelper {
 
+   /**
+    * Instantiates a new mapper helper.
+    */
    private MapperHelper() {
       // do nothing!
    }
 
-   public static VPackMapper createDefaultMapper() {
+   /**
+    * Creates the default mapper.
+    *
+    * @return the v pack mapper
+    */
+   public static VPackMapper createKGraphMapper() {
       final VPackMapper mapper = new VPackMapper();
       mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
       mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -64,6 +76,7 @@ public class MapperHelper {
       return mapper;
    }
 
+   /** The Constant EDGE_DESERIALIZER. */
    public static final JsonDeserializer<Edge> EDGE_DESERIALIZER = new JsonDeserializer<Edge>() {
       @SuppressWarnings("unchecked")
       @Override
@@ -72,6 +85,7 @@ public class MapperHelper {
       }
    };
 
+   /** The Constant NODE_DESERIALIZER. */
    public static final JsonDeserializer<Node> NODE_DESERIALIZER = new JsonDeserializer<Node>() {
       @SuppressWarnings("unchecked")
       @Override
@@ -80,6 +94,7 @@ public class MapperHelper {
       }
    };
 
+   /** The Constant NODE_SERIALIZER. */
    public static final JsonSerializer<Node> NODE_SERIALIZER = new JsonSerializer<Node>() {
       @Override
       public void serialize(final Node value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
@@ -92,6 +107,7 @@ public class MapperHelper {
       }
    };
 
+   /** The Constant EDGE_SERIALIZER. */
    public static final JsonSerializer<Edge> EDGE_SERIALIZER = new JsonSerializer<Edge>() {
       @Override
       public void serialize(final Edge value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
@@ -106,8 +122,12 @@ public class MapperHelper {
       }
    };
 
+   /**
+    * The Class ArangoModule.
+    */
    private static final class ArangoModule extends SimpleModule {
 
+      /** The Constant serialVersionUID. */
       private static final long serialVersionUID = 4570097748991257899L;
 
       @Override

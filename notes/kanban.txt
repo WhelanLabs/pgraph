@@ -42,7 +42,10 @@
 # WIP
 ##########################################################
 
-
+* JavaDoc the code
+    + use JAutodoc
+	- add meaningful text
+	- address Jautodoc TODO comments
 
 ##########################################################
 # backlog
@@ -50,10 +53,12 @@
 
 
 
-
-
-* JavaDoc the code
-
 * support DB access via config file(s) - see ArangoDB java driver source for ideas.
+    - ArangoDB system user and password
+    - ArangoDB host and port?
+
+* create performance tests and associated test suite.
+
+* add support in kGraph to work with a pool of ArangoDB end-points?
 
 * Big load test
