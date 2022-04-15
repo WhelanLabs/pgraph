@@ -27,22 +27,22 @@ public class ElementFactoryTest {
       kGraph.cleanup();
    }
 
-   @Test(expected = RuntimeException.class)
-   public void getCollectionName_Element_idIsNull_exception() {
-      logger.debug("getCollectionName_Element_idIsNull_exception");
-      Node node = new Node(KnowledgeGraph.generateKey(), "someCollection");
-      node.setId("something_without_a_slash");
-      ElementFactory.getTypeName(node);
-   }
+//   @Test(expected = RuntimeException.class)
+//   public void getCollectionName_Element_idIsNull_exception() {
+//      logger.debug("getCollectionName_Element_idIsNull_exception");
+//      Node node = new Node(KnowledgeGraph.generateKey(), "someCollection");
+//      node.setId("something_without_a_slash");
+//      ElementFactory.getTypeName(node);
+//   }
 
-   @Test(expected = RuntimeException.class)
-   public void getCollectionName_string_idIsNull_exception() {
-      ElementFactory.getTypeName("something_without_a_slash");
-   }
+//   @Test(expected = RuntimeException.class)
+//   public void getCollectionName_string_idIsNull_exception() {
+//      ElementFactory.getTypeName("something_without_a_slash");
+//   }
 
    @Test(expected = RuntimeException.class)
    public void getLeftAttrString_badDirection_exception() {
-      ElementFactory.getLeftAttrString(Direction.any);
+      ElementHelper.getLeftAttrString(Direction.any);
    }
 
    @Test(expected = RuntimeException.class)
@@ -55,7 +55,7 @@ public class ElementFactoryTest {
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection");
-      ElementFactory.getRightIdString(Direction.any, edge);
+      ElementHelper.getRightIdString(Direction.any, edge);
    }
 
 }

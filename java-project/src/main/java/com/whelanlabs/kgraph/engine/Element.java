@@ -1,12 +1,13 @@
 package com.whelanlabs.kgraph.engine;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface Element.
+ * The Interface Element.  Elements are the logical supertype for
+ * Nodes and Edges in a Property Graph.
  */
 public interface Element {
 
-   /** The Constant typeAttrName. */
+   /** The Constant typeAttrName. This correlates to the name of the 
+    *  Collection in ArangoDB.*/
    public static final String typeAttrName = "__type";
 
    /**
@@ -17,9 +18,9 @@ public interface Element {
    String getId();
 
    /**
-    * Gets the attribute.
+    * Gets the value of the attribute.
     *
-    * @param key the key
+    * @param key the key value for the given attribute.
     * @return the attribute
     */
    Object getAttribute(final String key);

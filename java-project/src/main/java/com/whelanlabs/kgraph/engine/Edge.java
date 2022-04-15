@@ -4,11 +4,13 @@ import java.util.Map;
 
 import com.arangodb.entity.BaseEdgeDocument;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Edge.
  */
 public class Edge extends BaseEdgeDocument implements Element {
+
+   /** The Constant serialVersionUID. */
+   private static final long serialVersionUID = -4801740400388403434L;
 
    /** The Constant leftTypeAttrName. Identifies the collection for the left
     *  end-point of an edge.*/
@@ -34,22 +36,30 @@ public class Edge extends BaseEdgeDocument implements Element {
    public Edge(String edgeKey, Node left, Node right, String type) {
       super(edgeKey, left.getId(), right.getId());
       this.addAttribute(typeAttrName, type);
-      String leftCollectionName = ElementFactory.getTypeName(left);
-      String rightCollectionName = ElementFactory.getTypeName(right);
+      String leftCollectionName = left.getType(); //.getTypeName(left);
+      String rightCollectionName = right.getType(); //ElementFactory.getTypeName(right);
       this.addAttribute(leftTypeAttrName, leftCollectionName);
       this.addAttribute(rightTypeAttrName, rightCollectionName);
    }
 
    /**
     * Instantiates a new edge.
+    * 
+    * This constructor is largely intended for use in deserializing
+    * objects, not for initial construction by calling applications.
     *
-    * @param properties the properties
+    * @param properties the properties for the created edge
     */
    public Edge(final Map<String, Object> properties) {
       super(properties);
    }
 
-   /** The Constant serialVersionUID. */
-   private static final long serialVersionUID = -4801740400388403434L;
+   public String getLeftType() {
+      return getAttribute(leftTypeAttrName).toString();
+   }
 
+   public String getRightType() {
+      return getAttribute(rightTypeAttrName).toString();
+   }
+   
 }

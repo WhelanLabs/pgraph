@@ -245,8 +245,8 @@ public class KnowledgeGraphTest {
 
    @Test
    public void expandLeft_noFilters_getResults() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType1");
+      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType2");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();

@@ -314,9 +314,7 @@ public class KnowledgeGraph {
    protected List<Triple<Node, Edge, Node>> expand(Node startingNode, String edgeCollectionName, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses, Direction direction) {
       List<Triple<Node, Edge, Node>> results = new ArrayList<>();
-      // QueryClause edgeIDQueryClause = new QueryClause("_from", Operator.EQUALS,
-      // startingNode.getId());
-      QueryClause edgeIDQueryClause = new QueryClause(ElementFactory.getLeftAttrString(direction), Operator.EQUALS, startingNode.getId());
+      QueryClause edgeIDQueryClause = new QueryClause(ElementHelper.getLeftAttrString(direction), Operator.EQUALS, startingNode.getId());
       List<QueryClause> augmentedRelClauses = new ArrayList<>();
       if (null != relClauses) {
          augmentedRelClauses.addAll(relClauses);
@@ -324,14 +322,24 @@ public class KnowledgeGraph {
       augmentedRelClauses.add(edgeIDQueryClause);
       List<Edge> edges = queryEdges(edgeCollectionName, augmentedRelClauses.toArray(new QueryClause[0]));
 
-      for (Edge edge : edges) { // edge.getTo()
-         QueryClause otherSideIDQueryClause = new QueryClause("_id", Operator.EQUALS, ElementFactory.getRightIdString(direction, edge));
+      for (Edge edge : edges) {
+         QueryClause otherSideIDQueryClause = new QueryClause("_id", Operator.EQUALS, ElementHelper.getRightIdString(direction, edge));
          List<QueryClause> augmentedOtherSideClauses = new ArrayList<>();
          if (null != otherSideClauses) {
             augmentedOtherSideClauses.addAll(otherSideClauses);
          }
          augmentedOtherSideClauses.add(otherSideIDQueryClause);
-         String typeName = ElementFactory.getTypeName(edge.getTo());
+         String typeName;
+         if(direction == Direction.outbound) {
+            typeName = edge.getRightType();
+         }
+         else if(direction == Direction.inbound) {
+            typeName = edge.getLeftType();
+         }
+         else {
+            // this case should be caught by the prior "new QueryClause()" call. (unreachable)
+            throw new RuntimeException("bad direction for expand. (" + direction + ")");
+         }
 
          List<Node> otherSides = queryNodes(typeName, augmentedOtherSideClauses.toArray(new QueryClause[0]));
          if (1 == otherSides.size()) {
