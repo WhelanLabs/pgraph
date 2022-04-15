@@ -29,24 +29,65 @@ import com.arangodb.util.MapBuilder;
 import com.whelanlabs.kgraph.engine.QueryClause.Operator;
 import com.whelanlabs.kgraph.serialization.MapperHelper;
 
+/**
+ * The Class KnowledgeGraph.  This class provides a generic implementation
+ * of a persistent property graph.
+ * 
+ * This class is a bit of a God Class, and should be considered 
+ * for refactoring, but it works for now, and there are more pressing
+ * things to do for now.  (Possible future work - luckily, good
+ * test coverage should make refactoring a real possibility.
+ * see also: https://en.wikipedia.org/wiki/God_object
+ */
 public class KnowledgeGraph {
 
+   /** The user DB. */
    private ArangoDatabase _userDB;
+   
+   /** The db name. */
    private DbName _db_name;
+   
+   /** The system DB. */
    private ArangoDB _systemDB = null;
+   
+   /** The node types collection name. This Collection 
+    * contains schema information on Nodes*/
    private String nodeTypesCollectionName = "node_types";
+   
+   /** The edge types collection name. This Collection 
+    * contains schema information on Edges*/
    private String edgeTypesCollectionName = "edge_types";
+   
+   /** The node types cache. */
    private Set<String> nodeTypesCache = new HashSet<>();
+   
+   /** The edge types cache. */
    private Set<String> edgeTypesCache = new HashSet<>();
+   
+   /** The count. */
    private static Long count = 0L;
 
+   /** The logger. */
    private static Logger logger = LogManager.getLogger(KnowledgeGraph.class);
 
+   /**
+    * Instantiates a new knowledge graph.
+    *
+    * @param db_name the db name
+    * @throws Exception the exception
+    */
    public KnowledgeGraph(String db_name) throws Exception {
       _db_name = DbName.normalize(db_name);
       setUp(_db_name);
    }
 
+   /**
+    * Sets the up.
+    *
+    * @param db_name the new up
+    * @throws InterruptedException the interrupted exception
+    * @throws ExecutionException the execution exception
+    */
    private void setUp(DbName db_name) throws InterruptedException, ExecutionException {
       setSystemDB();
       if (!_systemDB.db(db_name).exists()) {
@@ -55,6 +96,11 @@ public class KnowledgeGraph {
       _userDB = _systemDB.db(db_name);
    }
 
+   /**
+    * Sets the system DB.
+    *
+    * @return the arango DB
+    */
    private synchronized ArangoDB setSystemDB() {
       if (null == _systemDB) {
 
@@ -64,12 +110,24 @@ public class KnowledgeGraph {
       return _systemDB;
    }
 
+   /**
+    * Cleanup.
+    *
+    * @throws InterruptedException the interrupted exception
+    * @throws ExecutionException the execution exception
+    */
    public void cleanup() throws InterruptedException, ExecutionException {
       // db.drop();
       _systemDB.shutdown();
       _systemDB = null;
    }
 
+   /**
+    * Upsert.
+    *
+    * @param elements the elements
+    * @return the element list
+    */
    public ElementList<Element> upsert(Element... elements) {
       ElementList<Element> results = new ElementList<>();
       for (Element element : elements) {
@@ -84,6 +142,12 @@ public class KnowledgeGraph {
       return results;
    }
 
+   /**
+    * Upsert.
+    *
+    * @param node the node
+    * @return the node
+    */
    protected Node _upsert(final Node node) {
       ArangoCollection collection = null;
       try {
@@ -102,6 +166,11 @@ public class KnowledgeGraph {
       return node;
    }
 
+   /**
+    * Adds the node type.
+    *
+    * @param type the type
+    */
    private void addNodeType(String type) {
       if (!nodeTypesCache.contains(type)) {
          ArangoCollection nodeTypesCollection = getNodeCollection(nodeTypesCollectionName);
@@ -143,6 +212,12 @@ public class KnowledgeGraph {
       }
    }
 
+   /**
+    * Upsert.
+    *
+    * @param edge the edge
+    * @return the edge
+    */
    protected Edge _upsert(final Edge edge) {
       ArangoCollection collection = null;
       Edge result = null;
@@ -173,6 +248,12 @@ public class KnowledgeGraph {
       return result;
    }
 
+   /**
+    * Gets the edge collection.
+    *
+    * @param typeName the type name
+    * @return the edge collection
+    */
    protected ArangoCollection getEdgeCollection(String typeName) {
       CollectionEntity collectionEntity = null;
       ArangoCollection collection = _userDB.collection(typeName);
@@ -188,12 +269,24 @@ public class KnowledgeGraph {
       return result;
    }
 
+   /**
+    * Creates the node type.
+    *
+    * @param typeName the type name
+    * @return the arango collection
+    */
    public ArangoCollection createNodeType(String typeName) {
       _userDB.createCollection(typeName);
       return _userDB.collection(typeName);
 
    }
 
+   /**
+    * Gets the node collection.
+    *
+    * @param typeName the type name
+    * @return the node collection
+    */
    protected ArangoCollection getNodeCollection(String typeName) {
       CollectionEntity collectionEntity = null;
       ArangoCollection result;
@@ -211,16 +304,36 @@ public class KnowledgeGraph {
       return result;
    }
 
+   /**
+    * Gets the edge by key.
+    *
+    * @param key the key
+    * @param type the type
+    * @return the edge by key
+    */
    public Edge getEdgeByKey(String key, String type) {
       Edge doc = _userDB.collection(type).getDocument(key, Edge.class);
       return doc;
    }
 
+   /**
+    * Gets the node by key.
+    *
+    * @param key the key
+    * @param typeName the type name
+    * @return the node by key
+    */
    public Node getNodeByKey(String key, String typeName) {
       Node doc = _userDB.collection(typeName).getDocument(key, Node.class);
       return doc;
    }
 
+   /**
+    * Flush.
+    *
+    * @throws InterruptedException the interrupted exception
+    * @throws ExecutionException the execution exception
+    */
    public void flush() throws InterruptedException, ExecutionException {
       if (_systemDB.db(_db_name).exists()) {
 
@@ -231,6 +344,11 @@ public class KnowledgeGraph {
       setUp(_db_name);
    }
 
+   /**
+    * Gets the total count.
+    *
+    * @return the total count
+    */
    public Long getTotalCount() {
       Long result = 0l;
       Collection<CollectionEntity> collections = _systemDB.db(_db_name).getCollections();
@@ -241,6 +359,13 @@ public class KnowledgeGraph {
       return result;
    }
 
+   /**
+    * Query nodes.
+    *
+    * @param typeName the type name
+    * @param clauses the clauses
+    * @return the list
+    */
    public List<Node> queryNodes(String typeName, QueryClause... clauses) {
       ArangoCollection collection = _userDB.collection(typeName);
       MapBuilder bindVars = new MapBuilder();
@@ -259,6 +384,13 @@ public class KnowledgeGraph {
       return results;
    }
 
+   /**
+    * Query edges.
+    *
+    * @param typeName the type name
+    * @param clauses the clauses
+    * @return the list
+    */
    public List<Edge> queryEdges(String typeName, QueryClause... clauses) {
       MapBuilder bindVars = new MapBuilder();
       List<Edge> results = new ArrayList<Edge>();
@@ -277,6 +409,14 @@ public class KnowledgeGraph {
       return results;
    }
 
+   /**
+    * Generate query.
+    *
+    * @param collection the collection
+    * @param bindVars the bind vars
+    * @param clauses the clauses
+    * @return the string builder
+    */
    private StringBuilder generateQuery(ArangoCollection collection, MapBuilder bindVars, QueryClause... clauses) {
       StringBuilder query = new StringBuilder("FOR t IN ");
       query.append(collection.name());
@@ -301,16 +441,44 @@ public class KnowledgeGraph {
       return query;
    }
 
+   /**
+    * Expand right.
+    *
+    * @param leftNode the left node
+    * @param edgeCollectionName the edge collection name
+    * @param relClauses the rel clauses
+    * @param otherSideClauses the other side clauses
+    * @return the list
+    */
    public List<Triple<Node, Edge, Node>> expandRight(Node leftNode, String edgeCollectionName, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses) {
       return expand(leftNode, edgeCollectionName, relClauses, otherSideClauses, Direction.outbound);
    }
 
+   /**
+    * Expand left.
+    *
+    * @param rightNode the right node
+    * @param edgeCollectionName the edge collection name
+    * @param relClauses the rel clauses
+    * @param otherSideClauses the other side clauses
+    * @return the list
+    */
    public List<Triple<Node, Edge, Node>> expandLeft(Node rightNode, String edgeCollectionName, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses) {
       return expand(rightNode, edgeCollectionName, relClauses, otherSideClauses, Direction.inbound);
    }
 
+   /**
+    * Expand.
+    *
+    * @param startingNode the starting node
+    * @param edgeCollectionName the edge collection name
+    * @param relClauses the rel clauses
+    * @param otherSideClauses the other side clauses
+    * @param direction the direction
+    * @return the list
+    */
    protected List<Triple<Node, Edge, Node>> expand(Node startingNode, String edgeCollectionName, List<QueryClause> relClauses,
          List<QueryClause> otherSideClauses, Direction direction) {
       List<Triple<Node, Edge, Node>> results = new ArrayList<>();
@@ -337,7 +505,13 @@ public class KnowledgeGraph {
             typeName = edge.getLeftType();
          }
          else {
-            // this case should be caught by the prior "new QueryClause()" call. (unreachable)
+            /* This case is currently caught by the above "new QueryClause()" call, thus making
+             * this case unreachable.  However, in the future code changes in the future might
+             * make this reachable. Because of that, this should be retained for safety.
+             * This dings code coverage, but addressing that would be a pain involving a 
+             * mock/spy on the above "new QueryClause()" code to make this reachable. 
+             * Maybe some day when I am bored...
+             */
             throw new RuntimeException("bad direction for expand. (" + direction + ")");
          }
 
@@ -350,26 +524,53 @@ public class KnowledgeGraph {
       return results;
    }
 
+   /**
+    * Generate key.
+    *
+    * @return the string
+    */
    public static String generateKey() {
       return "KEY_" + System.currentTimeMillis() + count++;
    }
 
+   /**
+    * Generate a random and unique name that fits for being a ArangoDB
+    * element ID or Collection Name.
+    *
+    * @return the string
+    */
    public static String generateName() {
       return "NAME_" + System.currentTimeMillis() + count++;
    }
 
+   /**
+    * Gets the count of elements of a given type that are currently persisted.
+    *
+    * @param typeName the type name
+    * @return the count
+    */
    public Long getCount(String typeName) {
       ArangoCollection collection = _userDB.collection(typeName);
       Long result = collection.count().getCount();
       return result;
    }
 
+   /**
+    * Gets a list of the Types of Nodes in KGraph.
+    *
+    * @return the node types
+    */
    public List<String> getNodeTypes() {
       List<Node> nodes = queryNodes(nodeTypesCollectionName);
       List<String> results = nodes.stream().map(object -> object.getKey()).collect(Collectors.toList());
       return results;
    }
 
+   /**
+    * Gets a list of the Types of Edges in KGraph.
+    *
+    * @return the edge types
+    */
    public List<Node> getEdgeTypes() {
       List<Node> edgeTypes = queryNodes(edgeTypesCollectionName);
       List<Node> results = new ArrayList<>();
@@ -379,6 +580,12 @@ public class KnowledgeGraph {
       return results;
    }
 
+   /**
+    * Gets the edge types for left type.
+    *
+    * @param leftType the left type
+    * @return the edge types for left type
+    */
    public List<String> getEdgeTypesForLeftType(String leftType) {
       QueryClause queryClause = new QueryClause(Edge.leftTypeAttrName, QueryClause.Operator.EQUALS, leftType);
       List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
@@ -388,6 +595,12 @@ public class KnowledgeGraph {
       return edgeTypesNoDups;
    }
 
+   /**
+    * Gets the edge types for right type.
+    *
+    * @param rightType the right type
+    * @return the edge types for right type
+    */
    public List<String> getEdgeTypesForRightType(String rightType) {
       QueryClause queryClause = new QueryClause(Edge.rightTypeAttrName, QueryClause.Operator.EQUALS, rightType);
       List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
@@ -397,6 +610,12 @@ public class KnowledgeGraph {
       return edgeTypesNoDups;
    }
 
+   /**
+    * Gets the left types for edge type.
+    *
+    * @param edgeType the edge type
+    * @return the left types for edge type
+    */
    public List<String> getLeftTypesForEdgeType(String edgeType) {
       QueryClause queryClause = new QueryClause(Edge.edgeTypeAttrName, QueryClause.Operator.EQUALS, edgeType);
       List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);
@@ -406,6 +625,12 @@ public class KnowledgeGraph {
       return leftTypesNoDups;
    }
 
+   /**
+    * Gets the right typesfor edge type.
+    *
+    * @param edgeType the edge type
+    * @return the right typesfor edge type
+    */
    public List<String> getRightTypesforEdgeType(String edgeType) {
       QueryClause queryClause = new QueryClause(Edge.edgeTypeAttrName, QueryClause.Operator.EQUALS, edgeType);
       List<Node> edgeTypeNodes = queryNodes(edgeTypesCollectionName, queryClause);

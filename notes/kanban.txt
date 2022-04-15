@@ -44,7 +44,7 @@
 
 * JavaDoc the code
     + use JAutodoc
-	- add meaningful text
+	- add meaningful text - currently stopped at KnowledgeGraph.getEdgeTypes()
 	- address Jautodoc TODO comments
 
 ##########################################################
@@ -53,6 +53,7 @@
 
 * support DB access via config file(s) - see ArangoDB java driver source for ideas.
 
+* Change getNodeTypes() to not return schema node types. (nodeTypesCollectionName, edgeTypesCollectionName)
 
 * support DB access via config file(s) - see ArangoDB java driver source for ideas.
     - ArangoDB system user and password
@@ -62,4 +63,17 @@
 
 * add support in kGraph to work with a pool of ArangoDB end-points?
 
+
 * Big load test
+
+* restructure kanban.txt to have "done" actions from top to bottom have newest release
+  up-top, and newest added feature for the release be at the top of that release.
+  (basically making the "done" section provide an easily readable feature list.)
+  
+* tag version 1.0.0 of KGraph
+
+* Disallow client code from making/using Type with reserved names
+    - KnowledgeGraph.nodeTypesCollectionName
+    - KnowledgeGraph.edgeTypesCollectionName
+	
+* break apart KnowledgeGraph - no God Class

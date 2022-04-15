@@ -3,9 +3,9 @@ package com.whelanlabs.kgraph.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class ElementList.
+ * The Class ElementList.  This class is a List specifically designed to
+ * allow sublists of Nodes and Edges to be generated easily.
  *
  * @param <T> the generic type
  */
