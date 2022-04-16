@@ -43,13 +43,12 @@
 * KnowledgeGraph.getNodeTypes() shall not return schema node types.
   (nodeTypesCollectionName, edgeTypesCollectionName)
   
-  
+* Change KnowledgeGraph.getTotalCount() should not return schema node types counts in its total.
+  (nodeTypesCollectionName, edgeTypesCollectionName)
   
 ##########################################################
 # WIP
 ##########################################################
-
-
 
 
 ##########################################################
@@ -57,9 +56,6 @@
 ##########################################################
 
 * support DB access via a properties file(s) - see ArangoDB java driver source for ideas.
-
-* Change KnowledgeGraph.getTotalCount() should not return schema node types counts in its total.
-  (nodeTypesCollectionName, edgeTypesCollectionName)
 
 * Check that KnowledgeGraph.generateKey() is being used to genrate keys, and not IDs.  
   Based on what found, take appropiate action.

@@ -1,6 +1,7 @@
 package com.whelanlabs.kgraph.test.engine;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,13 +141,18 @@ public class KnowledgeGraphTest {
 
    @Test
    public void upsertNode_freshAndValid_typesExist() throws Exception {
+      String testTypeName = KnowledgeGraph.generateName();
+      kGraph.flush();
       Long beginSize = kGraph.getTotalCount();
-      final Node badDate = new Node(KnowledgeGraph.generateKey(), "dates");
+      assert (beginSize == 0) : "beginSize: " + beginSize;
+      
+      final Node badDate = new Node(KnowledgeGraph.generateKey(), testTypeName);
       badDate.addAttribute("foo", "bbar");
       kGraph.upsert(badDate);
 
       Long endSize = kGraph.getTotalCount();
-      assert (endSize > beginSize) : "{beginSize, endsize} is {" + beginSize + ", " + endSize + "}";
+      // the "+1" below shows that the new node is added, but does not show the new schema node.
+      assert (endSize == beginSize + 1) : "{beginSize, endsize} is {" + beginSize + ", " + endSize + "}";
    }
 
    @Test

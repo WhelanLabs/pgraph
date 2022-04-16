@@ -402,7 +402,20 @@ public class KnowledgeGraph {
       Long result = 0l;
       Collection<CollectionEntity> collections = _systemDB.db(_db_name).getCollections();
       for (CollectionEntity collectionEntity : collections) {
-         result += _userDB.collection(collectionEntity.getName()).count().getCount();
+         logger.debug("collectionEntity name: " + collectionEntity.getName());
+         String collectionName = collectionEntity.getName();
+         if(collectionName.startsWith("_")) {
+            // skip - this is a ArangoDB framework Collection
+         }
+         else if (collectionName.equals(nodeTypesCollectionName)) {
+            // skip - this is a kgraph schema collection
+         }
+         else if (collectionName.equals(edgeTypesCollectionName)) {
+            // skip - this is a kgraph schema collection
+         }
+         else {
+            result += _userDB.collection(collectionEntity.getName()).count().getCount();
+         }
       }
 
       return result;
