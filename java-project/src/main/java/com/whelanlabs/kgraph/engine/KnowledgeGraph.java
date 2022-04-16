@@ -51,11 +51,11 @@ public class KnowledgeGraph {
    
    /** The node types collection name. This Collection 
     * contains schema information on Nodes*/
-   private String nodeTypesCollectionName = "node_types";
+   protected static String nodeTypesCollectionName = "node_types";
    
    /** The edge types collection name. This Collection 
     * contains schema information on Edges*/
-   private String edgeTypesCollectionName = "edge_types";
+   protected static String edgeTypesCollectionName = "edge_types";
    
    /** The node types cache. */
    private Set<String> nodeTypesCache = new HashSet<>();

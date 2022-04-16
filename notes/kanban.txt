@@ -40,6 +40,11 @@
 
 * JavaDoc the code
 
+* KnowledgeGraph.getNodeTypes() shall not return schema node types.
+  (nodeTypesCollectionName, edgeTypesCollectionName)
+  
+  
+  
 ##########################################################
 # WIP
 ##########################################################
@@ -51,10 +56,7 @@
 # backlog
 ##########################################################
 
-* support DB access via config file(s) - see ArangoDB java driver source for ideas.
-
-* Change KnowledgeGraph.getNodeTypes() should not return schema node types.
-  (nodeTypesCollectionName, edgeTypesCollectionName)
+* support DB access via a properties file(s) - see ArangoDB java driver source for ideas.
 
 * Change KnowledgeGraph.getTotalCount() should not return schema node types counts in its total.
   (nodeTypesCollectionName, edgeTypesCollectionName)
