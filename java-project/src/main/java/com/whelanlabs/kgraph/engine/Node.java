@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.arangodb.entity.BaseDocument;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Node.
  */
@@ -23,10 +22,12 @@ public class Node extends BaseDocument implements Element {
 
    /**
     * Instantiates a new node.
+    * 
+    * This constructor is not intended for use by client code.
     *
     * @param properties the properties
     */
-   public Node(final Map<String, Object> properties) {
+   protected Node(final Map<String, Object> properties) {
       super(properties);
    }
 

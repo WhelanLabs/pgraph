@@ -3,7 +3,6 @@ package com.whelanlabs.kgraph.engine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class QueryClause.
  */
@@ -13,7 +12,7 @@ public class QueryClause {
    private static Logger logger = LogManager.getLogger(QueryClause.class);
 
    /**
-    * The Enum Operator.
+    * The Enum Operator.  This contains AQL string values for operators.
     */
    public enum Operator {
 
@@ -52,13 +51,13 @@ public class QueryClause {
       }
    }
 
-   /** The name. */
+   /** The name of the property for the query clause. */
    private String _name;
 
    /** The op. */
    private Operator _op;
 
-   /** The value. */
+   /** The value of the property for the query clause. */
    private Object _value;
 
    /** The at symbol. */
@@ -79,7 +78,7 @@ public class QueryClause {
    }
 
    /**
-    * To AQL.
+    * To AQL.  Generates a AQL string for the given query clause.
     *
     * @return the string
     */

@@ -1,4 +1,4 @@
-package com.whelanlabs.kgraph.serialization;
+package com.whelanlabs.kgraph.engine;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -22,10 +22,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.whelanlabs.kgraph.engine.Edge;
-import com.whelanlabs.kgraph.engine.Node;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MapperHelper.
  */

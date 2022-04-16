@@ -18,6 +18,7 @@ public class ElementFactoryTest {
 
    @BeforeClass
    public static void setUpBeforeClass() throws Exception {
+      logger.debug("Running ElementFactoryTest tests...");
       kGraph = new KnowledgeGraph(tablespace_name);
       kGraph.flush();
    }
@@ -27,18 +28,6 @@ public class ElementFactoryTest {
       kGraph.cleanup();
    }
 
-//   @Test(expected = RuntimeException.class)
-//   public void getCollectionName_Element_idIsNull_exception() {
-//      logger.debug("getCollectionName_Element_idIsNull_exception");
-//      Node node = new Node(KnowledgeGraph.generateKey(), "someCollection");
-//      node.setId("something_without_a_slash");
-//      ElementFactory.getTypeName(node);
-//   }
-
-//   @Test(expected = RuntimeException.class)
-//   public void getCollectionName_string_idIsNull_exception() {
-//      ElementFactory.getTypeName("something_without_a_slash");
-//   }
 
    @Test(expected = RuntimeException.class)
    public void getLeftAttrString_badDirection_exception() {

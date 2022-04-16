@@ -50,7 +50,7 @@ public class Edge extends BaseEdgeDocument implements Element {
     *
     * @param properties the properties for the created edge
     */
-   public Edge(final Map<String, Object> properties) {
+   protected Edge(final Map<String, Object> properties) {
       super(properties);
    }
 

@@ -38,14 +38,14 @@
 
 * replace "Collection" with "Type" in kgraph language.
 
+* JavaDoc the code
+
 ##########################################################
 # WIP
 ##########################################################
 
-* JavaDoc the code
-    + use JAutodoc
-	- add meaningful text - currently stopped at the start of Node.java
-	- address Jautodoc TODO comments
+
+
 
 ##########################################################
 # backlog
@@ -72,6 +72,7 @@
 
 * add support in kGraph to work with a pool of ArangoDB end-points?
 
+* 100% code coverage (this allows regressions in coverage to be easily found.)
 
 * Big load test
 

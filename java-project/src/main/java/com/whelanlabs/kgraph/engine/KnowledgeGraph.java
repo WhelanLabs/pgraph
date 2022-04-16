@@ -27,7 +27,6 @@ import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.TraversalOptions.Direction;
 import com.arangodb.util.MapBuilder;
 import com.whelanlabs.kgraph.engine.QueryClause.Operator;
-import com.whelanlabs.kgraph.serialization.MapperHelper;
 
 /**
  * The Class KnowledgeGraph.  This class provides a generic implementation
