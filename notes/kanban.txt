@@ -60,8 +60,6 @@
 * Check that KnowledgeGraph.generateKey() is being used to genrate keys, and not IDs.  
   Based on what found, take appropiate action.
   
-* disallow edge updates to change end-point properties.
-  
 * support DB access via config file(s) - see ArangoDB java driver source for ideas.
     - ArangoDB system user and password
     - ArangoDB host and port?
