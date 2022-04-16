@@ -1,5 +1,5 @@
 ##########################################################
-# completed
+# Release 1.0.0
 ##########################################################
 
 * create node and edge
@@ -44,7 +44,7 @@
 
 * JavaDoc the code
     + use JAutodoc
-	- add meaningful text - currently stopped at KnowledgeGraph.getEdgeTypes()
+	- add meaningful text - currently stopped at the start of Node.java
 	- address Jautodoc TODO comments
 
 ##########################################################
@@ -53,8 +53,15 @@
 
 * support DB access via config file(s) - see ArangoDB java driver source for ideas.
 
-* Change getNodeTypes() to not return schema node types. (nodeTypesCollectionName, edgeTypesCollectionName)
+* Change KnowledgeGraph.getNodeTypes() should not return schema node types.
+  (nodeTypesCollectionName, edgeTypesCollectionName)
 
+* Change KnowledgeGraph.getTotalCount() should not return schema node types counts in its total.
+  (nodeTypesCollectionName, edgeTypesCollectionName)
+
+* Check that KnowledgeGraph.generateKey() is being used to genrate keys, and not IDs.  
+  Based on what found, take appropiate action.
+  
 * support DB access via config file(s) - see ArangoDB java driver source for ideas.
     - ArangoDB system user and password
     - ArangoDB host and port?
@@ -66,10 +73,6 @@
 
 * Big load test
 
-* restructure kanban.txt to have "done" actions from top to bottom have newest release
-  up-top, and newest added feature for the release be at the top of that release.
-  (basically making the "done" section provide an easily readable feature list.)
-  
 * tag version 1.0.0 of KGraph
 
 * Disallow client code from making/using Type with reserved names
