@@ -53,15 +53,12 @@
 # WIP
 ##########################################################
 
+* create performance tests and associated test suite.
 
 ##########################################################
 # backlog
 ##########################################################
 
-
-
-
-* create performance tests and associated test suite.
 
 * support JSON dump and load.
 
