@@ -17,6 +17,7 @@ import org.junit.Test;
 import com.arangodb.ArangoDBException;
 import com.whelanlabs.kgraph.engine.Edge;
 import com.whelanlabs.kgraph.engine.Element;
+import com.whelanlabs.kgraph.engine.ElementHelper;
 import com.whelanlabs.kgraph.engine.KnowledgeGraph;
 import com.whelanlabs.kgraph.engine.Node;
 import com.whelanlabs.kgraph.engine.QueryClause;
@@ -41,8 +42,8 @@ public class KnowledgeGraphTest {
 
    @Test
    public void upsertNode_newNode_added() {
-      String typeName = KnowledgeGraph.generateName();
-      Node testNode = new Node(KnowledgeGraph.generateKey(), typeName);
+      String typeName = ElementHelper.generateName();
+      Node testNode = new Node(ElementHelper.generateKey(), typeName);
       testNode.addAttribute("foo", "bbar");
       testNode = kGraph.upsert(testNode).getNodes().get(0);
 
@@ -53,7 +54,7 @@ public class KnowledgeGraphTest {
 
    @Test
    public void upsertNode_existingNode_added() {
-      final Node badDate = new Node(KnowledgeGraph.generateKey(), "dates");
+      final Node badDate = new Node(ElementHelper.generateKey(), "dates");
       kGraph.upsert(badDate);
       badDate.addAttribute("foo", "bar");
       kGraph.upsert(badDate);
@@ -64,8 +65,8 @@ public class KnowledgeGraphTest {
 
    @Test
    public void upsertEdge_newEdge_added() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
+      final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
@@ -82,8 +83,8 @@ public class KnowledgeGraphTest {
 
    @Test
    public void upsertEdge_existingEdge_added() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
+      final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
@@ -103,8 +104,8 @@ public class KnowledgeGraphTest {
 
    @Test(expected = NullPointerException.class)
    public void upsertEdge_typeIsNull_exception() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
+      final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
@@ -117,8 +118,8 @@ public class KnowledgeGraphTest {
 
    @Test(expected = RuntimeException.class)
    public void upsertEdge_edgeIsNull_exception() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
+      final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       Edge edge = null;
@@ -127,8 +128,8 @@ public class KnowledgeGraphTest {
 
    @Test(expected = NullPointerException.class)
    public void upsertEdge_keyIsNull_exception() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
+      final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
@@ -141,12 +142,12 @@ public class KnowledgeGraphTest {
 
    @Test
    public void upsertNode_freshAndValid_typesExist() throws Exception {
-      String testTypeName = KnowledgeGraph.generateName();
+      String testTypeName = ElementHelper.generateName();
       kGraph.flush();
       Long beginSize = kGraph.getTotalCount();
       assert (beginSize == 0) : "beginSize: " + beginSize;
       
-      final Node badDate = new Node(KnowledgeGraph.generateKey(), testTypeName);
+      final Node badDate = new Node(ElementHelper.generateKey(), testTypeName);
       badDate.addAttribute("foo", "bbar");
       kGraph.upsert(badDate);
 
@@ -157,7 +158,7 @@ public class KnowledgeGraphTest {
 
    @Test
    public void queryNodes_singleClause_getResult() throws Exception {
-      final Node testDoc = new Node(KnowledgeGraph.generateKey(), "testType");
+      final Node testDoc = new Node(ElementHelper.generateKey(), "testType");
       testDoc.addAttribute("foo", "bar");
       testDoc.addAttribute("xname", "Homer");
       kGraph.upsert(testDoc);
@@ -174,7 +175,7 @@ public class KnowledgeGraphTest {
 
    @Test
    public void queryNodes_multipleClauses_getResult() throws Exception {
-      final Node testDoc = new Node(KnowledgeGraph.generateKey(), "testType");
+      final Node testDoc = new Node(ElementHelper.generateKey(), "testType");
       testDoc.addAttribute("foo", "bar");
       testDoc.addAttribute("foofoo", "barbar");
       kGraph.upsert(testDoc);
@@ -198,8 +199,8 @@ public class KnowledgeGraphTest {
 
    @Test
    public void expandRight_noFilters_getResults() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
+      final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
@@ -216,8 +217,8 @@ public class KnowledgeGraphTest {
 
    @Test
    public void queryEdge_edgeExists_getResults() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
+      final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
@@ -234,8 +235,8 @@ public class KnowledgeGraphTest {
 
    @Test(expected = NullPointerException.class)
    public void queryEdge_nullType_exception() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
+      final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
@@ -250,8 +251,8 @@ public class KnowledgeGraphTest {
 
    @Test
    public void expandLeft_noFilters_getResults() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType1");
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), "testNodeType2");
+      final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType1");
+      final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeType2");
       kGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
@@ -268,15 +269,15 @@ public class KnowledgeGraphTest {
 
    @Test
    public void expandRight_oneRelClause_getResults() {
-      String testTypeName = KnowledgeGraph.generateName();
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), testTypeName);
-      final Node rightNode1 = new Node(KnowledgeGraph.generateKey(), testTypeName);
-      final Node rightNode2 = new Node(KnowledgeGraph.generateKey(), testTypeName);
-      final Node rightNode3 = new Node(KnowledgeGraph.generateKey(), testTypeName);
+      String testTypeName = ElementHelper.generateName();
+      final Node leftNode = new Node(ElementHelper.generateKey(), testTypeName);
+      final Node rightNode1 = new Node(ElementHelper.generateKey(), testTypeName);
+      final Node rightNode2 = new Node(ElementHelper.generateKey(), testTypeName);
+      final Node rightNode3 = new Node(ElementHelper.generateKey(), testTypeName);
 
       kGraph.upsert(leftNode, rightNode1, rightNode2, rightNode3);
 
-      String edgeTypeName = KnowledgeGraph.generateName();
+      String edgeTypeName = ElementHelper.generateName();
       String edgeKey1 = leftNode.getKey() + ":" + rightNode1.getKey();
       String edgeKey2 = leftNode.getKey() + ":" + rightNode2.getKey();
       String edgeKey3 = leftNode.getKey() + ":" + rightNode3.getKey();
@@ -300,17 +301,17 @@ public class KnowledgeGraphTest {
 
    @Test
    public void expandLeft_oneOtherSideClause_getResults() {
-      String testTypeName = KnowledgeGraph.generateName();
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), testTypeName);
-      final Node leftNode1 = new Node(KnowledgeGraph.generateKey(), testTypeName);
-      final Node leftNode2 = new Node(KnowledgeGraph.generateKey(), testTypeName);
-      final Node leftNode3 = new Node(KnowledgeGraph.generateKey(), testTypeName);
+      String testTypeName = ElementHelper.generateName();
+      final Node rightNode = new Node(ElementHelper.generateKey(), testTypeName);
+      final Node leftNode1 = new Node(ElementHelper.generateKey(), testTypeName);
+      final Node leftNode2 = new Node(ElementHelper.generateKey(), testTypeName);
+      final Node leftNode3 = new Node(ElementHelper.generateKey(), testTypeName);
       leftNode1.addAttribute("nodeVal", "good");
       leftNode3.addAttribute("nodeVal", "good");
 
       kGraph.upsert(rightNode, leftNode1, leftNode2, leftNode3);
 
-      String edgeCollectionName = KnowledgeGraph.generateName();
+      String edgeCollectionName = ElementHelper.generateName();
       String edgeKey1 = leftNode1.getKey() + ":" + rightNode.getKey();
       String edgeKey2 = leftNode2.getKey() + ":" + rightNode.getKey();
       String edgeKey3 = leftNode3.getKey() + ":" + rightNode.getKey();
@@ -332,11 +333,11 @@ public class KnowledgeGraphTest {
 
    @Test
    public void expandRight_multiRelMultiOtherClauses_getResults() {
-      String testTypeName = KnowledgeGraph.generateName();
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), testTypeName);
-      final Node rightNode1 = new Node(KnowledgeGraph.generateKey(), testTypeName);
-      final Node rightNode2 = new Node(KnowledgeGraph.generateKey(), testTypeName);
-      final Node rightNode3 = new Node(KnowledgeGraph.generateKey(), testTypeName);
+      String testTypeName = ElementHelper.generateName();
+      final Node leftNode = new Node(ElementHelper.generateKey(), testTypeName);
+      final Node rightNode1 = new Node(ElementHelper.generateKey(), testTypeName);
+      final Node rightNode2 = new Node(ElementHelper.generateKey(), testTypeName);
+      final Node rightNode3 = new Node(ElementHelper.generateKey(), testTypeName);
       rightNode1.addAttribute("nodeVal1", "good");
       rightNode2.addAttribute("nodeVal1", "good");
       rightNode1.addAttribute("nodeVal2", "better");
@@ -346,7 +347,7 @@ public class KnowledgeGraphTest {
       kGraph.upsert(leftNode, rightNode1, rightNode2, rightNode3);
       String rn1id = rightNode1.getId();
 
-      String edgeCollectionName = KnowledgeGraph.generateName();
+      String edgeCollectionName = ElementHelper.generateName();
       String edgeKey1 = leftNode.getKey() + ":" + rightNode1.getKey();
       String edgeKey2 = leftNode.getKey() + ":" + rightNode2.getKey();
       String edgeKey3 = leftNode.getKey() + ":" + rightNode3.getKey();
@@ -379,8 +380,8 @@ public class KnowledgeGraphTest {
 
    @Test
    public void getCount_countIsOne_getAnswer() {
-      String typeName = KnowledgeGraph.generateName();
-      Node testNode = new Node(KnowledgeGraph.generateKey(), typeName);
+      String typeName = ElementHelper.generateName();
+      Node testNode = new Node(ElementHelper.generateKey(), typeName);
       testNode.addAttribute("foo", "bbar");
       testNode = kGraph.upsert(testNode).getNodes().get(0);
 
@@ -390,9 +391,9 @@ public class KnowledgeGraphTest {
 
    @Test
    public void expandRight_mixedOthersideTypes_getResults() {
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), "testNodeType");
-      final Node rightNode1 = new Node(KnowledgeGraph.generateKey(), KnowledgeGraph.generateName());
-      final Node rightNode2 = new Node(KnowledgeGraph.generateKey(), KnowledgeGraph.generateName());
+      final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
+      final Node rightNode1 = new Node(ElementHelper.generateKey(), ElementHelper.generateName());
+      final Node rightNode2 = new Node(ElementHelper.generateKey(), ElementHelper.generateName());
       kGraph.upsert(leftNode, rightNode1, rightNode2);
 
       String edgeKey1 = leftNode.getKey() + ":" + rightNode1.getKey();
@@ -410,17 +411,17 @@ public class KnowledgeGraphTest {
    
    @Test
    public void getEdgeTypes_typesExist_getResults() {
-      Node node1 = new Node(KnowledgeGraph.generateKey(), "testNodeType");
-      Node node2 = new Node(KnowledgeGraph.generateKey(), "testNodeType");
-      Node node3 = new Node(KnowledgeGraph.generateKey(), "testNodeType");
+      Node node1 = new Node(ElementHelper.generateKey(), "testNodeType");
+      Node node2 = new Node(ElementHelper.generateKey(), "testNodeType");
+      Node node3 = new Node(ElementHelper.generateKey(), "testNodeType");
       kGraph.upsert(node1, node2, node3);
 
-      String edgeType1 = KnowledgeGraph.generateName();
-      String edgeType2 = KnowledgeGraph.generateName();
-      String edgeType3 = KnowledgeGraph.generateName();
-      Edge edge1 = new Edge(KnowledgeGraph.generateKey(), node1, node2, edgeType1);
-      Edge edge2 = new Edge(KnowledgeGraph.generateKey(), node1, node3, edgeType2);
-      Edge edge3 = new Edge(KnowledgeGraph.generateKey(), node2, node3, edgeType3);
+      String edgeType1 = ElementHelper.generateName();
+      String edgeType2 = ElementHelper.generateName();
+      String edgeType3 = ElementHelper.generateName();
+      Edge edge1 = new Edge(ElementHelper.generateKey(), node1, node2, edgeType1);
+      Edge edge2 = new Edge(ElementHelper.generateKey(), node1, node3, edgeType2);
+      Edge edge3 = new Edge(ElementHelper.generateKey(), node2, node3, edgeType3);
       kGraph.upsert(edge1, edge2, edge3);
 
       List<Node> edgeTypes = kGraph.getEdgeTypes();
@@ -441,19 +442,19 @@ public class KnowledgeGraphTest {
 
    @Test
    public void getEdgeTypesForLeftType_givenEdgeTypes_getResults() {
-      String nodeType1 = KnowledgeGraph.generateName();
-      String nodeType2 = KnowledgeGraph.generateName();
-      String nodeType3 = KnowledgeGraph.generateName();
-      Node node1 = new Node(KnowledgeGraph.generateKey(), nodeType1);
-      Node node2 = new Node(KnowledgeGraph.generateKey(), nodeType2);
-      Node node3 = new Node(KnowledgeGraph.generateKey(), nodeType3);
+      String nodeType1 = ElementHelper.generateName();
+      String nodeType2 = ElementHelper.generateName();
+      String nodeType3 = ElementHelper.generateName();
+      Node node1 = new Node(ElementHelper.generateKey(), nodeType1);
+      Node node2 = new Node(ElementHelper.generateKey(), nodeType2);
+      Node node3 = new Node(ElementHelper.generateKey(), nodeType3);
       kGraph.upsert(node1, node2, node3);
 
-      String edgeType1 = KnowledgeGraph.generateName();
-      String edgeType2 = KnowledgeGraph.generateName();
-      Edge edge1 = new Edge(KnowledgeGraph.generateKey(), node1, node2, edgeType1);
-      Edge edge2 = new Edge(KnowledgeGraph.generateKey(), node1, node3, edgeType1);
-      Edge edge3 = new Edge(KnowledgeGraph.generateKey(), node1, node3, edgeType2);
+      String edgeType1 = ElementHelper.generateName();
+      String edgeType2 = ElementHelper.generateName();
+      Edge edge1 = new Edge(ElementHelper.generateKey(), node1, node2, edgeType1);
+      Edge edge2 = new Edge(ElementHelper.generateKey(), node1, node3, edgeType1);
+      Edge edge3 = new Edge(ElementHelper.generateKey(), node1, node3, edgeType2);
       kGraph.upsert(edge1, edge2, edge3);
 
       List<String> results = kGraph.getEdgeTypesForLeftType(nodeType1);
@@ -465,19 +466,19 @@ public class KnowledgeGraphTest {
 
    @Test
    public void getEdgeTypesForRightType_givenEdgeTypes_getResults() {
-      String nodeType1 = KnowledgeGraph.generateName();
-      String nodeType2 = KnowledgeGraph.generateName();
-      String nodeType3 = KnowledgeGraph.generateName();
-      Node node1 = new Node(KnowledgeGraph.generateKey(), nodeType1);
-      Node node2 = new Node(KnowledgeGraph.generateKey(), nodeType2);
-      Node node3 = new Node(KnowledgeGraph.generateKey(), nodeType3);
+      String nodeType1 = ElementHelper.generateName();
+      String nodeType2 = ElementHelper.generateName();
+      String nodeType3 = ElementHelper.generateName();
+      Node node1 = new Node(ElementHelper.generateKey(), nodeType1);
+      Node node2 = new Node(ElementHelper.generateKey(), nodeType2);
+      Node node3 = new Node(ElementHelper.generateKey(), nodeType3);
       kGraph.upsert(node1, node2, node3);
 
-      String edgeType1 = KnowledgeGraph.generateName();
-      String edgeType2 = KnowledgeGraph.generateName();
-      Edge edge1 = new Edge(KnowledgeGraph.generateKey(), node1, node3, edgeType1);
-      Edge edge2 = new Edge(KnowledgeGraph.generateKey(), node2, node3, edgeType1);
-      Edge edge3 = new Edge(KnowledgeGraph.generateKey(), node3, node3, edgeType2);
+      String edgeType1 = ElementHelper.generateName();
+      String edgeType2 = ElementHelper.generateName();
+      Edge edge1 = new Edge(ElementHelper.generateKey(), node1, node3, edgeType1);
+      Edge edge2 = new Edge(ElementHelper.generateKey(), node2, node3, edgeType1);
+      Edge edge3 = new Edge(ElementHelper.generateKey(), node3, node3, edgeType2);
       kGraph.upsert(edge1, edge2, edge3);
 
       List<String> results = kGraph.getEdgeTypesForRightType(nodeType3);
@@ -489,18 +490,18 @@ public class KnowledgeGraphTest {
 
    @Test
    public void getLeftTypesForEdgeType_givenEdgeTypes_getResults() {
-      String nodeType1 = KnowledgeGraph.generateName();
-      String nodeType2 = KnowledgeGraph.generateName();
-      String nodeType3 = KnowledgeGraph.generateName();
-      Node node1 = new Node(KnowledgeGraph.generateKey(), nodeType1);
-      Node node2 = new Node(KnowledgeGraph.generateKey(), nodeType2);
-      Node node3 = new Node(KnowledgeGraph.generateKey(), nodeType3);
+      String nodeType1 = ElementHelper.generateName();
+      String nodeType2 = ElementHelper.generateName();
+      String nodeType3 = ElementHelper.generateName();
+      Node node1 = new Node(ElementHelper.generateKey(), nodeType1);
+      Node node2 = new Node(ElementHelper.generateKey(), nodeType2);
+      Node node3 = new Node(ElementHelper.generateKey(), nodeType3);
       kGraph.upsert(node1, node2, node3);
 
-      String edgeType1 = KnowledgeGraph.generateName();
-      Edge edge1 = new Edge(KnowledgeGraph.generateKey(), node1, node3, edgeType1);
-      Edge edge2 = new Edge(KnowledgeGraph.generateKey(), node1, node2, edgeType1);
-      Edge edge3 = new Edge(KnowledgeGraph.generateKey(), node2, node3, edgeType1);
+      String edgeType1 = ElementHelper.generateName();
+      Edge edge1 = new Edge(ElementHelper.generateKey(), node1, node3, edgeType1);
+      Edge edge2 = new Edge(ElementHelper.generateKey(), node1, node2, edgeType1);
+      Edge edge3 = new Edge(ElementHelper.generateKey(), node2, node3, edgeType1);
       kGraph.upsert(edge1, edge2, edge3);
 
       List<String> results = kGraph.getLeftTypesForEdgeType(edgeType1);
@@ -512,18 +513,18 @@ public class KnowledgeGraphTest {
 
    @Test
    public void getRightTypesforEdgeType_givenEdgeTypes_getResults() {
-      String nodeType1 = KnowledgeGraph.generateName();
-      String nodeType2 = KnowledgeGraph.generateName();
-      String nodeType3 = KnowledgeGraph.generateName();
-      Node node1 = new Node(KnowledgeGraph.generateKey(), nodeType1);
-      Node node2 = new Node(KnowledgeGraph.generateKey(), nodeType2);
-      Node node3 = new Node(KnowledgeGraph.generateKey(), nodeType3);
+      String nodeType1 = ElementHelper.generateName();
+      String nodeType2 = ElementHelper.generateName();
+      String nodeType3 = ElementHelper.generateName();
+      Node node1 = new Node(ElementHelper.generateKey(), nodeType1);
+      Node node2 = new Node(ElementHelper.generateKey(), nodeType2);
+      Node node3 = new Node(ElementHelper.generateKey(), nodeType3);
       kGraph.upsert(node1, node2, node3);
 
-      String edgeType1 = KnowledgeGraph.generateName();
-      Edge edge1 = new Edge(KnowledgeGraph.generateKey(), node1, node3, edgeType1);
-      Edge edge2 = new Edge(KnowledgeGraph.generateKey(), node1, node2, edgeType1);
-      Edge edge3 = new Edge(KnowledgeGraph.generateKey(), node2, node3, edgeType1);
+      String edgeType1 = ElementHelper.generateName();
+      Edge edge1 = new Edge(ElementHelper.generateKey(), node1, node3, edgeType1);
+      Edge edge2 = new Edge(ElementHelper.generateKey(), node1, node2, edgeType1);
+      Edge edge3 = new Edge(ElementHelper.generateKey(), node2, node3, edgeType1);
       kGraph.upsert(edge1, edge2, edge3);
 
       List<String> results = kGraph.getRightTypesforEdgeType(edgeType1);

@@ -51,12 +51,12 @@
 ##########################################################
 
 
+
 ##########################################################
 # backlog
 ##########################################################
 
-* Check that KnowledgeGraph.generateKey() is being used to genrate keys, and not IDs.  
-  Based on what found, take appropiate action.
+
   
 * support DB access via a properties file(s) - see ArangoDB java driver source for ideas.
 
@@ -65,6 +65,8 @@
     - ArangoDB host and port?
 
 * create performance tests and associated test suite.
+
+* support JSON dump and load.
 
 * add support in kGraph to work with a pool of ArangoDB end-points?
 

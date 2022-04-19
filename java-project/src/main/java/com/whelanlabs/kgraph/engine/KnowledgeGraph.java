@@ -63,8 +63,7 @@ public class KnowledgeGraph {
    /** The edge types cache. */
    private Set<String> edgeTypesCache = new HashSet<>();
    
-   /** The count. */
-   private static Long count = 0L;
+
 
    /** The logger. */
    private static Logger logger = LogManager.getLogger(KnowledgeGraph.class);
@@ -599,25 +598,6 @@ public class KnowledgeGraph {
       }
 
       return results;
-   }
-
-   /**
-    * Generates a unique random string that can be used as a key.
-    *
-    * @return the string
-    */
-   public static String generateKey() {
-      return "KEY_" + System.currentTimeMillis() + count++;
-   }
-
-   /**
-    * Generate a random and unique name that fits for being a ArangoDB
-    * element ID or Collection Name.
-    *
-    * @return the string
-    */
-   public static String generateName() {
-      return "NAME_" + System.currentTimeMillis() + count++;
    }
 
    /**

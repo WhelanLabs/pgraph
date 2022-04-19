@@ -37,8 +37,8 @@ public class ElementFactoryTest {
    @Test(expected = RuntimeException.class)
    public void getRightIdString_badDirection_exception() {
       String testCollectionName = "someCollection";
-      final Node leftNode = new Node(KnowledgeGraph.generateKey(), testCollectionName);
-      final Node rightNode = new Node(KnowledgeGraph.generateKey(), testCollectionName);
+      final Node leftNode = new Node(ElementHelper.generateKey(), testCollectionName);
+      final Node rightNode = new Node(ElementHelper.generateKey(), testCollectionName);
       
       kGraph.upsert(leftNode, rightNode);
 

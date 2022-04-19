@@ -15,6 +15,9 @@ import com.arangodb.model.TraversalOptions.Direction;
  */
 public class ElementHelper {
 
+   /** The count. */
+   private static Long count = 0L;
+   
    /**
     * Instantiates a new element helper.
     */
@@ -57,4 +60,25 @@ public class ElementHelper {
       }
       throw new RuntimeException("unsupported direction.");
    }
+
+   /**
+    * Generates a unique random string that can be used as a key.
+    *
+    * @return the string
+    */
+   public static String generateKey() {
+      return "KEY_" + System.currentTimeMillis() + count++;
+   }
+
+   /**
+    * Generate a random and unique name that fits for being a ArangoDB
+    * element ID or Collection Name.
+    *
+    * @return the string
+    */
+   public static String generateName() {
+      return "NAME_" + System.currentTimeMillis() + count++;
+   }
+   
+   
 }
