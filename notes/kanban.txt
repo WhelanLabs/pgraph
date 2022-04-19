@@ -46,10 +46,12 @@
 * Change KnowledgeGraph.getTotalCount() should not return schema node types counts in its total.
   (nodeTypesCollectionName, edgeTypesCollectionName)
   
+* support DB access via config file(s) - ArangoDB system user, password, host, and port.
+
+
 ##########################################################
 # WIP
 ##########################################################
-
 
 
 ##########################################################
@@ -57,18 +59,13 @@
 ##########################################################
 
 
-  
-* support DB access via a properties file(s) - see ArangoDB java driver source for ideas.
 
-* support DB access via config file(s) - see ArangoDB java driver source for ideas.
-    - ArangoDB system user and password
-    - ArangoDB host and port?
 
 * create performance tests and associated test suite.
 
 * support JSON dump and load.
 
-* add support in kGraph to work with a pool of ArangoDB end-points?
+* add support in kGraph to work with a pool of ArangoDB end-points
 
 * 100% code coverage (this allows regressions in coverage to be easily found.)
 

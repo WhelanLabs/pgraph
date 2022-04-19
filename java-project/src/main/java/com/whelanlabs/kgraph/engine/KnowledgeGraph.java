@@ -1,5 +1,7 @@
 package com.whelanlabs.kgraph.engine;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -42,28 +45,26 @@ public class KnowledgeGraph {
 
    /** The user DB. */
    private ArangoDatabase _userDB;
-   
+
    /** The db name. */
    private DbName _db_name;
-   
+
    /** The system DB. */
    private ArangoDB _systemDB = null;
-   
+
    /** The node types collection name. This Collection 
     * contains schema information on Nodes*/
    protected static String nodeTypesCollectionName = "node_types";
-   
+
    /** The edge types collection name. This Collection 
     * contains schema information on Edges*/
    protected static String edgeTypesCollectionName = "edge_types";
-   
+
    /** The node types cache. */
    private Set<String> nodeTypesCache = new HashSet<>();
-   
+
    /** The edge types cache. */
    private Set<String> edgeTypesCache = new HashSet<>();
-   
-
 
    /** The logger. */
    private static Logger logger = LogManager.getLogger(KnowledgeGraph.class);
@@ -87,8 +88,9 @@ public class KnowledgeGraph {
     * @param db_name the name of the database to be set up.
     * @throws InterruptedException the interrupted exception
     * @throws ExecutionException the execution exception
+    * @throws IOException 
     */
-   private void setupApplicationDatabase(DbName db_name) throws InterruptedException, ExecutionException {
+   private void setupApplicationDatabase(DbName db_name) throws InterruptedException, ExecutionException, IOException {
       setupSystemDatabase();
       if (!_systemDB.db(db_name).exists()) {
          _systemDB.createDatabase(db_name);
@@ -98,14 +100,20 @@ public class KnowledgeGraph {
 
    /**
     * Sets up the system DB.
-    *
+    * 
+    * Loads the config properties from the "config.properties" resource in the classpath.
+    * non-configured properties assume default values.
+    * 
+    * see also: https://www.arangodb.com/docs/stable/drivers/java-reference-setup.html
+    * 
     * @return the ArangoDB system database
+    * @throws IOException 
     */
-   private synchronized ArangoDB setupSystemDatabase() {
+   private synchronized ArangoDB setupSystemDatabase() throws IOException {
       if (null == _systemDB) {
-
-         _systemDB = new ArangoDB.Builder().user("root").password("openSesame").serializer(new ArangoJack(MapperHelper.createKGraphMapper()))
-               .build();
+         try (InputStream in = KnowledgeGraph.class.getClassLoader().getResourceAsStream("config.properties")) {
+            _systemDB = new ArangoDB.Builder().loadProperties(in).serializer(new ArangoJack(MapperHelper.createKGraphMapper())).build();
+         }
       }
       return _systemDB;
    }
@@ -380,8 +388,9 @@ public class KnowledgeGraph {
     *
     * @throws InterruptedException the interrupted exception
     * @throws ExecutionException the execution exception
+    * @throws IOException 
     */
-   public void flush() throws InterruptedException, ExecutionException {
+   public void flush() throws Exception {
       if (_systemDB.db(_db_name).exists()) {
 
          Boolean isDropped = _userDB.drop();
@@ -403,16 +412,13 @@ public class KnowledgeGraph {
       for (CollectionEntity collectionEntity : collections) {
          logger.debug("collectionEntity name: " + collectionEntity.getName());
          String collectionName = collectionEntity.getName();
-         if(collectionName.startsWith("_")) {
+         if (collectionName.startsWith("_")) {
             // skip - this is a ArangoDB framework Collection
-         }
-         else if (collectionName.equals(nodeTypesCollectionName)) {
+         } else if (collectionName.equals(nodeTypesCollectionName)) {
             // skip - this is a kgraph schema collection
-         }
-         else if (collectionName.equals(edgeTypesCollectionName)) {
+         } else if (collectionName.equals(edgeTypesCollectionName)) {
             // skip - this is a kgraph schema collection
-         }
-         else {
+         } else {
             result += _userDB.collection(collectionEntity.getName()).count().getCount();
          }
       }
@@ -574,13 +580,11 @@ public class KnowledgeGraph {
          }
          augmentedOtherSideClauses.add(otherSideIDQueryClause);
          String typeName;
-         if(direction == Direction.outbound) {
+         if (direction == Direction.outbound) {
             typeName = edge.getRightType();
-         }
-         else if(direction == Direction.inbound) {
+         } else if (direction == Direction.inbound) {
             typeName = edge.getLeftType();
-         }
-         else {
+         } else {
             /* This case is currently caught by the above "new QueryClause()" call, thus making
              * this case unreachable.  However, in the future code changes in the future might
              * make this reachable. Because of that, this should be retained for safety.
@@ -679,7 +683,6 @@ public class KnowledgeGraph {
       return edgeTypesNoDups;
    }
 
-   
    /**
     * Gets a list of all left-side Node Type Names in the current KGraph
     * for which the input type is the defined edge type.
