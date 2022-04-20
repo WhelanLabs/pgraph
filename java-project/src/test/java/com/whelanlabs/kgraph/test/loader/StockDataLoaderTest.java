@@ -37,6 +37,10 @@ public class StockDataLoaderTest {
       assert (0 < endSize);
       long timeElapsed = endTime - startTime;
       logger.debug("Execution time in seconds: " + timeElapsed/1000);
+      logger.debug("Note: The average time on laptop is 177 seconds");
+
+      assert (timeElapsed < 200): "time elapsed >200. (" + timeElapsed + ")";
+
    }
 
 }
