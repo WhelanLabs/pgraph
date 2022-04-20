@@ -48,7 +48,7 @@ public class StockDataLoader {
 
       BufferedReader reader;
       try {
-         String filename = "../fetchers/stock_data_fetcher/data/AA_2020-05-07.txt";
+         String filename = "./src/test/resources/AA_2020-05-07.txt";
 
          Node ticker = new Node("AA", "tickers");
          ticker = kGraph.upsert(ticker).getNodes().get(0);

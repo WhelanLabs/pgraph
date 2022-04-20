@@ -1,5 +1,7 @@
 package com.whelanlabs.kgraph.test.loader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -11,9 +13,10 @@ public class StockDataLoaderTest {
    private static KnowledgeGraph kGraph = null;
    private static String tablespace_name = "stock_data_graph_db";
 
+   private static Logger logger = LogManager.getLogger(KnowledgeGraph.class);
+
    @BeforeClass
    public static void setUpBeforeClass() throws Exception {
-      // KnowledgeGraph.removeTablespace(tablespace_name);
       kGraph = new KnowledgeGraph(tablespace_name);
       kGraph.flush();
    }
@@ -25,11 +28,15 @@ public class StockDataLoaderTest {
 
    @Test
    public void load_freshAndValid_collectionsExist() throws Exception {
+      long startTime = System.currentTimeMillis();
       Long beginSize = kGraph.getTotalCount();
       assert (0 == beginSize) : "beginSize is " + beginSize;
       StockDataLoader.load(tablespace_name);
       Long endSize = kGraph.getTotalCount();
+      long endTime = System.currentTimeMillis();
       assert (0 < endSize);
+      long timeElapsed = endTime - startTime;
+      logger.debug("Execution time in seconds: " + timeElapsed/1000);
    }
 
 }
