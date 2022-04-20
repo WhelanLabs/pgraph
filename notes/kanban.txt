@@ -48,27 +48,25 @@
   
 * support DB access via config file(s) - ArangoDB system user, password, host, and port.
 
+* create performance tests and associated test suite.
+
 
 ##########################################################
 # WIP
 ##########################################################
 
-* create performance tests and associated test suite.
+* 100% code coverage (this allows regressions in coverage to be easily found.)
+
 
 ##########################################################
 # backlog
 ##########################################################
 
+* tag version 1.0.0 of KGraph
 
 * support JSON dump and load.
 
 * add support in kGraph to work with a pool of ArangoDB end-points
-
-* 100% code coverage (this allows regressions in coverage to be easily found.)
-
-* Big load test
-
-* tag version 1.0.0 of KGraph
 
 * Disallow client code from making/using Type with reserved names
     - KnowledgeGraph.nodeTypesCollectionName
