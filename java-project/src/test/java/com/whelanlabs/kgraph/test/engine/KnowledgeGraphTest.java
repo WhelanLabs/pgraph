@@ -534,6 +534,6 @@ public class KnowledgeGraphTest {
       assert (results.contains(nodeType3)) : "results = " + results;
    }
    
-   
+
 
 }

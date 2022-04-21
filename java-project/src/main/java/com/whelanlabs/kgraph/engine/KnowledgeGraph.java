@@ -582,18 +582,21 @@ public class KnowledgeGraph {
          String typeName;
          if (direction == Direction.outbound) {
             typeName = edge.getRightType();
-         } else if (direction == Direction.inbound) {
-            typeName = edge.getLeftType();
-         } else {
-            /* This case is currently caught by the above "new QueryClause()" call, thus making
-             * this case unreachable.  However, in the future code changes in the future might
-             * make this reachable. Because of that, this should be retained for safety.
-             * This dings code coverage, but addressing that would be a pain involving a 
-             * mock/spy on the above "new QueryClause()" code to make this reachable. 
-             * Maybe some day when I am bored...
+         } else { // if (direction == Direction.inbound) {
+            /* The case of any response besides Direction.outbound or Direction.inbound is 
+             * currently caught by the above "new QueryClause()" call, thus making
+             * this code safe.  However, in the future code changes in the future might
+             * make Direction.any a valid option. if so, this code will need to be improved.
+             * 
+             * Currently, protection against Direction.any is achieved by the unit test
+             * "expandBoth_noFilters_exception".
+             *  
+             * Maybe some day when I am bored, I'll come back, add a real "elese" choice
+             * here that throws an exception, and test it using a mocking framework.
              */
-            throw new RuntimeException("bad direction for expand. (" + direction + ")");
+            typeName = edge.getLeftType();
          }
+
 
          List<Node> otherSides = queryNodes(typeName, augmentedOtherSideClauses.toArray(new QueryClause[0]));
          if (1 == otherSides.size()) {

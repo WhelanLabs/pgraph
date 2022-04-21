@@ -2,18 +2,21 @@ package com.whelanlabs.kgraph.engine;
 
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.arangodb.model.TraversalOptions.Direction;
+
 public class KnowledgeGraphTest2 {
    private static KnowledgeGraph kGraph = null;
    private static String tablespace_name = "KnowledgeGraphTests_db";
 
-   private static Logger logger = LogManager.getLogger(KnowledgeGraphTest2.class);
-
+   private static Logger logger = LogManager.getLogger(KnowledgeGraphTest2.class);  
+   
    @BeforeClass
    public static void setUpBeforeClass() throws Exception {
       kGraph = new KnowledgeGraph(tablespace_name);
@@ -92,4 +95,22 @@ public class KnowledgeGraphTest2 {
       assert (!nodeTypes.contains(KnowledgeGraph.nodeTypesCollectionName)) : "nodeTypes = " + nodeTypes;
       assert (!nodeTypes.contains(KnowledgeGraph.edgeTypesCollectionName)) : "nodeTypes = " + nodeTypes;
    }
+   
+   @Test(expected = RuntimeException.class)
+   public void expandBoth_noFilters_exception() {
+      final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
+      final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeType");
+      kGraph.upsert(leftNode, rightNode);
+
+      String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
+      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeType");
+      edge = kGraph.upsert(edge).getEdges().get(0);
+      logger.debug("edge.id: " + edge.getId());
+
+      List<QueryClause> relClauses = null;
+      List<QueryClause> otherSideClauses = null;
+      
+      kGraph.expand(leftNode, "testEdgeType", relClauses, otherSideClauses, Direction.any);
+
+   }   
 }

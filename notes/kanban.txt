@@ -50,18 +50,20 @@
 
 * create performance tests and associated test suite.
 
+* 100% code coverage (this allows regressions in coverage to be easily found.)
+
+* tag version 1.0.0 of KGraph
 
 ##########################################################
 # WIP
 ##########################################################
 
-* 100% code coverage (this allows regressions in coverage to be easily found.)
+
 
 ##########################################################
 # backlog
 ##########################################################
 
-* tag version 1.0.0 of KGraph
 
 * support JSON dump and load.
 
