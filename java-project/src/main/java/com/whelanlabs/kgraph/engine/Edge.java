@@ -27,6 +27,8 @@ public class Edge extends BaseEdgeDocument implements Element {
 
    /**
     * Instantiates a new edge.
+    * 
+    * Periodic errors may occur if using non-persisted nodes.
     *
     * @param edgeKey the edge key
     * @param left the left
@@ -34,6 +36,8 @@ public class Edge extends BaseEdgeDocument implements Element {
     * @param type the type
     */
    public Edge(String edgeKey, Node left, Node right, String type) {
+      // TODO: Address "Periodic errors may occur if using non-persisted nodes" issue.
+      //       see unit test "".
       super(edgeKey, left.getId(), right.getId());
       this.addAttribute(typeAttrName, type);
       String leftCollectionName = left.getType(); //.getTypeName(left);

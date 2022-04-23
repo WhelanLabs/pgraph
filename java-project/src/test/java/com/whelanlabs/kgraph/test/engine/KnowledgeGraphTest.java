@@ -146,13 +146,51 @@ public class KnowledgeGraphTest {
       kGraph.flush();
       Long beginSize = kGraph.getTotalCount();
       assert (beginSize == 0) : "beginSize: " + beginSize;
-      
+
       final Node badDate = new Node(ElementHelper.generateKey(), testTypeName);
       badDate.addAttribute("foo", "bbar");
       kGraph.upsert(badDate);
 
       Long endSize = kGraph.getTotalCount();
-      // the "+1" below shows that the new node is added, but does not show the new schema node.
+      // the "+1" below shows that the new node is added, but does not show the new
+      // schema node.
+      assert (endSize == beginSize + 1) : "{beginSize, endsize} is {" + beginSize + ", " + endSize + "}";
+   }
+
+   @Test
+   public void getTotalCount_hasNodesAndEdges_getProperCount() throws Exception {
+      String testTypeName = ElementHelper.generateName();
+      kGraph.flush();
+      Long beginSize = kGraph.getTotalCount();
+      assert (beginSize == 0) : "beginSize: " + beginSize;
+
+      final Node n1 = new Node(ElementHelper.generateKey(), testTypeName);
+      final Node n2 = new Node(ElementHelper.generateKey(), testTypeName);
+      kGraph.upsert(n1, n2);
+      Edge e1 = new Edge(ElementHelper.generateKey(), n1, n2, ElementHelper.generateName());
+      kGraph.upsert(e1);
+
+      Long endSize = kGraph.getTotalCount();
+      assert (endSize == beginSize + 3) : "{beginSize, endsize} is {" + beginSize + ", " + endSize + "}";
+   }
+
+   @Test(expected = ArangoDBException.class)
+   public void getTotalCount_nonpersistedNodesForNewEdge_exception() throws Exception {
+      // TODO: Address "Periodic errors may occur if using non-persisted nodes" issue.
+      // see also: getTotalCount_hasNodesAndEdges_getProperCount
+      String testTypeName = ElementHelper.generateName();
+      kGraph.flush();
+      Long beginSize = kGraph.getTotalCount();
+      assert (beginSize == 0) : "beginSize: " + beginSize;
+
+      final Node n1 = new Node(ElementHelper.generateKey(), testTypeName);
+      final Node n2 = new Node(ElementHelper.generateKey(), testTypeName);
+
+      Edge e1 = new Edge(ElementHelper.generateKey(), n1, n2, ElementHelper.generateName());
+      kGraph.upsert(n1, n2);
+      kGraph.upsert(e1);
+
+      Long endSize = kGraph.getTotalCount();
       assert (endSize == beginSize + 1) : "{beginSize, endsize} is {" + beginSize + ", " + endSize + "}";
    }
 
@@ -408,7 +446,7 @@ public class KnowledgeGraphTest {
 
       assert (2 == results.size()) : "results.size() = " + results.size();
    }
-   
+
    @Test
    public void getEdgeTypes_typesExist_getResults() {
       Node node1 = new Node(ElementHelper.generateKey(), "testNodeType");
@@ -533,7 +571,5 @@ public class KnowledgeGraphTest {
       assert (results.contains(nodeType2)) : "results = " + results;
       assert (results.contains(nodeType3)) : "results = " + results;
    }
-   
-
 
 }
