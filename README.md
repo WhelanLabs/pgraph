@@ -12,6 +12,9 @@ Current test code requires that ArangoDB is started in Docker.
    
 ## To build licensing information:
    * mvn site
+
+## To build Javadoc
+   * mvn javadoc:javadoc
    
 ## To list new versions of third-party components:
    * mvn versions:display-dependency-updates
