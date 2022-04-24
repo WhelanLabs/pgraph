@@ -1,3 +1,5 @@
+# KGraph
+
 # Prerequisites for Running the Code
 Current test code requires that ArangoDB is started in Docker. 
 ## steps
@@ -8,7 +10,9 @@ Current test code requires that ArangoDB is started in Docker.
 # Build Commands
    
 ## To build normally:
-   * mvn clean install
+use one of the following:
+   * mvn clean source:jar javadoc:jar install
+   * mvn clean source:jar javadoc:jar install -Dtest=\!StockDataLoaderTest*
    
 ## To build licensing information:
    * mvn site
