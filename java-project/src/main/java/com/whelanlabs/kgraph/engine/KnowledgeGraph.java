@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
 import com.arangodb.entity.CollectionEntity;
@@ -439,11 +440,16 @@ public class KnowledgeGraph {
       List<Node> results = new ArrayList<Node>();
       try {
          StringBuilder query = generateQuery(collection, bindVars, clauses);
-
-         ArangoCursor<Node> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), Node.class);
-         cursor.forEachRemaining(aDocument -> {
-            results.add(aDocument);
-         });
+         try {
+            ArangoCursor<Node> cursor = _systemDB.db(_db_name).query(query.toString(), bindVars.get(), Node.class);
+            cursor.forEachRemaining(aDocument -> {
+               results.add(aDocument);
+            });
+         } catch (ArangoDBException e) {
+            if (!e.getErrorMessage().contains("collection or view not found")) {
+               throw e;
+            }
+         }
       } catch (Exception e) {
          logger.error("Failed to execute query. " + e.getMessage());
          throw e;
@@ -469,6 +475,7 @@ public class KnowledgeGraph {
          cursor.forEachRemaining(aDocument -> {
             results.add(aDocument);
          });
+
       } catch (Exception e) {
          logger.error("Failed to execute query. " + e.getMessage());
          throw e;
@@ -596,7 +603,6 @@ public class KnowledgeGraph {
              */
             typeName = edge.getLeftType();
          }
-
 
          List<Node> otherSides = queryNodes(typeName, augmentedOtherSideClauses.toArray(new QueryClause[0]));
          if (1 == otherSides.size()) {

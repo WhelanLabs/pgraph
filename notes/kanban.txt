@@ -52,15 +52,27 @@
 
 * 100% code coverage (this allows regressions in coverage to be easily found.)
 
-* tag version 1.0.0 of KGraph
+* create version 1.0.0 of KGraph (set POM.xml and add tag)
 
 ##########################################################
-# WIP
+# Release 1.0.1
 ##########################################################
 
 * include source in build results so can be accessed by dependent projects
 
 * include javadoc in build results so can be accessed by dependent projects
+
+* query non-existant type, get zero results
+
+* create version 1.0.1 of KGraph (set POM.xml and add tag)
+
+##########################################################
+# WIP
+##########################################################
+
+
+
+
 
 ##########################################################
 # backlog

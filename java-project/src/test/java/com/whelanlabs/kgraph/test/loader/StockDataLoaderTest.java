@@ -26,21 +26,25 @@ public class StockDataLoaderTest {
       // do nothing
    }
 
+//   @Test
+//   public void load_freshAndValid_collectionsExist() throws Exception {
+//      long startTime = System.currentTimeMillis();
+//      Long beginSize = kGraph.getTotalCount();
+//      assert (0 == beginSize) : "beginSize is " + beginSize;
+//      StockDataLoader.load(tablespace_name);
+//      Long endSize = kGraph.getTotalCount();
+//      long endTime = System.currentTimeMillis();
+//      assert (0 < endSize);
+//      long timeElapsed = endTime - startTime;
+//      logger.debug("Execution time in seconds: " + timeElapsed/1000);
+//      logger.debug("Note: The average time on laptop is 177 seconds");
+//
+//      assert (timeElapsed < 200): "time elapsed >200. (" + timeElapsed + ")";
+//   }
+
    @Test
-   public void load_freshAndValid_collectionsExist() throws Exception {
-      long startTime = System.currentTimeMillis();
-      Long beginSize = kGraph.getTotalCount();
-      assert (0 == beginSize) : "beginSize is " + beginSize;
-      StockDataLoader.load(tablespace_name);
-      Long endSize = kGraph.getTotalCount();
-      long endTime = System.currentTimeMillis();
-      assert (0 < endSize);
-      long timeElapsed = endTime - startTime;
-      logger.debug("Execution time in seconds: " + timeElapsed/1000);
-      logger.debug("Note: The average time on laptop is 177 seconds");
-
-      assert (timeElapsed < 200): "time elapsed >200. (" + timeElapsed + ")";
-
+   public void test_class_not_empty() throws Exception {
+      logger.debug("have a remaining test for cases where perf tests not run.");
+      assert (true);
    }
-
 }

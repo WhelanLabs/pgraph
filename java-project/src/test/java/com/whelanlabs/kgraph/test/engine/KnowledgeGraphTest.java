@@ -572,4 +572,19 @@ public class KnowledgeGraphTest {
       assert (results.contains(nodeType3)) : "results = " + results;
    }
 
+   @Test
+   public void queryNodes_typeDoesNotExist_getZeroResults() throws Exception {
+      QueryClause linearDatasetInfoQuery = new QueryClause("dataset_id", QueryClause.Operator.EQUALS, "datasetInfoID");
+      String nodeType = ElementHelper.generateName();
+      List<Node> results = kGraph.queryNodes(nodeType, linearDatasetInfoQuery);
+      assert (results.size() == 0) : "results = " + results;
+   }
+   
+   @Test
+   public void queryEdges_typeDoesNotExist_getZeroResults() throws Exception {
+      QueryClause linearDatasetInfoQuery = new QueryClause("dataset_id", QueryClause.Operator.EQUALS, "datasetInfoID");
+      String edgeType = ElementHelper.generateName();
+      List<Edge> results = kGraph.queryEdges(edgeType, linearDatasetInfoQuery);
+      assert (results.size() == 0) : "results = " + results;
+   }
 }
