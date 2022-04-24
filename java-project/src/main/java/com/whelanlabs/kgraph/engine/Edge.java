@@ -40,12 +40,19 @@ public class Edge extends BaseEdgeDocument implements Element {
       //       see unit test "".
       super(edgeKey, left.getId(), right.getId());
       this.addAttribute(typeAttrName, type);
-      String leftCollectionName = left.getType(); //.getTypeName(left);
-      String rightCollectionName = right.getType(); //ElementFactory.getTypeName(right);
+      String leftCollectionName = left.getType();
+      String rightCollectionName = right.getType();
       this.addAttribute(leftTypeAttrName, leftCollectionName);
       this.addAttribute(rightTypeAttrName, rightCollectionName);
    }
 
+   public Edge(String edgeKey, String leftId, String rightId, String leftType, String rightType, String type) {
+      super(edgeKey, leftType + "/" + leftId, rightType + "/" + rightId);
+      this.addAttribute(typeAttrName, type);
+      this.addAttribute(leftTypeAttrName, leftType);
+      this.addAttribute(rightTypeAttrName, rightType);
+   }
+   
    /**
     * Instantiates a new edge.
     * 

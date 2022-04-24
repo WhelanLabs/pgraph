@@ -82,6 +82,28 @@ public class KnowledgeGraphTest {
    }
 
    @Test
+   public void upsertEdge_nonNodeArgs_newEdge_added() {
+      
+      String leftID = ElementHelper.generateKey();
+      String rightID = ElementHelper.generateKey();
+      
+      final Node leftNode = new Node(leftID, "testNodeType");
+      final Node rightNode = new Node(rightID, "testNodeType");
+      kGraph.upsert(leftNode, rightNode);
+
+      String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
+      Edge edge = new Edge(edgeKey, leftID, rightID, "testNodeType", "testNodeType", "testEdgeType");
+      edge.addAttribute("foo", "bar");
+
+      edge.setKey(edgeKey);
+      edge = kGraph.upsert(edge).getEdges().get(0);
+
+      Edge result = kGraph.getEdgeByKey(edgeKey, "testEdgeType");
+      String attr = (String) result.getAttribute("foo");
+      assert ("bar".equals(attr));
+   }
+   
+   @Test
    public void upsertEdge_existingEdge_added() {
       final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
       final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeType");
@@ -253,6 +275,26 @@ public class KnowledgeGraphTest {
       assert (1 == results.size()) : "results.size() = " + results.size();
    }
 
+   @Test
+   public void expandRight_noNodeEdgeCreation_noFilters_getResults() {
+      String leftId = ElementHelper.generateKey();
+      String rightId = ElementHelper.generateKey();
+      final Node leftNode = new Node(leftId, "testNodeType");
+      final Node rightNode = new Node(rightId, "testNodeType");
+      kGraph.upsert(leftNode, rightNode);
+
+      String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
+      Edge edge = new Edge(edgeKey, leftId, rightId, "testNodeType", "testNodeType", "testEdgeType");
+      edge = kGraph.upsert(edge).getEdges().get(0);
+      logger.debug("edge.id: " + edge.getId());
+
+      List<QueryClause> relClauses = null;
+      List<QueryClause> otherSideClauses = null;
+      List<Triple<Node, Edge, Node>> results = kGraph.expandRight(leftNode, "testEdgeType", relClauses, otherSideClauses);
+
+      assert (1 == results.size()) : "results.size() = " + results.size();
+   }
+   
    @Test
    public void queryEdge_edgeExists_getResults() {
       final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
