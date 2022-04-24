@@ -5,7 +5,7 @@
 	<packaging>jar</packaging>
 	<version>1.0.0</version>
 	<name>kgraph</name>
-  <url>http://www.whelanlabs.com/kgraph</url>
+	<url>http://www.whelanlabs.com/kgraph</url>
 
 
 	<properties>
@@ -69,6 +69,14 @@
 
 
 	<build>
+    <resources> 
+        <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.java</include>
+                </includes>
+        </resource>
+    </resources>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -131,7 +139,6 @@
 						</execution>
 					</executions>
 				</plugin>
-
 			</plugins>
 		</pluginManagement>
 	</build>
