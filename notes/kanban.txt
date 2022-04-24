@@ -60,6 +60,8 @@
 
 * include source in build results so can be accessed by dependent projects
 
+* include javadoc in build results so can be accessed by dependent projects
+
 ##########################################################
 # backlog
 ##########################################################
