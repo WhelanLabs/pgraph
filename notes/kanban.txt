@@ -95,4 +95,8 @@
     - KnowledgeGraph.nodeTypesCollectionName
     - KnowledgeGraph.edgeTypesCollectionName
 	
+* set based performance improvements
+	- load nodes
+	- load edges
+
 * break apart KnowledgeGraph - no God Class
