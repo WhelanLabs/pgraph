@@ -52,6 +52,16 @@ public class KnowledgeGraphTest {
       assert ("bbar".equals(attr));
    }
 
+   @Test(expected = RuntimeException.class)
+   public void getNodeByKey_nodeDoesNotExist_exception() {
+      String typeName = ElementHelper.generateName();
+      Node testNode = new Node(ElementHelper.generateKey(), typeName);
+      kGraph.upsert(testNode);
+      Node result = kGraph.getNodeByKey(ElementHelper.generateKey(), typeName);
+      logger.debug("result = " + result);
+   }
+   
+   
    @Test
    public void upsertNode_existingNode_added() {
       final Node badDate = new Node(ElementHelper.generateKey(), "dates");

@@ -381,6 +381,9 @@ public class KnowledgeGraph {
     */
    public Node getNodeByKey(String key, String typeName) {
       Node doc = _userDB.collection(typeName).getDocument(key, Node.class);
+      if(null == doc) {
+         throw new RuntimeException("Node does not exist. (key = " + key + ")");
+      }
       return doc;
    }
 
