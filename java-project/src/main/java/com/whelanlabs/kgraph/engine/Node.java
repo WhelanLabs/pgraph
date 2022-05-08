@@ -17,6 +17,7 @@ public class Node extends BaseDocument implements Element {
     */
    public Node(String key, String type) {
       super(key);
+      id = type + "/" + key;
       this.addAttribute(typeAttrName, type);
    }
 

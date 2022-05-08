@@ -620,8 +620,18 @@ public class KnowledgeGraph {
     * @return the count
     */
    public Long getCount(String typeName) {
+      Long result = 0l;
       ArangoCollection collection = _userDB.collection(typeName);
-      Long result = collection.count().getCount();
+      try {
+         result = collection.count().getCount();
+      }
+      catch (Exception e) {
+         if( e.getMessage()==null || !(e.getMessage().contains("collection or view not found"))) {
+            throw e;
+         }
+      }
+      // collection or view not found
+      
       return result;
    }
 

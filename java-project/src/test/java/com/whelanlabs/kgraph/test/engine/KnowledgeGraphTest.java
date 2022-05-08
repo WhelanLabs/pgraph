@@ -196,8 +196,8 @@ public class KnowledgeGraphTest {
       assert (endSize == beginSize + 3) : "{beginSize, endsize} is {" + beginSize + ", " + endSize + "}";
    }
 
-   @Test(expected = ArangoDBException.class)
-   public void getTotalCount_nonpersistedNodesForNewEdge_exception() throws Exception {
+   @Test
+   public void getTotalCount_nonpersistedNodesForNewEdge_success() throws Exception {
       // TODO: Address "Periodic errors may occur if using non-persisted nodes" issue.
       // see also: getTotalCount_hasNodesAndEdges_getProperCount
       String testTypeName = ElementHelper.generateName();
@@ -209,11 +209,10 @@ public class KnowledgeGraphTest {
       final Node n2 = new Node(ElementHelper.generateKey(), testTypeName);
 
       Edge e1 = new Edge(ElementHelper.generateKey(), n1, n2, ElementHelper.generateName());
-      kGraph.upsert(n1, n2);
-      kGraph.upsert(e1);
+      kGraph.upsert(e1, n1, n2);
 
       Long endSize = kGraph.getTotalCount();
-      assert (endSize == beginSize + 1) : "{beginSize, endsize} is {" + beginSize + ", " + endSize + "}";
+      assert (endSize == beginSize + 3) : "{beginSize, endsize} is {" + beginSize + ", " + endSize + "}";
    }
 
    @Test
@@ -263,8 +262,12 @@ public class KnowledgeGraphTest {
       final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
 
+      logger.debug("leftNode = " + leftNode);
+      
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeType");
+      
+      logger.debug("edge = " + edge);
       edge = kGraph.upsert(edge).getEdges().get(0);
       logger.debug("edge.id: " + edge.getId());
 
@@ -468,7 +471,20 @@ public class KnowledgeGraphTest {
       Long count = kGraph.getCount(typeName);
       assert (1 == count);
    }
+   
+   @Test
+   public void getCount_typeDoesNoteExist_getZero() {
+      String typeName = ElementHelper.generateName();;
+      Long count = kGraph.getCount(typeName);
+      assert (0 == count);
+   }
 
+   @Test(expected = NullPointerException.class)
+   public void getCount_typeIsNull_getZero() {
+      Long count = kGraph.getCount(null);
+      assert (0 == count);
+   }
+   
    @Test
    public void expandRight_mixedOthersideTypes_getResults() {
       final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
