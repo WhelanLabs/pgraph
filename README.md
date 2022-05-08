@@ -11,9 +11,12 @@ Current test code requires that ArangoDB is started in Docker.
    
 ## To build normally:
 use one of the following:
+
 	mvn clean source:jar javadoc:jar install
 	
 	mvn clean source:jar javadoc:jar install -Dtest=\!StockDataLoaderTest*
+	
+	mvn clean source:jar javadoc:jar install -DskipTests
    
 ## To build licensing information:
 	mvn site
