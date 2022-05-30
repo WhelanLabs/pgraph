@@ -45,7 +45,8 @@ import com.whelanlabs.kgraph.engine.QueryClause.Operator;
 public class KnowledgeGraph {
 
    /** The user DB. */
-   private ArangoDatabase _userDB;
+   // TODO: make this private again once Andrew's need is moved back into KGraph.
+   public ArangoDatabase _userDB;
 
    /** The db name. */
    private DbName _db_name;
