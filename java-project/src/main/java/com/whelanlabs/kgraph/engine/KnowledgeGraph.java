@@ -743,4 +743,14 @@ public class KnowledgeGraph {
       List<String> leftTypesNoDups = new ArrayList<String>(new LinkedHashSet<>(leftTypes));
       return leftTypesNoDups;
    }
+   
+   public List<Node> query(String query, Map<String, Object> bindVars) {
+      List<Node> resultNodes = new ArrayList<>();
+      ArangoCursor<Node> cursor = _userDB.query(query, bindVars, null, Node.class);
+      cursor.forEachRemaining(aDocument -> {
+         logger.debug("result: " + aDocument);
+         resultNodes.add(aDocument);
+      });
+      return resultNodes;
+   }
 }
