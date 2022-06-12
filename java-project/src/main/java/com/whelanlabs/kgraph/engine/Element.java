@@ -16,6 +16,8 @@ public interface Element {
     * @return the id
     */
    String getId();
+   
+   String getKey();
 
    /**
     * Gets the value of the attribute.

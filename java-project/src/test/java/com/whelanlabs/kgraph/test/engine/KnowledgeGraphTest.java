@@ -62,8 +62,7 @@ public class KnowledgeGraphTest {
       Node result = kGraph.getNodeByKey(ElementHelper.generateKey(), typeName);
       logger.debug("result = " + result);
    }
-   
-   
+
    @Test
    public void upsertNode_existingNode_added() {
       final Node badDate = new Node(ElementHelper.generateKey(), "dates");
@@ -95,10 +94,10 @@ public class KnowledgeGraphTest {
 
    @Test
    public void upsertEdge_nonNodeArgs_newEdge_added() {
-      
+
       String leftID = ElementHelper.generateKey();
       String rightID = ElementHelper.generateKey();
-      
+
       final Node leftNode = new Node(leftID, "testNodeType");
       final Node rightNode = new Node(rightID, "testNodeType");
       kGraph.upsert(leftNode, rightNode);
@@ -114,7 +113,7 @@ public class KnowledgeGraphTest {
       String attr = (String) result.getAttribute("foo");
       assert ("bar".equals(attr));
    }
-   
+
    @Test
    public void upsertEdge_existingEdge_added() {
       final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
@@ -275,10 +274,10 @@ public class KnowledgeGraphTest {
       kGraph.upsert(leftNode, rightNode);
 
       logger.debug("leftNode = " + leftNode);
-      
+
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeType");
-      
+
       logger.debug("edge = " + edge);
       edge = kGraph.upsert(edge).getEdges().get(0);
       logger.debug("edge.id: " + edge.getId());
@@ -309,7 +308,7 @@ public class KnowledgeGraphTest {
 
       assert (1 == results.size()) : "results.size() = " + results.size();
    }
-   
+
    @Test
    public void queryEdge_edgeExists_getResults() {
       final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
@@ -483,10 +482,11 @@ public class KnowledgeGraphTest {
       Long count = kGraph.getCount(typeName);
       assert (1 == count);
    }
-   
+
    @Test
    public void getCount_typeDoesNoteExist_getZero() {
-      String typeName = ElementHelper.generateName();;
+      String typeName = ElementHelper.generateName();
+      ;
       Long count = kGraph.getCount(typeName);
       assert (0 == count);
    }
@@ -496,7 +496,7 @@ public class KnowledgeGraphTest {
       Long count = kGraph.getCount(null);
       assert (0 == count);
    }
-   
+
    @Test
    public void expandRight_mixedOthersideTypes_getResults() {
       final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
@@ -649,7 +649,7 @@ public class KnowledgeGraphTest {
       List<Node> results = kGraph.queryNodes(nodeType, linearDatasetInfoQuery);
       assert (results.size() == 0) : "results = " + results;
    }
-   
+
    @Test
    public void queryEdges_typeDoesNotExist_getZeroResults() throws Exception {
       QueryClause linearDatasetInfoQuery = new QueryClause("dataset_id", QueryClause.Operator.EQUALS, "datasetInfoID");
@@ -657,7 +657,7 @@ public class KnowledgeGraphTest {
       List<Edge> results = kGraph.queryEdges(edgeType, linearDatasetInfoQuery);
       assert (results.size() == 0) : "results = " + results;
    }
-   
+
    @Test
    public void query_hasResults_getResults() throws Exception {
       String nodeType = ElementHelper.generateName();
@@ -668,14 +668,42 @@ public class KnowledgeGraphTest {
       Node node3 = new Node(ElementHelper.generateKey(), nodeType);
       node3.addAttribute("time", 3);
       kGraph.upsert(node1, node2, node3);
-      
-      
+
       String query = "FOR t IN " + nodeType + " FILTER t.time <= @time SORT t.time DESC LIMIT 1 RETURN t";
       logger.debug("query: " + query);
       Map<String, Object> bindVars = Collections.singletonMap("time", 2);
-      
+
       List<Node> results = kGraph.query(query, bindVars);
       assert (results.size() == 1) : "results = " + results;
       assert (results.get(0).getKey().equals(node2.getKey())) : "results = " + results;
+   }
+
+   @Test
+   public void delete_nodeExists_deleted() {
+      Boolean pass = false;
+      String typeName = ElementHelper.generateName();
+      Node testNode = new Node(ElementHelper.generateKey(), typeName);
+      testNode = kGraph.upsert(testNode).getNodes().get(0);
+
+      Node result = kGraph.getNodeByKey(testNode.getKey(), typeName);
+      assert (null != result);
+
+      kGraph.delete(result);
+      
+      try {
+         Node result2 = kGraph.getNodeByKey(testNode.getKey(), typeName);
+      } catch (RuntimeException e) {
+         pass = true;
+      }
+      assert (pass == true);
+   }
+
+   @Test(expected = RuntimeException.class)
+   public void delete_nodeNotExists_exception() {
+      String typeName = ElementHelper.generateName();
+      Node testNode = new Node(ElementHelper.generateKey(), typeName);
+
+      kGraph.delete(testNode);
+      Node result2 = kGraph.getNodeByKey(testNode.getKey(), typeName);
    }
 }

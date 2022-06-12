@@ -753,4 +753,14 @@ public class KnowledgeGraph {
       });
       return resultNodes;
    }
+   
+   // TODO: augment delete to cascade delete edges when a node is deleted.
+   public void delete(Element element) {
+      try {
+         _userDB.collection(element.getType()).deleteDocument(element.getKey());
+       } catch (ArangoDBException e) {
+         throw new RuntimeException("Failed to delete element.", e);
+       }
+   }
+   
 }
