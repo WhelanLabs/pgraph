@@ -70,5 +70,11 @@ public class Edge extends BaseEdgeDocument implements Element {
    public String getRightType() {
       return getAttribute(rightTypeAttrName).toString();
    }
+
+   @Override
+   public String toJson() {
+      // TODO Auto-generated method stub
+      return null;
+   }
    
 }

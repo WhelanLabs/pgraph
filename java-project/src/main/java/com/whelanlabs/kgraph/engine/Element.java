@@ -1,5 +1,7 @@
 package com.whelanlabs.kgraph.engine;
 
+import java.util.Collection;
+
 /**
  * The Interface Element.  Elements are the logical supertype for
  * Nodes and Edges in a Property Graph.
@@ -35,5 +37,26 @@ public interface Element {
    default String getType() {
       String typeName = (String) getAttribute(typeAttrName);
       return typeName;
+   }
+   
+   String toJson();
+   
+   static String toJson(Collection<Element> elements) {
+      String result = "";
+      Boolean first = true;
+
+      result += "{\n";
+      for(Element element : elements) {
+         if(first) {
+            first = false;
+         }
+         else {
+            result += ",\n";
+         }
+         result += element.toJson();
+      }
+      result += "}\n";
+
+      return result;
    }
 }
