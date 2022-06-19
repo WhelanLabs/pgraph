@@ -117,8 +117,7 @@ public class KnowledgeGraphTest2 {
    
    @Test
    public void toJson_goodNode_getJson() throws Exception {
-      String nodeType1 = ElementHelper.generateName();
-      Node node1 = new Node(ElementHelper.generateKey(), nodeType1);
+      Node node1 = new Node(ElementHelper.generateKey(), "TestNodeType");
       node1.addAttribute("foo", 123);
       node1.addAttribute("bar", "abc");
       String jsonString1 = node1.toJson();
@@ -132,11 +131,11 @@ public class KnowledgeGraphTest2 {
    public void toJson_goodEdge_getJson() throws Exception {
       String nodeType1 = ElementHelper.generateName();
       
-      Node node1 = new Node(ElementHelper.generateKey(), nodeType1);
-      Node node2 = new Node(ElementHelper.generateKey(), nodeType1);
+      Node node1 = new Node(ElementHelper.generateKey(), "TestNodeType");
+      Node node2 = new Node(ElementHelper.generateKey(), "TestNodeType");
       node1.addAttribute("foo", 123);
       node1.addAttribute("bar", "abc");
-      Edge edge = new Edge(ElementHelper.generateKey(), node1, node2, ElementHelper.generateKey());
+      Edge edge = new Edge(ElementHelper.generateKey(), node1, node2, "TestEdgeType");
       
       String jsonString1 = edge.toJson();
       logger.debug("jsonString1: " + jsonString1);
@@ -147,13 +146,12 @@ public class KnowledgeGraphTest2 {
    
    @Test
    public void toJson_goodElements_getJson() throws Exception {
-      String nodeType1 = ElementHelper.generateName();
       
-      Node node1 = new Node(ElementHelper.generateKey(), nodeType1);
-      Node node2 = new Node(ElementHelper.generateKey(), nodeType1);
+      Node node1 = new Node(ElementHelper.generateKey(), "TestNodeType");
+      Node node2 = new Node(ElementHelper.generateKey(), "TestNodeType");
       node1.addAttribute("foo", 123);
       node1.addAttribute("bar", "abc");
-      Edge edge = new Edge(ElementHelper.generateKey(), node1, node2, ElementHelper.generateKey());
+      Edge edge = new Edge(ElementHelper.generateKey(), node1, node2, "TestEdgeType");
       List<Element> elements = new ArrayList<>();
       elements.add(node1);
       elements.add(edge);

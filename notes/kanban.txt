@@ -85,6 +85,8 @@
 ##########################################################
 
 * add toJson() support
+  - OOTB content
+  - java class (Node or Edge)
 
 
 
