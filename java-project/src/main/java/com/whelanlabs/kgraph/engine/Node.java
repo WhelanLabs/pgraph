@@ -3,14 +3,8 @@ package com.whelanlabs.kgraph.engine;
 import java.util.Map;
 
 import com.arangodb.entity.BaseDocument;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 /**
  * The Class Node.

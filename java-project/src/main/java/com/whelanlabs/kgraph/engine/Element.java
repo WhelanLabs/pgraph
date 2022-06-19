@@ -2,12 +2,11 @@ package com.whelanlabs.kgraph.engine;
 
 import java.util.Collection;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 /**
- * The Interface Element.  Elements are the logical supertype for
+ * The Interface Element.  Elements are the logical parent type for
  * Nodes and Edges in a Property Graph.
  */
 public interface Element {

@@ -3,8 +3,7 @@ package com.whelanlabs.kgraph.engine;
 import java.util.Map;
 
 import com.arangodb.entity.BaseEdgeDocument;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper; 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter; 
 
 /**
