@@ -3,6 +3,8 @@ package com.whelanlabs.kgraph.engine;
 import java.util.Map;
 
 import com.arangodb.entity.BaseDocument;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 /**
  * The Class Node.
@@ -36,8 +38,9 @@ public class Node extends BaseDocument implements Element {
    private static final long serialVersionUID = -1109802074556650431L;
 
    @Override
-   public String toJson() {
-      // TODO Auto-generated method stub
-      return null;
+   public String toJson() throws Exception {
+      ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+      String json = ow.writeValueAsString(this);
+      return json;
    }
 }

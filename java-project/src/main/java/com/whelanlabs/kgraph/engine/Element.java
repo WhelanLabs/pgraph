@@ -2,6 +2,10 @@ package com.whelanlabs.kgraph.engine;
 
 import java.util.Collection;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
 /**
  * The Interface Element.  Elements are the logical supertype for
  * Nodes and Edges in a Property Graph.
@@ -39,24 +43,12 @@ public interface Element {
       return typeName;
    }
    
-   String toJson();
+   String toJson() throws Exception;
    
-   static String toJson(Collection<Element> elements) {
-      String result = "";
-      Boolean first = true;
-
-      result += "{\n";
-      for(Element element : elements) {
-         if(first) {
-            first = false;
-         }
-         else {
-            result += ",\n";
-         }
-         result += element.toJson();
-      }
-      result += "}\n";
-
-      return result;
+   static String toJson(Collection<Element> elements) throws Exception {
+      
+      ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+      String json = ow.writeValueAsString(elements);
+      return json;
    }
 }

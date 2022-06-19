@@ -84,7 +84,7 @@
 # WIP
 ##########################################################
 
-
+* add toJson() support
 
 
 
@@ -93,7 +93,7 @@
 ##########################################################
 
 
-* support JSON dump and load.
+* support 'load from json' support
 
 * add support in kGraph to work with a pool of ArangoDB end-points
 

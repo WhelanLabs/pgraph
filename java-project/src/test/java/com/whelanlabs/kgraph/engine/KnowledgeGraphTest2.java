@@ -1,5 +1,6 @@
 package com.whelanlabs.kgraph.engine;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Triple;
@@ -112,5 +113,56 @@ public class KnowledgeGraphTest2 {
       
       kGraph.expand(leftNode, "testEdgeType", relClauses, otherSideClauses, Direction.any);
 
-   }   
+   }
+   
+   @Test
+   public void toJson_goodNode_getJson() throws Exception {
+      String nodeType1 = ElementHelper.generateName();
+      Node node1 = new Node(ElementHelper.generateKey(), nodeType1);
+      node1.addAttribute("foo", 123);
+      node1.addAttribute("bar", "abc");
+      String jsonString1 = node1.toJson();
+      logger.debug("jsonString1: " + jsonString1);
+      kGraph.upsert(node1);
+      String jsonString2 = node1.toJson();
+      logger.debug("jsonString2: " + jsonString2);
+   }
+   
+   @Test
+   public void toJson_goodEdge_getJson() throws Exception {
+      String nodeType1 = ElementHelper.generateName();
+      
+      Node node1 = new Node(ElementHelper.generateKey(), nodeType1);
+      Node node2 = new Node(ElementHelper.generateKey(), nodeType1);
+      node1.addAttribute("foo", 123);
+      node1.addAttribute("bar", "abc");
+      Edge edge = new Edge(ElementHelper.generateKey(), node1, node2, ElementHelper.generateKey());
+      
+      String jsonString1 = edge.toJson();
+      logger.debug("jsonString1: " + jsonString1);
+      kGraph.upsert(node1, node2, edge);
+      String jsonString2 = edge.toJson();
+      logger.debug("jsonString2: " + jsonString2);
+   }
+   
+   @Test
+   public void toJson_goodElements_getJson() throws Exception {
+      String nodeType1 = ElementHelper.generateName();
+      
+      Node node1 = new Node(ElementHelper.generateKey(), nodeType1);
+      Node node2 = new Node(ElementHelper.generateKey(), nodeType1);
+      node1.addAttribute("foo", 123);
+      node1.addAttribute("bar", "abc");
+      Edge edge = new Edge(ElementHelper.generateKey(), node1, node2, ElementHelper.generateKey());
+      List<Element> elements = new ArrayList<>();
+      elements.add(node1);
+      elements.add(edge);
+      elements.add(node2);
+
+      String jsonString1 = Element.toJson(elements);
+      logger.debug("jsonString1: " + jsonString1);
+      kGraph.upsert(node1, node2, edge);
+      String jsonString2 = Element.toJson(elements);
+      logger.debug("jsonString2: " + jsonString2);
+   }
 }
