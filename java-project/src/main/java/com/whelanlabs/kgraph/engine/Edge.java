@@ -79,5 +79,14 @@ public class Edge extends BaseEdgeDocument implements Element {
       String json = ow.writeValueAsString(this);
       return json;
    }
+
+   @Override
+   public String toDot() {
+// edgeId  [shape=oval label="one\ltwo three\lfour five six seven\l"]
+// leftId -> edgeId -> rightId
+      StringBuilder s = new StringBuilder();
+      s.append("stuff...");
+      return s.toString();
+   }
    
 }

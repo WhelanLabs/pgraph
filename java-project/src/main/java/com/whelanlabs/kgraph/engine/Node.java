@@ -43,4 +43,12 @@ public class Node extends BaseDocument implements Element {
       String json = ow.writeValueAsString(this);
       return json;
    }
+
+   @Override
+   public String toDot() {
+      // a  [label="one\ltwo three\lfour five six seven\l"]
+      StringBuilder s = new StringBuilder();
+      s.append("stuff...");
+      return s.toString();
+   }
 }

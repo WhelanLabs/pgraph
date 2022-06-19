@@ -21,7 +21,7 @@ public interface Element {
     * @return the id
     */
    String getId();
-   
+
    String getKey();
 
    /**
@@ -41,13 +41,37 @@ public interface Element {
       String typeName = (String) getAttribute(typeAttrName);
       return typeName;
    }
-   
+
    String toJson() throws Exception;
-   
+
    static String toJson(Collection<Element> elements) throws Exception {
-      
+
       ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
       String json = ow.writeValueAsString(elements);
       return json;
    }
+
+   static String toDot(Collection<Element> elements) throws Exception {
+      // see also: https://renenyffenegger.ch/notes/tools/Graphviz/examples/index
+//      digraph L {
+//         node [shape=record fontname=Arial];
+//         a  [label="one\ltwo three\lfour five six seven\l"]
+//         b  [label="one\ntwo three\nfour five six seven"]
+//         c  [label="one\rtwo three\rfour five six seven\r"]
+//         a -> b -> c
+//       }
+      StringBuilder s = new StringBuilder();
+      s.append("digraph G {\n");
+      s.append("node [shape=record fontname=Arial];\n");
+      for (Element e : elements) {
+         s.append(e.toDot());
+      }
+
+      s.append("node [shape=record fontname=Arial];\n");
+
+      return s.toString();
+   }
+
+   String toDot();
+
 }

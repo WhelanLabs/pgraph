@@ -90,6 +90,7 @@
 # WIP
 ##########################################################
 
+* export elements as Dot.
 
 * support 'load from json' support
 
