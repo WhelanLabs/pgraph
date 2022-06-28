@@ -53,13 +53,6 @@ public interface Element {
 
    static String toDot(Collection<Element> elements) throws Exception {
       // see also: https://renenyffenegger.ch/notes/tools/Graphviz/examples/index
-//      digraph L {
-//         node [shape=record fontname=Arial];
-//         a  [label="one\ltwo three\lfour five six seven\l"]
-//         b  [label="one\ntwo three\nfour five six seven"]
-//         c  [label="one\rtwo three\rfour five six seven\r"]
-//         a -> b -> c
-//       }
       StringBuilder s = new StringBuilder();
       s.append("digraph G {\n");
       s.append("node [shape=record fontname=Arial];\n");
@@ -67,7 +60,7 @@ public interface Element {
          s.append(e.toDot());
       }
 
-      s.append("node [shape=record fontname=Arial];\n");
+      s.append("}\n");
 
       return s.toString();
    }

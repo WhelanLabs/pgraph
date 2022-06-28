@@ -125,6 +125,10 @@ public class KnowledgeGraphTest2 {
       kGraph.upsert(node1);
       String jsonString2 = node1.toJson();
       logger.debug("jsonString2: " + jsonString2);
+      assert (jsonString1.contains("\"bar\" : \"abc\","));
+      assert (jsonString2.contains("\"type\" : \"TestNodeType\""));
+
+
    }
    
    @Test
@@ -139,9 +143,13 @@ public class KnowledgeGraphTest2 {
       
       String jsonString1 = edge.toJson();
       logger.debug("jsonString1: " + jsonString1);
+      assert (jsonString1.contains("\"id\" : null,"));
+
       kGraph.upsert(node1, node2, edge);
       String jsonString2 = edge.toJson();
       logger.debug("jsonString2: " + jsonString2);
+      assert (jsonString2.contains("\"type\" : \"TestEdgeType\""));
+
    }
    
    @Test
@@ -162,5 +170,31 @@ public class KnowledgeGraphTest2 {
       kGraph.upsert(node1, node2, edge);
       String jsonString2 = Element.toJson(elements);
       logger.debug("jsonString2: " + jsonString2);
+      
+      assert (jsonString1.contains("\"id\" : null,"));
+      assert (jsonString2.contains("\"type\" : \"TestNodeType\""));
+   }
+   
+   @Test
+   public void toDot_goodElements_getDot() throws Exception {
+      
+      Node node1 = new Node(ElementHelper.generateKey(), "TestNodeType");
+      Node node2 = new Node(ElementHelper.generateKey(), "TestNodeType");
+      node1.addAttribute("foo", 123);
+      node1.addAttribute("bar", "abc_node");
+      Edge edge = new Edge(ElementHelper.generateKey(), node1, node2, "TestEdgeType");
+      edge.addAttribute("foo", 123456);
+      edge.addAttribute("bar", "abc_edge");
+      List<Element> elements = new ArrayList<>();
+      kGraph.upsert(node1, node2, edge);
+      elements.add(node1);
+      elements.add(node2);
+      elements.add(edge);
+
+      String dotString = Element.toDot(elements);
+      logger.debug("dotString: " + dotString);
+      
+      assert (dotString.contains("id = \\\"TestEdgeType/KEY"));
+      assert (dotString.contains("digraph G {"));
    }
 }

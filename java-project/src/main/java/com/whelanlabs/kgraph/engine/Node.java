@@ -46,9 +46,22 @@ public class Node extends BaseDocument implements Element {
 
    @Override
    public String toDot() {
-      // a  [label="one\ltwo three\lfour five six seven\l"]
-      StringBuilder s = new StringBuilder();
-      s.append("stuff...");
-      return s.toString();
-   }
+            StringBuilder s = new StringBuilder();
+            s.append(getId().replace("/", "_") + " [label=\"");
+            s.append("type = \\\"" + getType() + "\\\"\\l");
+            s.append("id = \\\"" + getId() + "\\\"\\l");
+            for(String key : this.getProperties().keySet()) {
+               if("__type"!=key) {
+                  Object value = getAttribute(key);
+                  if(value instanceof String) {
+                     s.append(key + " = \\\"" + getAttribute(key) + "\\\"\\l");
+                  }
+                  else {
+                     s.append(key + " = " + getAttribute(key) + "\\l");
+                  }
+               }
+            }
+            s.append("\"]\n");
+            return s.toString();
+         }
 }

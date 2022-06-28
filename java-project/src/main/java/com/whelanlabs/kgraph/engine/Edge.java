@@ -85,7 +85,22 @@ public class Edge extends BaseEdgeDocument implements Element {
 // edgeId  [shape=oval label="one\ltwo three\lfour five six seven\l"]
 // leftId -> edgeId -> rightId
       StringBuilder s = new StringBuilder();
-      s.append("stuff...");
+      s.append(getId().replace("/", "_") + " [shape=oval label=\"");
+      s.append("type = \\\"" + getType() + "\\\"\\l");
+      s.append("id = \\\"" + getId() + "\\\"\\l");
+      for(String key : this.getProperties().keySet()) {
+         if("__type"!=key && "__left_collection"!=key && "__right_collection"!=key) {
+            Object value = getAttribute(key);
+            if(value instanceof String) {
+               s.append(key + " = \\\"" + getAttribute(key) + "\\\"\\l");
+            }
+            else {
+               s.append(key + " = " + getAttribute(key) + "\\l");
+            }
+         }
+      }
+      s.append("\"]\n");
+      s.append(getFrom().replace("/", "_") + " -> " + getId().replace("/", "_") + " -> " +  getTo().replace("/", "_") + "\n");
       return s.toString();
    }
    
