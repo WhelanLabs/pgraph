@@ -2,6 +2,8 @@ package com.whelanlabs.kgraph.engine;
 
 import java.util.Collection;
 
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -10,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  * Nodes and Edges in a Property Graph.
  */
 public interface Element {
+   // TODO: after deep thought, this should probably be a parent class instead of an interface.
 
    /** The Constant typeAttrName. This correlates to the name of the 
     *  Collection in ArangoDB.*/

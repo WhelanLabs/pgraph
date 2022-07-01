@@ -1,6 +1,9 @@
 package com.whelanlabs.kgraph.engine;
 
 import java.util.Map;
+import java.util.Set;
+
+import org.json.JSONObject;
 
 import com.arangodb.entity.BaseDocument;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -64,4 +67,23 @@ public class Node extends BaseDocument implements Element {
             s.append("\"]\n");
             return s.toString();
          }
+
+   public static Node hydrate(JSONObject jsonObj) {
+      
+      String key = jsonObj.getString("key");
+      String type = jsonObj.getString("type");
+      
+      Node result = new Node(key, type);
+      
+      result.setRevision(jsonObj.getString("revision"));
+
+      JSONObject props = jsonObj.getJSONObject("properties");
+      Set<String> propsKeySet = props.keySet();
+      for( String propKey : propsKeySet){
+         Object propValue = props.get(propKey);
+         result.addAttribute(propKey, propValue);
+     }
+
+      return result;
+   }
 }

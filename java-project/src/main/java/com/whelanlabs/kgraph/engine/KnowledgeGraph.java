@@ -383,7 +383,7 @@ public class KnowledgeGraph {
     */
    public Node getNodeByKey(String key, String typeName) {
       Node doc = _userDB.collection(typeName).getDocument(key, Node.class);
-      if(null == doc) {
+      if (null == doc) {
          throw new RuntimeException("Node does not exist. (key = " + key + ")");
       }
       return doc;
@@ -629,14 +629,13 @@ public class KnowledgeGraph {
       ArangoCollection collection = _userDB.collection(typeName);
       try {
          result = collection.count().getCount();
-      }
-      catch (Exception e) {
-         if( e.getMessage()==null || !(e.getMessage().contains("collection or view not found"))) {
+      } catch (Exception e) {
+         if (e.getMessage() == null || !(e.getMessage().contains("collection or view not found"))) {
             throw e;
          }
       }
       // collection or view not found
-      
+
       return result;
    }
 
@@ -744,7 +743,7 @@ public class KnowledgeGraph {
       List<String> leftTypesNoDups = new ArrayList<String>(new LinkedHashSet<>(leftTypes));
       return leftTypesNoDups;
    }
-   
+
    public List<Node> query(String query, Map<String, Object> bindVars) {
       List<Node> resultNodes = new ArrayList<>();
       ArangoCursor<Node> cursor = _userDB.query(query, bindVars, null, Node.class);
@@ -754,20 +753,35 @@ public class KnowledgeGraph {
       });
       return resultNodes;
    }
-   
+
    // TODO: augment delete to cascade delete edges when a node is deleted.
    public void delete(Element element) {
       try {
          _userDB.collection(element.getType()).deleteDocument(element.getKey());
-       } catch (ArangoDBException e) {
+      } catch (ArangoDBException e) {
          throw new RuntimeException("Failed to delete element.", e);
-       }
+      }
    }
-   
-   public void loadFromJson(JSONArray jsonArray) {
+
+   public List<Element> loadFromJson(JSONArray jsonArray) {
+      List<Element> elementList = new ArrayList<>();
       for (int i = 0; i < jsonArray.length(); i++) {
          JSONObject jsonObj = jsonArray.getJSONObject(i);
-     }
+         if (jsonObj.has(edgeTypesCollectionName)) {
+            Edge edge = Edge.hydrate(jsonObj);
+            elementList.add(edge);
+         } else {
+            // is a node
+            Node node = Node.hydrate(jsonObj);
+            elementList.add(node);
+         }
+      }
+      return elementList;
    }
-   
+
+   public ElementList<Element> upsert(List<Element> results) {
+      Element[] array = results.toArray(new Element[0]);
+      return upsert(array);
+   }
+
 }

@@ -204,14 +204,21 @@ public class KnowledgeGraphTest2 {
    }
    
    @Test
-   public void importJson_goodThought_loaded() throws Exception {
+   public void importJson_goodJson_loaded() throws Exception {
       String filePath = "./src/test/resources/test_load_data.json";
       String content = new String(Files.readAllBytes(Paths.get(filePath)));
 
       logger.debug("content = "+ content);
       
       JSONArray jsonArr = new JSONArray(content);
-      kGraph.loadFromJson(jsonArr);
+      List<Element> results = kGraph.loadFromJson(jsonArr);
+      
+      logger.debug("results: " + results);
+
+      assert (results.size()==24): "size = " + results.size();
+
+       ElementList<Element> testNode = kGraph.upsert(results);
+
       fail("implement me!");
    }
 }

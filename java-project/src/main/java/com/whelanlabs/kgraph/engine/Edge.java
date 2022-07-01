@@ -1,6 +1,11 @@
 package com.whelanlabs.kgraph.engine;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.arangodb.entity.BaseEdgeDocument;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,6 +70,7 @@ public class Edge extends BaseEdgeDocument implements Element {
       super(properties);
    }
 
+
    public String getLeftType() {
       return getAttribute(leftTypeAttrName).toString();
    }
@@ -102,6 +108,29 @@ public class Edge extends BaseEdgeDocument implements Element {
       s.append("\"]\n");
       s.append(getFrom().replace("/", "_") + " -> " + getId().replace("/", "_") + " -> " +  getTo().replace("/", "_") + "\n");
       return s.toString();
+   }
+
+   public static Edge hydrate(JSONObject jsonObj) {
+      
+      String edgeKey = jsonObj.getString("key");
+      String leftId = jsonObj.getString("from");
+      String rightId = jsonObj.getString("to");
+      String leftType = jsonObj.getString("leftType");
+      String rightType = jsonObj.getString("rightType");
+      String type = jsonObj.getString("type");
+      
+      Edge result = new Edge(edgeKey, leftId, rightId, leftType, rightType, type);
+      
+      result.setRevision(jsonObj.getString("revision"));
+
+      JSONObject props = jsonObj.getJSONObject("properties");
+      Set<String> propsKeySet = props.keySet();
+      for( String propKey : propsKeySet){
+         Object propValue = props.get(propKey);
+         result.addAttribute(propKey, propValue);
+     }
+
+      return result;
    }
    
 }
