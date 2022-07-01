@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoCursor;
@@ -762,6 +764,10 @@ public class KnowledgeGraph {
        }
    }
    
-   
+   public void loadFromJson(JSONArray jsonArray) {
+      for (int i = 0; i < jsonArray.length(); i++) {
+         JSONObject jsonObj = jsonArray.getJSONObject(i);
+     }
+   }
    
 }
