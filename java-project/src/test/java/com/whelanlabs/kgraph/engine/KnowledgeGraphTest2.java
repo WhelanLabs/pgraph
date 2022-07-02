@@ -21,8 +21,8 @@ public class KnowledgeGraphTest2 {
    private static KnowledgeGraph kGraph = null;
    private static String tablespace_name = "KnowledgeGraphTests_db";
 
-   private static Logger logger = LogManager.getLogger(KnowledgeGraphTest2.class);  
-   
+   private static Logger logger = LogManager.getLogger(KnowledgeGraphTest2.class);
+
    @BeforeClass
    public static void setUpBeforeClass() throws Exception {
       kGraph = new KnowledgeGraph(tablespace_name);
@@ -97,11 +97,11 @@ public class KnowledgeGraphTest2 {
       assert (nodeTypes.contains(nodeType1)) : "nodeTypes = " + nodeTypes;
       assert (nodeTypes.contains(nodeType2)) : "nodeTypes = " + nodeTypes;
       assert (nodeTypes.contains(nodeType3)) : "nodeTypes = " + nodeTypes;
-      
+
       assert (!nodeTypes.contains(KnowledgeGraph.nodeTypesCollectionName)) : "nodeTypes = " + nodeTypes;
       assert (!nodeTypes.contains(KnowledgeGraph.edgeTypesCollectionName)) : "nodeTypes = " + nodeTypes;
    }
-   
+
    @Test(expected = RuntimeException.class)
    public void expandBoth_noFilters_exception() {
       final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
@@ -115,11 +115,11 @@ public class KnowledgeGraphTest2 {
 
       List<QueryClause> relClauses = null;
       List<QueryClause> otherSideClauses = null;
-      
+
       kGraph.expand(leftNode, "testEdgeType", relClauses, otherSideClauses, Direction.any);
 
    }
-   
+
    @Test
    public void toJson_goodNode_getJson() throws Exception {
       Node node1 = new Node(ElementHelper.generateKey(), "TestNodeType");
@@ -133,19 +133,18 @@ public class KnowledgeGraphTest2 {
       assert (jsonString1.contains("\"bar\" : \"abc\","));
       assert (jsonString2.contains("\"type\" : \"TestNodeType\""));
 
-
    }
-   
+
    @Test
    public void toJson_goodEdge_getJson() throws Exception {
       String nodeType1 = ElementHelper.generateName();
-      
+
       Node node1 = new Node(ElementHelper.generateKey(), "TestNodeType");
       Node node2 = new Node(ElementHelper.generateKey(), "TestNodeType");
       node1.addAttribute("foo", 123);
       node1.addAttribute("bar", "abc");
       Edge edge = new Edge(ElementHelper.generateKey(), node1, node2, "TestEdgeType");
-      
+
       String jsonString1 = edge.toJson();
       logger.debug("jsonString1: " + jsonString1);
       assert (jsonString1.contains("\"id\" : null,"));
@@ -156,10 +155,10 @@ public class KnowledgeGraphTest2 {
       assert (jsonString2.contains("\"type\" : \"TestEdgeType\""));
 
    }
-   
+
    @Test
    public void toJson_goodElements_getJson() throws Exception {
-      
+
       Node node1 = new Node(ElementHelper.generateKey(), "TestNodeType");
       Node node2 = new Node(ElementHelper.generateKey(), "TestNodeType");
       node1.addAttribute("foo", 123);
@@ -175,14 +174,14 @@ public class KnowledgeGraphTest2 {
       kGraph.upsert(node1, node2, edge);
       String jsonString2 = Element.toJson(elements);
       logger.debug("jsonString2: " + jsonString2);
-      
+
       assert (jsonString1.contains("\"id\" : null,"));
       assert (jsonString2.contains("\"type\" : \"TestNodeType\""));
    }
-   
+
    @Test
    public void toDot_goodElements_getDot() throws Exception {
-      
+
       Node node1 = new Node(ElementHelper.generateKey(), "TestNodeType");
       Node node2 = new Node(ElementHelper.generateKey(), "TestNodeType");
       node1.addAttribute("foo", 123);
@@ -198,27 +197,27 @@ public class KnowledgeGraphTest2 {
 
       String dotString = Element.toDot(elements);
       logger.debug("dotString: " + dotString);
-      
+
       assert (dotString.contains("id = \\\"TestEdgeType/KEY"));
       assert (dotString.contains("digraph G {"));
    }
-   
+
    @Test
    public void importJson_goodJson_loaded() throws Exception {
       String filePath = "./src/test/resources/test_load_data.json";
       String content = new String(Files.readAllBytes(Paths.get(filePath)));
 
-      logger.debug("content = "+ content);
-      
+      logger.debug("content = " + content);
+
       JSONArray jsonArr = new JSONArray(content);
       List<Element> results = kGraph.loadFromJson(jsonArr);
-      
+
       logger.debug("results: " + results);
 
-      assert (results.size()==24): "size = " + results.size();
+      assert (results.size() == 24) : "results size = " + results.size();
 
-       ElementList<Element> testNode = kGraph.upsert(results);
+      ElementList<Element> testNodes = kGraph.upsert(results);
 
-      fail("implement me!");
+      assert (testNodes.size() == 24) : "testNodes size = " + testNodes.size();
    }
 }

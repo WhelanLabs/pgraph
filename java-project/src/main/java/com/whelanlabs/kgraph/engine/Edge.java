@@ -119,6 +119,10 @@ public class Edge extends BaseEdgeDocument implements Element {
       String rightType = jsonObj.getString("rightType");
       String type = jsonObj.getString("type");
       
+      // TODO: this is a bit of a hack, but for now just trying to get the POC working.
+      leftId = leftId.split("/")[1];
+      rightId = rightId.split("/")[1];
+      
       Edge result = new Edge(edgeKey, leftId, rightId, leftType, rightType, type);
       
       result.setRevision(jsonObj.getString("revision"));

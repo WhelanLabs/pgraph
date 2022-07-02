@@ -283,6 +283,8 @@ public class KnowledgeGraph {
          addEdgeType(edge);
          collection = getEdgeCollection(edge.getType());
          if (!collection.documentExists(edge.getKey())) {
+            logger.debug("edge = " + edge);
+
             collection.insertDocument(edge);
             result = edge;
          } else {
@@ -767,7 +769,7 @@ public class KnowledgeGraph {
       List<Element> elementList = new ArrayList<>();
       for (int i = 0; i < jsonArray.length(); i++) {
          JSONObject jsonObj = jsonArray.getJSONObject(i);
-         if (jsonObj.has(edgeTypesCollectionName)) {
+         if (jsonObj.has("from")) {
             Edge edge = Edge.hydrate(jsonObj);
             elementList.add(edge);
          } else {
