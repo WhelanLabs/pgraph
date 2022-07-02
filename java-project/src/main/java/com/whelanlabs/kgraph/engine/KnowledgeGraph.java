@@ -778,6 +778,7 @@ public class KnowledgeGraph {
             elementList.add(node);
          }
       }
+      upsert(elementList);
       return elementList;
    }
 
