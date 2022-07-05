@@ -103,6 +103,7 @@
 # WIP
 ##########################################################
 
+* see: https://github.com/arangodb/arangodb-java-driver/issues/45#issuecomment-535828007
 * publish release 3.6.0.
 
 ##########################################################
