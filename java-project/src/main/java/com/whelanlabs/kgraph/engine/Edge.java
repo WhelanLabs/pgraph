@@ -1,10 +1,8 @@
 package com.whelanlabs.kgraph.engine;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.arangodb.entity.BaseEdgeDocument;
@@ -51,8 +49,8 @@ public class Edge extends BaseEdgeDocument implements Element {
       this.addAttribute(rightTypeAttrName, rightCollectionName);
    }
 
-   public Edge(String edgeKey, String leftId, String rightId, String leftType, String rightType, String type) {
-      super(edgeKey, leftType + "/" + leftId, rightType + "/" + rightId);
+   public Edge(String edgeKey, String leftKey, String rightKey, String leftType, String rightType, String type) {
+      super(edgeKey, leftType + "/" + leftKey, rightType + "/" + rightKey);
       this.addAttribute(typeAttrName, type);
       this.addAttribute(leftTypeAttrName, leftType);
       this.addAttribute(rightTypeAttrName, rightType);
