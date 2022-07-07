@@ -240,36 +240,6 @@ public class KnowledgeGraph {
       }
       return results;
    }
-   // #################################### end of test...
-
-   /**
-    * Upsert.  Creates a Node if it does not exist, and updates
-    * the Node if it already exists.
-    * 
-    * For updates, all attributes specified in the input Node will be 
-    * added to the persisted Node if they do not yet exist, and overwritten 
-    * in the persisted Node if they do exist there.
-    *
-    * @param node the node
-    * @return the node
-    */
-   protected Node _upsert(final Node node) {
-      ArangoCollection collection = null;
-      try {
-         addNodeType(node.getType());
-         collection = getNodeCollection(node.getType());
-         logger.trace("upsertNode " + node.getKey());
-         if (!collection.documentExists(node.getKey())) {
-            collection.insertDocument(node);
-         } else {
-            collection.updateDocument(node.getKey(), node);
-         }
-      } catch (Exception e) {
-         logger.error(node.toString());
-         throw e;
-      }
-      return node;
-   }
 
    /**
     * Adds the node type.
@@ -337,52 +307,6 @@ public class KnowledgeGraph {
             edgeTypesCache.add(edgeId);
          }
       }
-   }
-
-   /**
-    * Upsert.  Creates an Edge if it does not exist, and updates
-    * the Edge if it already exists.
-    * 
-    * For updates, all attributes from the input Edge will be 
-    * added to the Edge if they do not yet exist, and overwritten 
-    * in the existing Edge if they do exist there.
-    * 
-    * Creation of edges requires that the end-point Nodes for the 
-    * Edge have already been persisted.
-    *
-    * @param edge the edge
-    * @return the edge
-    */
-   protected Edge _upsert(final Edge edge) {
-      ArangoCollection collection = null;
-      Edge result = null;
-      try {
-         addEdgeType(edge);
-         collection = getEdgeCollection(edge.getType());
-         if (!collection.documentExists(edge.getKey())) {
-            logger.debug("edge = " + edge);
-
-            collection.insertDocument(edge);
-            result = edge;
-         } else {
-            logger.debug("Fetch already existing element. (key=" + edge.getKey() + ")");
-            result = collection.updateDocument(edge.getKey(), edge).getNew();
-            result = collection.getDocument(edge.getKey(), Edge.class);
-         }
-      } catch (Exception e) {
-         if (null != edge) {
-            logger.debug(edge.toString());
-         } else {
-            logger.error("The edge is null.");
-         }
-         if (null != collection) {
-            logger.debug("collection = '" + collection.toString() + "'");
-         } else {
-            logger.error("The collection is null.");
-         }
-         throw e;
-      }
-      return result;
    }
 
    /**
@@ -846,7 +770,7 @@ public class KnowledgeGraph {
       List<Element> elementList = new ArrayList<>();
       for (int i = 0; i < jsonArray.length(); i++) {
          JSONObject jsonObj = jsonArray.getJSONObject(i);
-         if (jsonObj.has("from")) {
+         if (jsonObj.has("_from")) {
             Edge edge = Edge.hydrate(jsonObj);
             elementList.add(edge);
          } else {

@@ -94,24 +94,25 @@
 
 
 ##########################################################
-# Release 3.6.0
+# Release 4.0.0
 ##########################################################
 
 * support 'load from json' support
+
+* close security defects (Snyk is cool)
+
+* improve performance (result was 100X)
 
 ##########################################################
 # WIP
 ##########################################################
 
-* see: https://github.com/arangodb/arangodb-java-driver/issues/45#issuecomment-535828007
-* publish release 3.6.0.
+* publish release 4.0.0.
 
 ##########################################################
 # backlog
 ##########################################################
 
-
-* support 'load from json' support
 
 * add support in kGraph to work with a pool of ArangoDB end-points
 

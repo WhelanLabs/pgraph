@@ -110,9 +110,9 @@ public class Edge extends BaseEdgeDocument implements Element {
 
    public static Edge hydrate(JSONObject jsonObj) {
       
-      String edgeKey = jsonObj.getString("key");
-      String leftId = jsonObj.getString("from");
-      String rightId = jsonObj.getString("to");
+      String edgeKey = jsonObj.getString("_key");
+      String leftId = jsonObj.getString("_from");
+      String rightId = jsonObj.getString("_to");
       String leftType = jsonObj.getString("leftType");
       String rightType = jsonObj.getString("rightType");
       String type = jsonObj.getString("type");
@@ -122,8 +122,6 @@ public class Edge extends BaseEdgeDocument implements Element {
       rightId = rightId.split("/")[1];
       
       Edge result = new Edge(edgeKey, leftId, rightId, leftType, rightType, type);
-      
-      result.setRevision(jsonObj.getString("revision"));
 
       JSONObject props = jsonObj.getJSONObject("properties");
       Set<String> propsKeySet = props.keySet();

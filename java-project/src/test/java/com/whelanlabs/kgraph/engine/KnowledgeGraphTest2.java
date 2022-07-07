@@ -58,30 +58,6 @@ public class KnowledgeGraphTest2 {
       kGraph.getNodeCollection(testEdgeCollection);
    }
 
-   @Test(expected = RuntimeException.class)
-   public void upsert_nodeKeyIsNull_exception() {
-      final Node node = new Node(ElementHelper.generateKey(), "testNodeCollection");
-      node.setKey(null);
-      kGraph._upsert(node);
-   }
-
-   @Test(expected = RuntimeException.class)
-   public void upsert_edgeKeyIsNull_exception() {
-      final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeCollection");
-      final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeCollection");
-      kGraph.upsert(leftNode, rightNode);
-
-      String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
-      Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection");
-      edge.setKey(null);
-      kGraph._upsert(edge);
-   }
-
-   @Test(expected = RuntimeException.class)
-   public void upsert_edgeIsNull_exception() {
-      kGraph._upsert((Edge) null);
-   }
-
    @Test
    public void getNodeTypes_typesExist_getResults() {
       String nodeType1 = ElementHelper.generateName();
@@ -213,10 +189,10 @@ public class KnowledgeGraphTest2 {
 
       logger.debug("results: " + results);
 
-      assert (results.size() == 24) : "results size = " + results.size();
+      assert (results.size() == 25) : "results size = " + results.size();
 
       ElementList<Element> testNodes = kGraph.upsert(results);
 
-      assert (testNodes.size() == 24) : "testNodes size = " + testNodes.size();
+      assert (testNodes.size() == 25) : "testNodes size = " + testNodes.size();
    }
 }

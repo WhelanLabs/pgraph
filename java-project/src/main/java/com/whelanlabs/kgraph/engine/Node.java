@@ -70,12 +70,10 @@ public class Node extends BaseDocument implements Element {
 
    public static Node hydrate(JSONObject jsonObj) {
       
-      String key = jsonObj.getString("key");
+      String key = jsonObj.getString("_key");
       String type = jsonObj.getString("type");
       
       Node result = new Node(key, type);
-      
-      result.setRevision(jsonObj.getString("revision"));
 
       JSONObject props = jsonObj.getJSONObject("properties");
       Set<String> propsKeySet = props.keySet();
