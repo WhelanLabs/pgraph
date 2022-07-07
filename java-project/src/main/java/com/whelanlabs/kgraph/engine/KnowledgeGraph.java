@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +28,11 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.DocumentCreateEntity;
+import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.CollectionCreateOptions;
+import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.TraversalOptions.Direction;
 import com.arangodb.util.MapBuilder;
 import com.whelanlabs.kgraph.engine.QueryClause.Operator;
@@ -153,17 +157,90 @@ public class KnowledgeGraph {
     */
    public ElementList<Element> upsert(Element... elements) {
       ElementList<Element> results = new ElementList<>();
+      List<Node> nodes = new ArrayList<>();
+      List<Edge> edges = new ArrayList<>();
+
       for (Element element : elements) {
          if (element instanceof Node) {
-            results.add(_upsert((Node) element));
-         } else if (element instanceof Edge) {
-            results.add(_upsert((Edge) element));
+            nodes.add((Node) element);
          } else {
-            throw new RuntimeException("Unsupported type for insert");
+            edges.add((Edge) element);
+         }
+      }
+      results.addAll(betterUpsertNodes(nodes));
+      results.addAll(betterUpsertEdges(edges));
+
+      return results;
+   }
+
+   private ElementList<Node> betterUpsertNodes(List<Node> nodes) {
+      ElementList<Node> results = new ElementList<>();
+      HashMap<String, List<Node>> upserts = new HashMap<>();
+
+      for (Node node : nodes) {
+         String nodeType = node.getType();
+         List<Node> elementsOfType = new ArrayList<>();
+         if (upserts.containsKey(nodeType)) {
+            elementsOfType = upserts.get(nodeType);
+         }
+         elementsOfType.add(node);
+         upserts.put(nodeType, elementsOfType);
+      }
+
+      for (String type : upserts.keySet()) {
+         addNodeType(type);
+         List<Node> values = upserts.get(type);
+         DocumentCreateOptions documentCreationOptions = new DocumentCreateOptions();
+         documentCreationOptions = documentCreationOptions.overwrite(true).returnNew(true);
+         ArangoCollection collection = getNodeCollection(type);
+         MultiDocumentEntity<DocumentCreateEntity<Node>> inserts = collection.insertDocuments(values, documentCreationOptions);
+         Collection<DocumentCreateEntity<Node>> docs = inserts.getDocuments();
+         Iterator<DocumentCreateEntity<Node>> itr = docs.iterator();
+         while (itr.hasNext()) {
+            DocumentCreateEntity<Node> documentCreateEntity = itr.next();
+            Node newNode = documentCreateEntity.getNew();
+            results.add(newNode);
          }
       }
       return results;
    }
+
+   private ElementList<Edge> betterUpsertEdges(List<Edge> edges) {
+      // collection = getEdgeCollection(edge.getType());
+      ElementList<Edge> results = new ElementList<>();
+      HashMap<String, List<Edge>> upserts = new HashMap<>();
+
+      for (Edge edge : edges) {
+         String edgeType = edge.getType();
+         List<Edge> elementsOfType = new ArrayList<>();
+         if (upserts.containsKey(edgeType)) {
+            elementsOfType = upserts.get(edgeType);
+         }
+         elementsOfType.add(edge);
+         upserts.put(edgeType, elementsOfType);
+      }
+
+      for (String type : upserts.keySet()) {
+         List<Edge> values = upserts.get(type);
+         Edge firstValue = values.get(0);
+         DocumentCreateOptions documentCreationOptions = new DocumentCreateOptions();
+         documentCreationOptions = documentCreationOptions.overwrite(true).returnNew(true);
+         // ArangoCollection collection = getNodeCollection(type);
+         ArangoCollection collection = getEdgeCollection(type);
+         MultiDocumentEntity<DocumentCreateEntity<Edge>> inserts = collection.insertDocuments(values, documentCreationOptions);
+         Collection<DocumentCreateEntity<Edge>> docs = inserts.getDocuments();
+         Iterator<DocumentCreateEntity<Edge>> itr = docs.iterator();
+         while (itr.hasNext()) {
+            DocumentCreateEntity<Edge> documentCreateEntity = itr.next();
+            Edge newEdge = documentCreateEntity.getNew();
+            newEdge.setId(documentCreateEntity.getId());
+            addEdgeType(newEdge);
+            results.add(newEdge);
+         }
+      }
+      return results;
+   }
+   // #################################### end of test...
 
    /**
     * Upsert.  Creates a Node if it does not exist, and updates

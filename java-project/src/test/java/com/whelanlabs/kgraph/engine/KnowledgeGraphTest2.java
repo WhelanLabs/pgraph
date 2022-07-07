@@ -147,7 +147,7 @@ public class KnowledgeGraphTest2 {
 
       String jsonString1 = edge.toJson();
       logger.debug("jsonString1: " + jsonString1);
-      assert (jsonString1.contains("\"id\" : null,"));
+      assert (jsonString1.contains("_key\" : \"KEY_"));
 
       kGraph.upsert(node1, node2, edge);
       String jsonString2 = edge.toJson();
@@ -175,7 +175,7 @@ public class KnowledgeGraphTest2 {
       String jsonString2 = Element.toJson(elements);
       logger.debug("jsonString2: " + jsonString2);
 
-      assert (jsonString1.contains("\"id\" : null,"));
+      assert (jsonString1.contains("\"_key\" : \"KEY_"));
       assert (jsonString2.contains("\"type\" : \"TestNodeType\""));
    }
 
@@ -190,11 +190,10 @@ public class KnowledgeGraphTest2 {
       edge.addAttribute("foo", 123456);
       edge.addAttribute("bar", "abc_edge");
       List<Element> elements = new ArrayList<>();
-      kGraph.upsert(node1, node2, edge);
-      elements.add(node1);
-      elements.add(node2);
-      elements.add(edge);
-
+      
+      ElementList<Element> updated = kGraph.upsert(node1, node2, edge);
+      elements.addAll(updated);
+      
       String dotString = Element.toDot(elements);
       logger.debug("dotString: " + dotString);
 

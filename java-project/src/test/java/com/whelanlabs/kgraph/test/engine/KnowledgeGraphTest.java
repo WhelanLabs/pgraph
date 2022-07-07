@@ -159,8 +159,8 @@ public class KnowledgeGraphTest {
       kGraph.upsert(edge);
    }
 
-   @Test(expected = NullPointerException.class)
-   public void upsertEdge_keyIsNull_exception() {
+   @Test
+   public void upsertEdge_keyIsNull_keyAutoPopulated() {
       final Node leftNode = new Node(ElementHelper.generateKey(), "testNodeType");
       final Node rightNode = new Node(ElementHelper.generateKey(), "testNodeType");
       kGraph.upsert(leftNode, rightNode);
@@ -171,6 +171,10 @@ public class KnowledgeGraphTest {
 
       edge.setKey(null);
       edge = kGraph.upsert(edge).getEdges().get(0);
+      
+      assert (null != edge.getKey());
+
+      logger.debug("edge = " + edge);
    }
 
    @Test
