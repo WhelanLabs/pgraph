@@ -109,6 +109,11 @@
 
 * publish release 4.0.0.
 
+* read about cluster support
+  - https://www.arangodb.com/docs/stable/architecture-deployment-modes-cluster-architecture.html
+  - https://www.arangodb.com/docs/stable/deployment-cluster-using-the-starter.html
+  - https://www.arangodb.com/docs/stable/deployment-docker.html
+
 ##########################################################
 # backlog
 ##########################################################
