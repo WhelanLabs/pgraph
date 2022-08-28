@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -663,7 +664,7 @@ public class KnowledgeGraphTest {
    }
 
    @Test
-   public void query_hasResults_getResults() throws Exception {
+   public void queryNodes_hasResults_getResults() throws Exception {
       String nodeType = ElementHelper.generateName();
       Node node1 = new Node(ElementHelper.generateKey(), nodeType);
       node1.addAttribute("time", 1);
@@ -677,11 +678,33 @@ public class KnowledgeGraphTest {
       logger.debug("query: " + query);
       Map<String, Object> bindVars = Collections.singletonMap("time", 2);
 
-      List<Node> results = kGraph.query(query, bindVars);
+      List<Node> results = kGraph.queryNodes(query, bindVars);
       assert (results.size() == 1) : "results = " + results;
       assert (results.get(0).getKey().equals(node2.getKey())) : "results = " + results;
    }
 
+   @Test
+   public void queryEdges_hasResults_getResults() throws Exception {
+      String nodeType = ElementHelper.generateName();
+      String edgeType = ElementHelper.generateName();
+
+      Node node1 = new Node(ElementHelper.generateKey(), nodeType);
+      node1.addAttribute("time", 1);
+      Node node2 = new Node(ElementHelper.generateKey(), nodeType);
+      node2.addAttribute("time", 2);
+      Edge edge1 = new Edge(ElementHelper.generateKey(), node1, node2, edgeType);
+      kGraph.upsert(node1, node2, edge1);
+
+      String query = "FOR t IN " + edgeType + " FILTER t._from == @left AND t._to == @to RETURN t";
+      logger.debug("query: " + query);
+      Map<String, Object> bindVars = new HashMap<>();
+      bindVars.put("left", node1.getId());
+      bindVars.put("to", node2.getId());
+
+      List<Edge> results = kGraph.queryEdges(query, bindVars);
+      assert (results.size() == 1) : "results = " + results;
+      assert (results.get(0).getKey().equals(edge1.getKey())) : "results = " + results;
+   }
    @Test
    public void delete_nodeExists_deleted() {
       Boolean pass = false;

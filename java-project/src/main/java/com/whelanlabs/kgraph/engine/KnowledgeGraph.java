@@ -747,7 +747,7 @@ public class KnowledgeGraph {
       return leftTypesNoDups;
    }
 
-   public List<Node> query(String query, Map<String, Object> bindVars) {
+   public List<Node> queryNodes(String query, Map<String, Object> bindVars) {
       List<Node> resultNodes = new ArrayList<>();
       ArangoCursor<Node> cursor = _userDB.query(query, bindVars, null, Node.class);
       cursor.forEachRemaining(aDocument -> {
@@ -757,6 +757,17 @@ public class KnowledgeGraph {
       return resultNodes;
    }
 
+   
+   public List<Edge> queryEdges(String query, Map<String, Object> bindVars) {
+      List<Edge> resultNodes = new ArrayList<>();
+      ArangoCursor<Edge> cursor = _userDB.query(query, bindVars, null, Edge.class);
+      cursor.forEachRemaining(aDocument -> {
+         logger.debug("result: " + aDocument);
+         resultNodes.add(aDocument);
+      });
+      return resultNodes;
+   }
+   
    // TODO: augment delete to cascade delete edges when a node is deleted.
    public void delete(Element element) {
       try {
