@@ -206,7 +206,6 @@ public class KnowledgeGraph {
    }
 
    private ElementList<Edge> betterUpsertEdges(List<Edge> edges) {
-      // collection = getEdgeCollection(edge.getType());
       ElementList<Edge> results = new ElementList<>();
       HashMap<String, List<Edge>> upserts = new HashMap<>();
 
@@ -225,7 +224,6 @@ public class KnowledgeGraph {
          Edge firstValue = values.get(0);
          DocumentCreateOptions documentCreationOptions = new DocumentCreateOptions();
          documentCreationOptions = documentCreationOptions.overwrite(true).returnNew(true);
-         // ArangoCollection collection = getNodeCollection(type);
          ArangoCollection collection = getEdgeCollection(type);
          MultiDocumentEntity<DocumentCreateEntity<Edge>> inserts = collection.insertDocuments(values, documentCreationOptions);
          Collection<DocumentCreateEntity<Edge>> docs = inserts.getDocuments();
