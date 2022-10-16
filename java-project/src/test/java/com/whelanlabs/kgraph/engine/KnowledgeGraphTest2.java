@@ -1,13 +1,10 @@
 package com.whelanlabs.kgraph.engine;
 
-import static org.junit.Assert.fail;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -113,7 +110,6 @@ public class KnowledgeGraphTest2 {
 
    @Test
    public void toJson_goodEdge_getJson() throws Exception {
-      String nodeType1 = ElementHelper.generateName();
 
       Node node1 = new Node(ElementHelper.generateKey(), "TestNodeType");
       Node node2 = new Node(ElementHelper.generateKey(), "TestNodeType");

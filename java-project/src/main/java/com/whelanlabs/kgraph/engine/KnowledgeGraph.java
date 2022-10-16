@@ -221,7 +221,6 @@ public class KnowledgeGraph {
 
       for (String type : upserts.keySet()) {
          List<Edge> values = upserts.get(type);
-         Edge firstValue = values.get(0);
          DocumentCreateOptions documentCreationOptions = new DocumentCreateOptions();
          documentCreationOptions = documentCreationOptions.overwrite(true).returnNew(true);
          ArangoCollection collection = getEdgeCollection(type);

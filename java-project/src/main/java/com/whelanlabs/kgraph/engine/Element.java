@@ -2,8 +2,6 @@ package com.whelanlabs.kgraph.engine;
 
 import java.util.Collection;
 
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 

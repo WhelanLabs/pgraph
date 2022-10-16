@@ -1,7 +1,6 @@
 package com.whelanlabs.kgraph.test.engine;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -718,7 +717,7 @@ public class KnowledgeGraphTest {
       kGraph.delete(result);
       
       try {
-         Node result2 = kGraph.getNodeByKey(testNode.getKey(), typeName);
+         kGraph.getNodeByKey(testNode.getKey(), typeName);
       } catch (RuntimeException e) {
          pass = true;
       }
@@ -731,6 +730,6 @@ public class KnowledgeGraphTest {
       Node testNode = new Node(ElementHelper.generateKey(), typeName);
 
       kGraph.delete(testNode);
-      Node result2 = kGraph.getNodeByKey(testNode.getKey(), typeName);
+      kGraph.getNodeByKey(testNode.getKey(), typeName);
    }
 }
