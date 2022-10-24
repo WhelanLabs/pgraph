@@ -3,7 +3,7 @@
 	<groupId>com.whelanlabs.kgraph</groupId>
 	<artifactId>kgraph</artifactId>
 	<packaging>jar</packaging>
-	<version>5.0.1</version>
+	<version>5.0.2</version>
 	<name>kgraph</name>
 	<url>http://www.whelanlabs.com/kgraph</url>
 
@@ -59,6 +59,14 @@
 			<artifactId>json</artifactId>
 			<version>20220924</version>
 		</dependency>
+
+		<!-- the following fix bugs in indirect deps -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.13.4.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
