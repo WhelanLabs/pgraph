@@ -20,7 +20,7 @@
 
 * Switch edge constructor to be object based (not string based)
 
-* combine KnowledgeGraph.upsert[...]() to KnowledgeGraph.upsert()
+* combine PropertyGraph.upsert[...]() to PropertyGraph.upsert()
 
 * switch node constructor to specify collection
 
@@ -36,14 +36,14 @@
 
 * getRightTypesforEdgeType
 
-* replace "Collection" with "Type" in kgraph language.
+* replace "Collection" with "Type" in PGraph language.
 
 * JavaDoc the code
 
-* KnowledgeGraph.getNodeTypes() shall not return schema node types.
+* PropertyGraph.getNodeTypes() shall not return schema node types.
   (nodeTypesCollectionName, edgeTypesCollectionName)
   
-* Change KnowledgeGraph.getTotalCount() should not return schema node types counts in its total.
+* Change PropertyGraph.getTotalCount() should not return schema node types counts in its total.
   (nodeTypesCollectionName, edgeTypesCollectionName)
   
 * support DB access via config file(s) - ArangoDB system user, password, host, and port.
@@ -52,7 +52,7 @@
 
 * 100% code coverage (this allows regressions in coverage to be easily found.)
 
-* create version 1.0.0 of KGraph (set POM.xml and add tag)
+* create version 1.0.0 of PGraph (set POM.xml and add tag)
 
 ##########################################################
 # Release 1.0.1
@@ -64,7 +64,7 @@
 
 * query non-existant type, get zero results
 
-* create version 1.0.1 of KGraph (set POM.xml and add tag)
+* create version 1.0.1 of PGraph (set POM.xml and add tag)
 
 ##########################################################
 # Release 1.1.1
@@ -72,7 +72,7 @@
 
 * edge creation with no end nodes.
 
-* create version 1.1.1 of KGraph (set POM.xml and add tag)
+* create version 1.1.1 of PGraph (set POM.xml and add tag)
 
 ##########################################################
 # Release 2.0.0
@@ -119,14 +119,14 @@
 ##########################################################
 
 
-* add support in kGraph to work with a pool of ArangoDB end-points
+* add support in PGraph to work with a pool of ArangoDB end-points
 
 * Disallow client code from making/using Type with reserved names
-    - KnowledgeGraph.nodeTypesCollectionName
-    - KnowledgeGraph.edgeTypesCollectionName
+    - PropertyGraph.nodeTypesCollectionName
+    - PropertyGraph.edgeTypesCollectionName
 	
 * set based performance improvements
 	- load nodes
 	- load edges
 
-* break apart KnowledgeGraph - no God Class
+* break apart PropertyGraph - no God Class

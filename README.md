@@ -1,4 +1,4 @@
-# KGraph
+# PGraph
 
 # Prerequisites for Running the Code
 Current test code requires that ArangoDB is started in Docker. 

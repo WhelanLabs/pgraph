@@ -1,4 +1,4 @@
-package com.whelanlabs.kgraph.engine;
+package com.whelanlabs.pgraph.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,10 +35,10 @@ import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.TraversalOptions.Direction;
 import com.arangodb.util.MapBuilder;
-import com.whelanlabs.kgraph.engine.QueryClause.Operator;
+import com.whelanlabs.pgraph.engine.QueryClause.Operator;
 
 /**
- * The Class KnowledgeGraph.  This class provides a generic implementation
+ * The Class PropertyGraph.  This class provides a generic implementation
  * of a persistent property graph.
  * 
  * This class is a bit of a God Class, and should be considered 
@@ -47,10 +47,10 @@ import com.whelanlabs.kgraph.engine.QueryClause.Operator;
  * test coverage should make refactoring a real possibility.
  * see also: https://en.wikipedia.org/wiki/God_object
  */
-public class KnowledgeGraph {
+public class PropertyGraph {
 
    /** The user DB. */
-   // TODO: make this private again once Andrew's need is moved back into KGraph.
+   // TODO: make this private again once Andrew's need is moved back into PGraph.
    public ArangoDatabase _userDB;
 
    /** The db name. */
@@ -74,15 +74,15 @@ public class KnowledgeGraph {
    private Set<String> edgeTypesCache = new HashSet<>();
 
    /** The logger. */
-   private static Logger logger = LogManager.getLogger(KnowledgeGraph.class);
+   private static Logger logger = LogManager.getLogger(PropertyGraph.class);
 
    /**
-    * Instantiates a new knowledge graph.
+    * Instantiates a new property graph.
     *
     * @param db_name the db name
     * @throws Exception the exception
     */
-   public KnowledgeGraph(String db_name) throws Exception {
+   public PropertyGraph(String db_name) throws Exception {
       _db_name = DbName.normalize(db_name);
       setupApplicationDatabase(_db_name);
    }
@@ -118,8 +118,8 @@ public class KnowledgeGraph {
     */
    private synchronized ArangoDB setupSystemDatabase() throws IOException {
       if (null == _systemDB) {
-         try (InputStream in = KnowledgeGraph.class.getClassLoader().getResourceAsStream("config.properties")) {
-            _systemDB = new ArangoDB.Builder().loadProperties(in).serializer(new ArangoJack(MapperHelper.createKGraphMapper())).build();
+         try (InputStream in = PropertyGraph.class.getClassLoader().getResourceAsStream("config.properties")) {
+            _systemDB = new ArangoDB.Builder().loadProperties(in).serializer(new ArangoJack(MapperHelper.createPGraphMapper())).build();
          }
       }
       return _systemDB;
@@ -421,9 +421,9 @@ public class KnowledgeGraph {
          if (collectionName.startsWith("_")) {
             // skip - this is a ArangoDB framework Collection
          } else if (collectionName.equals(nodeTypesCollectionName)) {
-            // skip - this is a kgraph schema collection
+            // skip - this is a pgraph schema collection
          } else if (collectionName.equals(edgeTypesCollectionName)) {
-            // skip - this is a kgraph schema collection
+            // skip - this is a pgraph schema collection
          } else {
             result += _userDB.collection(collectionEntity.getName()).count().getCount();
          }
@@ -640,7 +640,7 @@ public class KnowledgeGraph {
    }
 
    /**
-    * Gets a list of the Types of Nodes in KGraph.
+    * Gets a list of the Types of Nodes in PGraph.
     *
     * @return the node types
     */
@@ -651,7 +651,7 @@ public class KnowledgeGraph {
    }
 
    /**
-    * Gets a list of Edge Type Schema Nodes in the current KGraph.
+    * Gets a list of Edge Type Schema Nodes in the current PGraph.
     *
     * @return the edge types
     */
@@ -665,7 +665,7 @@ public class KnowledgeGraph {
    }
 
    /**
-    * Gets a list of Edge Type Schema Nodes in the current KGraph
+    * Gets a list of Edge Type Schema Nodes in the current PGraph
     * for which the input type is the defined left type.
     * 
     * Keep in mind that for a given Edge type, instances may have
@@ -686,7 +686,7 @@ public class KnowledgeGraph {
    }
 
    /**
-    * Gets a list of Edge Type Schema Nodes in the current KGraph
+    * Gets a list of Edge Type Schema Nodes in the current PGraph
     * for which the input type is the defined right type.
     * 
     * Keep in mind that for a given Edge type, instances may have
@@ -707,7 +707,7 @@ public class KnowledgeGraph {
    }
 
    /**
-    * Gets a list of all left-side Node Type Names in the current KGraph
+    * Gets a list of all left-side Node Type Names in the current PGraph
     * for which the input type is the defined edge type.
     * 
     * (Put another way, this method shows all the types for
@@ -726,7 +726,7 @@ public class KnowledgeGraph {
    }
 
    /**
-    * Gets a list of all right-side Node Type Names in the current KGraph
+    * Gets a list of all right-side Node Type Names in the current PGraph
     * for which the input type is the defined edge type.
     * 
     * (Put another way, this method shows all the types for

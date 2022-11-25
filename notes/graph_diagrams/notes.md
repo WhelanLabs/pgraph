@@ -1,4 +1,4 @@
-KGraph supports generation of DOT documents.
+PGraph supports generation of DOT documents.
 
 For more information on DOT and GraphViz, see:
 * https://graphviz.org/

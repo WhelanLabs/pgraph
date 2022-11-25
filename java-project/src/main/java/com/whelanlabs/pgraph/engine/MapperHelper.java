@@ -1,4 +1,4 @@
-package com.whelanlabs.kgraph.engine;
+package com.whelanlabs.pgraph.engine;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -40,7 +40,7 @@ public class MapperHelper {
     *
     * @return the v pack mapper
     */
-   public static VPackMapper createKGraphMapper() {
+   public static VPackMapper createPGraphMapper() {
       final VPackMapper mapper = new VPackMapper();
       mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
       mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

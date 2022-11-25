@@ -1,4 +1,4 @@
-package com.whelanlabs.kgraph.engine;
+package com.whelanlabs.pgraph.engine;
 
 import com.arangodb.model.TraversalOptions.Direction;
 
@@ -10,7 +10,7 @@ import com.arangodb.model.TraversalOptions.Direction;
  * possible combinations.  For example, it currently lacks a
  * "getRightAttrString()" method because there isn't (yet?)
  * a need for such a function. (Given the Direction flipping
- * logic in KGraph, it is likely to have complete traversal
+ * logic in PGraph, it is likely to have complete traversal
  * abilities without having symmetric helper functions.)
  */
 public class ElementHelper {

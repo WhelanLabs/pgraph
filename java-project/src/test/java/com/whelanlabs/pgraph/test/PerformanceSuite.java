@@ -1,9 +1,9 @@
-package com.whelanlabs.kgraph.test;
+package com.whelanlabs.pgraph.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import com.whelanlabs.kgraph.test.loader.StockDataLoaderTest;
+import com.whelanlabs.pgraph.test.loader.StockDataLoaderTest;
 
 @RunWith(Suite.class)
 

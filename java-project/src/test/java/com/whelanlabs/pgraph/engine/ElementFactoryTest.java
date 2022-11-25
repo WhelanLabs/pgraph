@@ -1,4 +1,4 @@
-package com.whelanlabs.kgraph.engine;
+package com.whelanlabs.pgraph.engine;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,10 +8,14 @@ import org.junit.Test;
 
 import com.arangodb.ArangoCollection;
 import com.arangodb.model.TraversalOptions.Direction;
+import com.whelanlabs.pgraph.engine.Edge;
+import com.whelanlabs.pgraph.engine.ElementHelper;
+import com.whelanlabs.pgraph.engine.PropertyGraph;
+import com.whelanlabs.pgraph.engine.Node;
 
 public class ElementFactoryTest {
 
-   private static KnowledgeGraph kGraph = null;
+   private static PropertyGraph pGraph = null;
    private static String tablespace_name = "ElementFactoryTest_db";
 
    private static Logger logger = LogManager.getLogger(ElementFactoryTest.class);
@@ -19,13 +23,13 @@ public class ElementFactoryTest {
    @BeforeClass
    public static void setUpBeforeClass() throws Exception {
       logger.debug("Running ElementFactoryTest tests...");
-      kGraph = new KnowledgeGraph(tablespace_name);
-      kGraph.flush();
+      pGraph = new PropertyGraph(tablespace_name);
+      pGraph.flush();
    }
 
    @AfterClass
    public static void tearDownAfterClass() throws Exception {
-      kGraph.cleanup();
+      pGraph.cleanup();
    }
 
 
@@ -40,7 +44,7 @@ public class ElementFactoryTest {
       final Node leftNode = new Node(ElementHelper.generateKey(), testCollectionName);
       final Node rightNode = new Node(ElementHelper.generateKey(), testCollectionName);
       
-      kGraph.upsert(leftNode, rightNode);
+      pGraph.upsert(leftNode, rightNode);
 
       String edgeKey = leftNode.getKey() + ":" + rightNode.getKey();
       Edge edge = new Edge(edgeKey, leftNode, rightNode, "testEdgeCollection");

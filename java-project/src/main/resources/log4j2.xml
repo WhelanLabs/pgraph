@@ -7,8 +7,8 @@
 				pattern="%d{YYYY-MM-dd HH:mm:ss} [%t] %-5p %c{1}:%L - %msg%n" />
 		</Console>
 
-		<RollingFile name="RollingFile" filename="log/kgraph.log"
-			filepattern="${logPath}/%d{YYYYMMddHHmmss}-kgraph.log">
+		<RollingFile name="RollingFile" filename="log/pgraph.log"
+			filepattern="${logPath}/%d{YYYYMMddHHmmss}-pgraph.log">
 			<PatternLayout
 				pattern="%d{YYYY-MM-dd HH:mm:ss} [%t] %-5p %c{1}:%L - %msg%n" />
 			<Policies>
@@ -23,10 +23,10 @@
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="RollingFile" />
 		</Root>
-		<Logger name="com.whelanlabs.kgraph.engine" level="DEBUG" additivity="false">
+		<Logger name="com.whelanlabs.pgraph.engine" level="DEBUG" additivity="false">
 			<Appender-ref ref="Console" level="DEBUG" />
 		</Logger>
-		<Logger name="com.whelanlabs.kgraph.test" level="DEBUG" additivity="false">
+		<Logger name="com.whelanlabs.pgraph.test" level="DEBUG" additivity="false">
 			<Appender-ref ref="Console" level="DEBUG" />
 		</Logger>
 	</Loggers>

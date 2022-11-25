@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.whelanlabs.kgraph</groupId>
-	<artifactId>kgraph</artifactId>
+	<groupId>com.whelanlabs.pgraph</groupId>
+	<artifactId>pgraph</artifactId>
 	<packaging>jar</packaging>
 	<version>5.0.2</version>
-	<name>kgraph</name>
-	<url>http://www.whelanlabs.com/kgraph</url>
+	<name>pgraph</name>
+	<url>http://www.whelanlabs.com/pgraph</url>
 
 
 	<properties>
@@ -115,7 +115,7 @@
 					<configuration>
 						<archive>
 							<manifest>
-								<mainClass>com.whelanlabs.kgraph.App</mainClass>
+								<mainClass>com.whelanlabs.pgraph.App</mainClass>
 							</manifest>
 						</archive>
 						<descriptorRefs>
