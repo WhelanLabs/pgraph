@@ -3,7 +3,7 @@
 	<groupId>com.whelanlabs.pgraph</groupId>
 	<artifactId>pgraph</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>7.0.0</version>
 	<name>pgraph</name>
 	<url>http://www.whelanlabs.com/pgraph</url>
 
